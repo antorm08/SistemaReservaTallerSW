@@ -1,0 +1,332 @@
+---
+// Página para hacer reservas con calendario
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout title="Reservar Espacio">
+  <Navbar />
+  
+  <div class="container">
+    <h1 class="mb-4">Reservar Espacio</h1>
+    
+    <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 24px;">
+      <!-- Panel izquierdo: Selección -->
+      <div>
+        <div class="card">
+          <h2 class="card-title">1. Selecciona un Espacio</h2>
+          <select class="form-select" id="espacioSelect">
+            <option value="">Cargando espacios...</option>
+          </select>
+        </div>
+        
+        <div class="card">
+          <h2 class="card-title">2. Selecciona una Fecha</h2>
+          <input type="date" class="form-input" id="fechaInput" min="">
+        </div>
+        
+        <div id="horariosCard" class="card" style="display: none;">
+          <h2 class="card-title">3. Selecciona un Horario</h2>
+          <div id="loading" style="display: none; text-align: center; padding: 20px;">
+            <div class="loading"></div>
+            <p class="mt-2">Consultando disponibilidad...</p>
+          </div>
+          <div id="horarioInfo" style="margin-bottom: 16px;"></div>
+          <div id="timeSlots" class="time-slots"></div>
+        </div>
+      </div>
+      
+      <!-- Panel derecho: Resumen -->
+      <div>
+        <div class="card" style="position: sticky; top: 20px;">
+          <h2 class="card-title">Resumen de Reserva</h2>
+          
+          <div id="resumen" style="margin: 20px 0;">
+            <p style="color: var(--text-light); text-align: center; padding: 40px 0;">
+              Selecciona un espacio, fecha y horario para continuar
+            </p>
+          </div>
+          
+          <div id="alertReserva"></div>
+          
+          <div class="form-group" id="observacionesGroup" style="display: none;">
+            <label class="form-label">Observaciones (opcional)</label>
+            <textarea class="form-textarea" id="observaciones" placeholder="Ej: Cumpleaños, torneo, etc."></textarea>
+          </div>
+          
+          <button id="reservarBtn" class="btn btn-primary btn-block" style="display: none;">
+            Confirmar Reserva
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // @ts-nocheck
+  let espacios = [];
+  let espacioSeleccionado = null;
+  let fechaSeleccionada = null;
+  let slotSeleccionado = null;
+  let slotsDisponibles = [];
+  
+  // Configurar fecha mínima (hoy)
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('fechaInput').min = hoy;
+  document.getElementById('fechaInput').value = hoy;
+  
+  // Cargar espacios
+  async function cargarEspacios() {
+    try {
+      const response = await fetch('/api/espacios');
+      const data = await response.json();
+      
+      if (data.success) {
+        espacios = data.data;
+        const select = document.getElementById('espacioSelect');
+        select.innerHTML = '<option value="">Selecciona un espacio...</option>' +
+          espacios.map(e => `<option value="${e.id}">${e.nombre} - $${e.precioHora}/hora</option>`).join('');
+        
+        // Si hay espacioId en URL, seleccionarlo
+        const params = new URLSearchParams(window.location.search);
+        const espacioId = params.get('espacioId');
+        if (espacioId) {
+          select.value = espacioId;
+          select.dispatchEvent(new Event('change'));
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar espacios:', error);
+    }
+  }
+  
+  // Consultar disponibilidad
+  async function consultarDisponibilidad() {
+    if (!espacioSeleccionado || !fechaSeleccionada) return;
+    
+    const loading = document.getElementById('loading');
+    const timeSlots = document.getElementById('timeSlots');
+    const horarioInfo = document.getElementById('horarioInfo');
+    
+    loading.style.display = 'block';
+    timeSlots.innerHTML = '';
+    
+    try {
+      const response = await fetch(`/api/espacios/${espacioSeleccionado.id}/disponibilidad?fecha=${fechaSeleccionada}`);
+      const data = await response.json();
+      
+      loading.style.display = 'none';
+      
+      if (data.success) {
+        slotsDisponibles = data.data.slots;
+        
+        horarioInfo.innerHTML = `
+          <div class="alert alert-info">
+            <strong>Horario de operación:</strong> ${data.data.horarioOperacion.apertura} - ${data.data.horarioOperacion.cierre}<br>
+            <strong>Disponibles:</strong> ${data.data.disponibles} de ${data.data.total} turnos
+          </div>
+        `;
+        
+        timeSlots.innerHTML = slotsDisponibles.map(slot => {
+          let claseExtra = '';
+          if (!slot.disponible) {
+            if (slot.motivo === 'Reservado') claseExtra = 'slot-reservado';
+            else if (slot.motivo === 'Horario pasado') claseExtra = 'slot-pasado';
+            else claseExtra = 'slot-bloqueado';
+          }
+          
+          return `
+          <div class="time-slot ${slot.disponible ? '' : 'disabled'} ${claseExtra}" 
+               data-inicio="${slot.horaInicio}" 
+               data-fin="${slot.horaFin}"
+               ${slot.disponible ? '' : `title="${slot.motivo || 'No disponible'}"`}>
+            <div style="font-weight: 600;">${slot.horaInicio}</div>
+            <div style="font-size: 12px; color: var(--text-light);">${slot.horaFin}</div>
+            ${!slot.disponible ? `<div style="font-size: 11px; margin-top: 4px; font-weight: 500;">${slot.motivo || 'No disponible'}</div>` : ''}
+          </div>
+        `;
+        }).join('');
+        
+        // Agregar event listeners a los slots
+        document.querySelectorAll('.time-slot:not(.disabled)').forEach(slot => {
+          slot.addEventListener('click', () => seleccionarSlot(slot));
+        });
+      }
+    } catch (error) {
+      loading.style.display = 'none';
+      horarioInfo.innerHTML = '<div class="alert alert-error">Error al consultar disponibilidad</div>';
+    }
+  }
+  
+  function seleccionarSlot(slotElement) {
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+    slotElement.classList.add('selected');
+    
+    slotSeleccionado = {
+      horaInicio: slotElement.dataset.inicio,
+      horaFin: slotElement.dataset.fin,
+    };
+    
+    actualizarResumen();
+  }
+  
+  function actualizarResumen() {
+    const resumen = document.getElementById('resumen');
+    const reservarBtn = document.getElementById('reservarBtn');
+    const obsGroup = document.getElementById('observacionesGroup');
+    
+    if (espacioSeleccionado && fechaSeleccionada && slotSeleccionado) {
+      resumen.innerHTML = `
+        <div style="margin-bottom: 12px;">
+          <strong>Espacio:</strong><br>
+          ${espacioSeleccionado.nombre}
+        </div>
+        <div style="margin-bottom: 12px;">
+          <strong>Fecha:</strong><br>
+          ${new Date(fechaSeleccionada + 'T00:00:00').toLocaleDateString('es-ES', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </div>
+        <div style="margin-bottom: 12px;">
+          <strong>Horario:</strong><br>
+          ${slotSeleccionado.horaInicio} - ${slotSeleccionado.horaFin}
+        </div>
+        <div style="padding: 12px; background: var(--light); border-radius: var(--radius); margin-top: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 18px; font-weight: 600;">Total:</span>
+            <span style="font-size: 24px; font-weight: 700; color: var(--primary);">$${espacioSeleccionado.precioHora}</span>
+          </div>
+        </div>
+      `;
+      
+      reservarBtn.style.display = 'block';
+      obsGroup.style.display = 'block';
+    }
+  }
+  
+  // Event listeners
+  document.getElementById('espacioSelect').addEventListener('change', (e) => {
+    espacioSeleccionado = espacios.find(esp => esp.id === parseInt(e.target.value));
+    if (espacioSeleccionado) {
+      document.getElementById('horariosCard').style.display = 'block';
+      fechaSeleccionada = document.getElementById('fechaInput').value;
+      consultarDisponibilidad();
+    }
+  });
+  
+  document.getElementById('fechaInput').addEventListener('change', (e) => {
+    fechaSeleccionada = e.target.value;
+    slotSeleccionado = null;
+    if (espacioSeleccionado) {
+      consultarDisponibilidad();
+    }
+  });
+  
+  document.getElementById('reservarBtn').addEventListener('click', async () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const token = localStorage.getItem('token');
+    
+    if (!user.id || !token) {
+      // Guardar estado actual para continuar después del login
+      sessionStorage.setItem('reservaEnProgreso', JSON.stringify({
+        espacioId: espacioSeleccionado.id,
+        fecha: fechaSeleccionada,
+        horaInicio: slotSeleccionado.horaInicio,
+        horaFin: slotSeleccionado.horaFin
+      }));
+      
+      const confirmLogin = await showConfirm(
+        '¿Deseas iniciar sesión para completar tu reserva?',
+        'Iniciar Sesión Requerido',
+        '�'
+      );
+      
+      if (confirmLogin) {
+        sessionStorage.setItem('redirectAfterLogin', '/reservar');
+        window.location.href = '/login';
+      }
+      return;
+    }
+    
+    const btn = document.getElementById('reservarBtn');
+    const alertDiv = document.getElementById('alertReserva');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading"></span> Procesando...';
+    alertDiv.innerHTML = '';
+    
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        showError('Sesión expirada. Por favor, inicia sesión nuevamente', 'Sesión Expirada', '⏱️');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
+        return;
+      }
+      
+      const response = await fetch('/api/reservas', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          usuarioId: user.id,
+          espacioId: espacioSeleccionado.id,
+          fecha: fechaSeleccionada,
+          horaInicio: slotSeleccionado.horaInicio,
+          horaFin: slotSeleccionado.horaFin,
+          observaciones: document.getElementById('observaciones').value || null,
+        }),
+      });
+      
+      const data = await response.json();
+      console.log('Respuesta del servidor:', data);
+      
+      if (data.success) {
+        alertDiv.innerHTML = '<div class="alert alert-success">¡Reserva creada exitosamente!</div>';
+        setTimeout(() => {
+          window.location.href = '/mis-reservas';
+        }, 1500);
+      } else {
+        console.error('Error en reserva:', data);
+        alertDiv.innerHTML = `<div class="alert alert-error">${data.error || 'Error al crear la reserva'}</div>`;
+        btn.disabled = false;
+        btn.textContent = 'Confirmar Reserva';
+      }
+    } catch (error) {
+      console.error('Error completo:', error);
+      alertDiv.innerHTML = '<div class="alert alert-error">Error al conectar con el servidor. Intenta nuevamente.</div>';
+      btn.disabled = false;
+      btn.textContent = 'Confirmar Reserva';
+    }
+  });
+  
+  cargarEspacios();
+  
+  // Restaurar reserva en progreso después del login
+  const reservaEnProgreso = sessionStorage.getItem('reservaEnProgreso');
+  if (reservaEnProgreso) {
+    try {
+      const data = JSON.parse(reservaEnProgreso);
+      sessionStorage.removeItem('reservaEnProgreso');
+      
+      // Esperar a que se carguen los espacios y luego restaurar la selección
+      setTimeout(() => {
+        const select = document.getElementById('espacioSelect');
+        if (select) {
+          select.value = data.espacioId;
+          select.dispatchEvent(new Event('change'));
+        }
+      }, 500);
+    } catch (e) {
+      console.error('Error al restaurar reserva:', e);
+    }
+  }
+</script>

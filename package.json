@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@prisma/adapter-libsql": "^7.3.0",
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "prisma": "5.22.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}

@@ -1,0 +1,179 @@
+// ============================================
+// Sistema de Reservas - Centro Deportivo
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../proyecto-reservas/node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// MODELO: USUARIO
+// ============================================
+// Gestiona usuarios del sistema (clientes y administradores)
+// Estados de rol: "usuario", "admin"
+model Usuario {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  password      String    // Hash bcrypt
+  nombre        String
+  apellido      String?
+  telefono      String?
+  dni           String?   @unique
+  direccion     String?
+  fechaNacimiento DateTime?
+  
+  // Estado y metadata
+  rol           String    @default("usuario") // "usuario", "admin"
+  activo        Boolean   @default(true)
+  emailVerificado Boolean @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relaciones
+  reservas      Reserva[]
+  
+  @@index([email])
+  @@index([dni])
+}
+
+// ============================================
+// MODELO: ESPACIO
+// ============================================
+// Representa espacios deportivos disponibles
+// Tipos: futbol5, futbol7, futbol11, basquet, voley, piscina, gimnasio
+model Espacio {
+  id            Int       @id @default(autoincrement())
+  nombre        String    @unique
+  descripcion   String?
+  tipo          String    // Tipo de espacio deportivo
+  capacidad     Int       // Capacidad máxima de personas
+  
+  // Información de precios
+  precioHora    Float
+  precioMedia   Float?    // Precio por media hora (opcional)
+  
+  // Características
+  techado       Boolean   @default(false)
+  iluminacion   Boolean   @default(true)
+  vestuarios    Boolean   @default(true)
+  estacionamiento Boolean @default(false)
+  
+  // Estado
+  activo        Boolean   @default(true)
+  orden         Int       @default(0) // Para ordenar en la UI
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relaciones
+  horarios      Horario[]
+  reservas      Reserva[]
+  horariosBloquados HorarioBloqueado[]
+  
+  @@index([tipo])
+  @@index([activo])
+}
+
+// ============================================
+// MODELO: HORARIO
+// ============================================
+// Define los horarios de operación de cada espacio por día de semana
+// diaSemana: 0=Domingo, 1=Lunes, 2=Martes, 3=Miércoles, 4=Jueves, 5=Viernes, 6=Sábado
+model Horario {
+  id            Int       @id @default(autoincrement())
+  espacioId     Int
+  diaSemana     Int       // 0-6 (Domingo a Sábado)
+  horaApertura  String    // Formato "HH:MM"
+  horaCierre    String    // Formato "HH:MM"
+  intervalo     Int       @default(60) // Duración de cada turno en minutos
+  activo        Boolean   @default(true)
+  
+  // Relación
+  espacio       Espacio   @relation(fields: [espacioId], references: [id], onDelete: Cascade)
+  
+  @@unique([espacioId, diaSemana])
+  @@index([espacioId])
+}
+
+// ============================================
+// MODELO: RESERVA
+// ============================================
+// Registra las reservas realizadas por los usuarios
+// Estados: "pendiente", "confirmada", "cancelada", "completada", "no_asistio"
+model Reserva {
+  id            Int       @id @default(autoincrement())
+  
+  // Información temporal
+  fecha         DateTime  // Fecha de la reserva
+  horaInicio    String    // Formato "HH:MM"
+  horaFin       String    // Formato "HH:MM"
+  
+  // Estado y pago
+  estado        String    @default("confirmada") // "pendiente", "confirmada", "cancelada", "completada", "no_asistio"
+  pagado        Boolean   @default(false)
+  montoPagado   Float     @default(0)
+  metodoPago    String?   // "efectivo", "tarjeta", "transferencia", null
+  
+  // Información adicional
+  observaciones String?
+  motivoCancelacion String?
+  canceladoPor  String?   // "usuario", "admin", "sistema"
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  canceladaAt   DateTime?
+  
+  // Relaciones
+  usuarioId     Int
+  usuario       Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  
+  espacioId     Int
+  espacio       Espacio   @relation(fields: [espacioId], references: [id], onDelete: Cascade)
+  
+  // Constraints
+  @@unique([espacioId, fecha, horaInicio]) // No permitir reservas duplicadas
+  @@index([usuarioId])
+  @@index([espacioId])
+  @@index([fecha])
+  @@index([estado])
+}
+
+// ============================================
+// MODELO: HORARIO BLOQUEADO
+// ============================================
+// Gestiona bloqueos de horarios por mantenimiento, eventos, etc.
+// Tipos: "mantenimiento", "evento_especial", "feriado", "clima", "otro"
+model HorarioBloqueado {
+  id            Int       @id @default(autoincrement())
+  
+  // Información temporal
+  fechaInicio   DateTime
+  fechaFin      DateTime
+  horaInicio    String    // Formato "HH:MM"
+  horaFin       String    // Formato "HH:MM"
+  
+  // Información del bloqueo
+  tipo          String    @default("mantenimiento") // Tipo de bloqueo
+  motivo        String    // Descripción del motivo
+  todoElDia     Boolean   @default(false)
+  
+  // Metadata
+  activo        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  createdBy     String?   // Email del admin que creó el bloqueo
+  
+  // Relación
+  espacioId     Int
+  espacio       Espacio   @relation(fields: [espacioId], references: [id], onDelete: Cascade)
+  
+  @@index([espacioId])
+  @@index([fechaInicio, fechaFin])
+}

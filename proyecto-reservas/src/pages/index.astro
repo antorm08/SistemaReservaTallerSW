@@ -1,0 +1,428 @@
+---
+// Página de inicio
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout title="Sistema de Reservas - Centro Deportivo">
+  <Navbar />
+  
+  <div class="container" style="padding: 10x 20px;">
+    <!-- Header -->
+    <div class="welcome-header">
+      <div>
+        <h1 class="welcome-title">Bienvenido</h1>
+        <p class="welcome-subtitle">¿Qué deporte te gustaría practicar hoy?</p>
+      </div>
+      <div class="notification-badge" id="notificationBadge" style="display: none;">
+        🔔 Notificaciones
+      </div>
+    </div>
+    
+    <!-- Reserva Rápida -->
+    <div class="section-header">
+      <div class="section-title">
+        ⚡ Reserva Rápida
+      </div>
+      <a href="/espacios" class="link-primary">Ver todos</a>
+    </div>
+    
+    <div class="sports-grid" id="sportsGrid">
+      <div class="sport-card futbol">
+        <div class="sport-card-content">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            <h3 class="sport-name">Fútbol</h3>
+          </div>
+          <p class="sport-info">Canchas 5 y 7</p>
+        </div>
+      </div>
+      
+      <div class="sport-card basquet">
+        <div class="sport-card-content">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></svg>
+            <h3 class="sport-name">Baloncesto</h3>
+          </div>
+          <p class="sport-info">Pista Interior</p>
+        </div>
+      </div>
+      
+      <div class="sport-card natacion">
+        <div class="sport-card-content">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+            <h3 class="sport-name">Natación</h3>
+          </div>
+          <p class="sport-info">Carriles Libres</p>
+        </div>
+      </div>
+      
+      <div class="sport-card gimnasio">
+        <div class="sport-card-content">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6v11M17.5 6v11M3 9h3M18 9h3M3 15h3M18 15h3M9 12h6"/></svg>
+            <h3 class="sport-name">Gimnasio</h3>
+          </div>
+          <p class="sport-info">Acceso Diario</p>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Próximas Reservas -->
+    <div class="section-header" style="margin-top: 48px;">
+      <div class="section-title" style="display: flex; align-items: center; gap: 8px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Próximas Reservas
+      </div>
+      <a href="/mis-reservas" class="link-primary">Ver historial completo</a>
+    </div>
+    
+    <div class="reservas-card">
+      <div id="loadingReservas" class="loading-state">
+        <div class="loading"></div>
+        <p>Cargando reservas...</p>
+      </div>
+      
+      <div id="reservasTable" style="display: none;">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Actividad</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Duración</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="reservasBody"></tbody>
+        </table>
+      </div>
+      
+      <div id="noReservas" class="empty-state" style="display: none;">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        <p>No tienes reservas próximas</p>
+        <a href="/espacios" class="btn btn-primary" style="margin-top: 16px;">Hacer una reserva</a>
+      </div>
+      
+      <div id="noLoginReservas" class="empty-state" style="display: none;">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" ry="2"/><path d="M12 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </div>
+        <p style="margin-bottom: 8px;"><strong>Inicia sesión para ver tus reservas</strong></p>
+        <p style="font-size: 14px; color: var(--text-light);">Accede a tu historial y gestiona tus espacios deportivos</p>
+        <a href="/login" class="btn btn-primary" style="margin-top: 16px;">Iniciar Sesión</a>
+      </div>
+    </div>
+  </div>
+  
+</Layout>
+
+<style>
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.welcome-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.welcome-subtitle {
+  font-size: 16px;
+  color: var(--text-light);
+}
+
+.notification-badge {
+  background: var(--white);
+  padding: 10px 20px;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.notification-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.link-primary {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.link-primary:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.sports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+.sport-card {
+  height: 180px;
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sport-card-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.sport-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.sport-info {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.sport-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.sport-card.futbol {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.7) 0%, rgba(21, 128, 61, 0.8) 100%), url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&q=75');
+  background-size: cover;
+  background-position: center;
+}
+
+.sport-card.basquet {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.7) 0%, rgba(234, 88, 12, 0.8) 100%), url('https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&q=75');
+  background-size: cover;
+  background-position: center;
+}
+
+.sport-card.natacion {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.7) 0%, rgba(30, 58, 138, 0.8) 100%), url('https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=600&q=75');
+  background-size: cover;
+  background-position: center;
+}
+
+.sport-card.gimnasio {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.7) 0%, rgba(126, 34, 206, 0.8) 100%), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=75');
+  background-size: cover;
+  background-position: center;
+}
+
+.reservas-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modern-table thead {
+  background: var(--light);
+}
+
+.modern-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modern-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modern-table tbody tr:hover {
+  background: var(--light);
+}
+
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .sports-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .welcome-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+</style>
+
+<script>
+  // @ts-nocheck
+  const sportsGrid = document.getElementById('sportsGrid');
+  
+  if (sportsGrid) {
+    const cards = sportsGrid.querySelectorAll('.sport-card');
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        // Usar categorías generales que agrupen múltiples tipos
+        const categoria = card.classList.contains('futbol') ? 'futbol' :
+                         card.classList.contains('basquet') ? 'basquet' :
+                         card.classList.contains('natacion') ? 'piscina' :
+                         card.classList.contains('gimnasio') ? 'gimnasio' : '';
+        window.location.href = `/espacios?categoria=${categoria}`;
+      });
+    });
+  }
+  
+  // Mostrar badge de notificaciones solo si hay sesión
+  const token = localStorage.getItem('token');
+  const notificationBadge = document.getElementById('notificationBadge');
+  
+  if (token && notificationBadge) {
+    notificationBadge.style.display = 'block';
+  }
+  
+  // Cargar próximas reservas del usuario
+  async function cargarReservasUsuario() {
+    const loadingEl = document.getElementById('loadingReservas');
+    const tableEl = document.getElementById('reservasTable');
+    const noDataEl = document.getElementById('noReservas');
+    const noLoginEl = document.getElementById('noLoginReservas');
+    const bodyEl = document.getElementById('reservasBody');
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (noLoginEl) noLoginEl.style.display = 'block';
+        return;
+      }
+      
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.id) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (noLoginEl) noLoginEl.style.display = 'block';
+        return;
+      }
+      
+      // Siempre filtrar por usuarioId - "Próximas Reservas" es personal
+      const response = await fetch(`/api/reservas?usuarioId=${user.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const data = await response.json();
+      
+      if (loadingEl) loadingEl.style.display = 'none';
+      
+      if (data.success && data.data.length > 0) {
+        const reservasProximas = data.data
+          .filter(r => r.estado !== 'cancelada' && new Date(r.fecha) >= new Date())
+          .slice(0, 5);
+        
+        if (reservasProximas.length === 0) {
+          if (noDataEl) noDataEl.style.display = 'block';
+          return;
+        }
+        
+        if (tableEl) tableEl.style.display = 'block';
+        if (bodyEl) {
+          bodyEl.innerHTML = reservasProximas.map(r => {
+            const fecha = new Date(r.fecha).toLocaleDateString('es-ES', { 
+              day: 'numeric', 
+              month: 'short' 
+            });
+            const duracion = calcularDuracion(r.horaInicio, r.horaFin);
+            const estadoBadge = r.estado === 'confirmada' ? 
+              '<span class="badge badge-success">Aprobado</span>' :
+              '<span class="badge badge-warning">Pendiente</span>';
+            
+            return `
+              <tr>
+                <td>
+                  <strong>${r.espacio.nombre}</strong><br>
+                  <small style="color: var(--text-light);">${r.espacio.tipo}</small>
+                </td>
+                <td>${fecha}</td>
+                <td>${r.horaInicio}</td>
+                <td>${duracion}</td>
+                <td>${estadoBadge}</td>
+                <td>
+                  <button class="btn-icon" onclick="window.location.href='/mis-reservas'">⋮</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      } else {
+        if (noDataEl) noDataEl.style.display = 'block';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (noDataEl) noDataEl.style.display = 'block';
+    }
+  }
+  
+  function calcularDuracion(inicio, fin) {
+    const [h1, m1] = inicio.split(':').map(Number);
+    const [h2, m2] = fin.split(':').map(Number);
+    const minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+    const horas = Math.floor(minutos / 60);
+    return horas > 1 ? `${horas} Horas` : '1 Hora';
+  }
+  
+  cargarReservasUsuario();
+</script>

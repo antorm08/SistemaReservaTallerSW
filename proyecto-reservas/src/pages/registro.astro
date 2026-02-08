@@ -1,0 +1,131 @@
+---
+// Página de registro
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout title="Registro - Sistema de Reservas">
+  <Navbar />
+  
+  <div class="container-narrow" style="margin-top: 40px;">
+    <div class="card">
+      <h1 class="card-title text-center mb-3">Crear Cuenta</h1>
+      
+      <div id="alert"></div>
+      
+      <form id="registerForm">
+        <div class="form-group">
+          <label class="form-label">Nombre *</label>
+          <input type="text" class="form-input" id="nombre" required placeholder="Juan">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Apellido</label>
+          <input type="text" class="form-input" id="apellido" placeholder="Pérez">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" class="form-input" id="email" required placeholder="juan@email.com">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input type="tel" class="form-input" id="telefono" placeholder="555-1234">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">DNI</label>
+          <input type="text" class="form-input" id="dni" placeholder="12345678">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Contraseña *</label>
+          <input type="password" class="form-input" id="password" required placeholder="Mínimo 6 caracteres">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Confirmar Contraseña *</label>
+          <input type="password" class="form-input" id="confirmPassword" required placeholder="Repite tu contraseña">
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+          Registrarse
+        </button>
+      </form>
+      
+      <p class="text-center mt-3" style="color: var(--text-light);">
+        ¿Ya tienes cuenta? <a href="/login" style="color: var(--primary);">Inicia sesión</a>
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // @ts-nocheck
+  const form = document.getElementById('registerForm');
+  const alertDiv = document.getElementById('alert');
+  const submitBtn = document.getElementById('submitBtn');
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const password = document.getElementById('password')?.value;
+      const confirmPassword = document.getElementById('confirmPassword')?.value;
+      
+      if (password !== confirmPassword) {
+        if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-error">Las contraseñas no coinciden</div>';
+        return;
+      }
+      
+      const data = {
+        nombre: document.getElementById('nombre')?.value,
+        apellido: document.getElementById('apellido')?.value || null,
+        email: document.getElementById('email')?.value,
+        telefono: document.getElementById('telefono')?.value || null,
+        dni: document.getElementById('dni')?.value || null,
+        password: password,
+      };
+      
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loading"></span> Registrando...';
+      }
+      if (alertDiv) alertDiv.innerHTML = '';
+      
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          localStorage.setItem('token', result.data.token);
+          localStorage.setItem('user', JSON.stringify(result.data.usuario));
+          
+          if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-success">¡Registro exitoso! Redirigiendo...</div>';
+          
+          setTimeout(() => {
+            window.location.href = '/espacios';
+          }, 1500);
+        } else {
+          if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${result.error}</div>`;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Registrarse';
+          }
+        }
+      } catch (error) {
+        if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-error">Error de conexión. Intenta nuevamente.</div>';
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Registrarse';
+        }
+      }
+    });
+  }
+</script>

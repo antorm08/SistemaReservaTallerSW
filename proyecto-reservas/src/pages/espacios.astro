@@ -1,0 +1,206 @@
+---
+// Página de espacios disponibles
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout title="Espacios Disponibles">
+  <Navbar />
+  
+  <div class="container">
+    <div class="flex-between mb-4">
+      <h1>Espacios Deportivos</h1>
+      <div class="flex gap-2">
+        <select class="form-select" id="categoriaFilter" style="width: 200px;">
+          <option value="">Todas las categorías</option>
+          <option value="futbol">Fútbol (Todos)</option>
+          <option value="futbol5">  • Fútbol 5</option>
+          <option value="futbol7">  • Fútbol 7</option>
+          <option value="futbol11">  • Fútbol 11</option>
+          <option value="basquet">Básquet</option>
+          <option value="voley">Vóley</option>
+          <option value="piscina">Piscina</option>
+          <option value="gimnasio">Gimnasio</option>
+        </select>
+      </div>
+    </div>
+    
+    <div id="loading" class="text-center">
+      <div class="loading" style="width: 40px; height: 40px;"></div>
+      <p class="mt-2">Cargando espacios...</p>
+    </div>
+    
+    <div id="espaciosGrid" class="grid grid-3" style="display: none;"></div>
+    
+    <div id="noResults" style="display: none;" class="card text-center">
+      <p style="color: var(--text-light);">No se encontraron espacios</p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // @ts-nocheck
+  let espacios = [];
+  
+  // Leer parámetros de URL al inicio
+  const urlParams = new URLSearchParams(window.location.search);
+  const categoriaInicial = urlParams.get('categoria');
+  
+  async function cargarEspacios() {
+    const loading = document.getElementById('loading');
+    const grid = document.getElementById('espaciosGrid');
+    
+    try {
+      const response = await fetch('/api/espacios');
+      const data = await response.json();
+      
+      if (data.success) {
+        espacios = data.data;
+        
+        // Obtener disponibilidad de todos los espacios en una sola llamada
+        const hoy = new Date().toISOString().split('T')[0];
+        const dispResp = await fetch(`/api/espacios/disponibilidad-multiple?fecha=${hoy}`);
+        const dispData = await dispResp.json();
+        
+        if (dispData.success) {
+          // Asignar disponibilidad a cada espacio
+          espacios.forEach(espacio => {
+            espacio.horariosDisponibles = dispData.data[espacio.id] || 0;
+          });
+        }
+        
+        loading.style.display = 'none';
+        
+        // Aplicar filtro inicial si existe, sino mostrar todos
+        if (categoriaInicial) {
+          document.getElementById('categoriaFilter').value = categoriaInicial;
+          const filtrados = filtrarPorCategoria(categoriaInicial);
+          mostrarEspacios(filtrados);
+        } else {
+          mostrarEspacios(espacios);
+        }
+      }
+    } catch (error) {
+      loading.innerHTML = '<div class="alert alert-error">Error al cargar espacios</div>';
+    }
+  }
+  
+  function mostrarEspacios(items) {
+    const grid = document.getElementById('espaciosGrid');
+    const noResults = document.getElementById('noResults');
+    
+    if (items.length === 0) {
+      grid.style.display = 'none';
+      noResults.style.display = 'block';
+      return;
+    }
+    
+    noResults.style.display = 'none';
+    grid.style.display = 'grid';
+    
+    grid.innerHTML = items.map(espacio => {
+      const descripcion = espacio.descripcion || 'Espacio deportivo de calidad';
+      const tipoColor = getTipoColor(espacio.tipo);
+      
+      return `
+      <div class="espacio-card">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 24px;">${getTipoIcon(espacio.tipo)}</span>
+            <h3 class="card-title" style="margin: 0;">${espacio.nombre}</h3>
+          </div>
+          <div style="margin: 12px 0; min-height: 32px;">
+            <span class="badge" style="background: ${tipoColor}; color: white;">${formatTipo(espacio.tipo)}</span>
+            ${espacio.iluminacion ? '<span class="badge badge-success">Iluminación</span>' : ''}
+            ${espacio.techado ? '<span class="badge badge-success">Techado</span>' : ''}
+          </div>
+          <p class="descripcion-card">
+            ${descripcion}
+          </p>
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="color: var(--text-light); font-size: 14px;">Capacidad:</span>
+              <strong style="color: var(--dark); font-size: 15px;">${espacio.capacidad} personas</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-light); font-size: 14px;">Precio/hora:</span>
+              <strong style="color: #16A34A; font-size: 20px; font-weight: 800;">$${espacio.precioHora}</strong>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size: 13px; color: var(--text-light); margin-bottom: 8px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            ${espacio.horariosDisponibles > 0 
+              ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <strong style="color: var(--primary);">${espacio.horariosDisponibles} horarios</strong> disponibles hoy`
+              : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span style="color: #64748B;">Sin disponibilidad hoy</span>'}
+          </p>
+          <a href="/reservar?espacioId=${espacio.id}" class="btn btn-primary btn-block espacio-btn">
+            Ver Disponibilidad
+          </a>
+        </div>
+      </div>
+    `}).join('');
+  }
+  
+  function getTipoColor(tipo) {
+    const colores = {
+      'futbol5': '#16A34A',
+      'futbol7': '#16A34A',
+      'futbol11': '#16A34A',
+      'basquet': '#F97316',
+      'voley': '#F97316',
+      'piscina': '#2563EB',
+      'gimnasio': '#9333EA',
+    };
+    return colores[tipo] || '#64748B';
+  }
+  
+  function getTipoIcon(tipo) {
+    // SVG simplificados para mejor rendimiento
+    const icons = {
+      'futbol5': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>',
+      'futbol7': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>',
+      'futbol11': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>',
+      'basquet': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>',
+      'voley': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>',
+      'piscina': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10c1.3 0 2-.7 3-.7s2 .7 3 .7 2-.7 3-.7 2 .7 3 .7 2-.7 3-.7 1.7.7 3 .7"/><path d="M2 14c1.3 0 2-.7 3-.7s2 .7 3 .7 2-.7 3-.7 2 .7 3 .7 2-.7 3-.7 1.7.7 3 .7"/><path d="M2 18c1.3 0 2-.7 3-.7s2 .7 3 .7 2-.7 3-.7 2 .7 3 .7 2-.7 3-.7 1.7.7 3 .7"/></svg>',
+      'gimnasio': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6v11M17.5 6v11M3 9h3M18 9h3M3 15h3M18 15h3M9 12h6"/></svg>',
+    };
+    return icons[tipo] || '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>';
+  }
+  
+  function formatTipo(tipo) {
+    const tipos = {
+      'futbol5': 'Fútbol 5',
+      'futbol7': 'Fútbol 7',
+      'futbol11': 'Fútbol 11',
+      'basquet': 'Básquet',
+      'voley': 'Vóley',
+      'piscina': 'Piscina',
+      'gimnasio': 'Gimnasio',
+    };
+    return tipos[tipo] || tipo;
+  }
+  
+  function filtrarPorCategoria(categoria) {
+    if (!categoria) {
+      return espacios;
+    }
+    
+    // Si es una categoría general (ej: 'futbol'), incluir todos sus subtipos
+    if (categoria === 'futbol') {
+      return espacios.filter(e => e.tipo.startsWith('futbol'));
+    }
+    
+    // Si es un tipo específico, filtrar exactamente
+    return espacios.filter(e => e.tipo === categoria);
+  }
+  
+  document.getElementById('categoriaFilter').addEventListener('change', (e) => {
+    const categoria = e.target.value;
+    const filtrados = filtrarPorCategoria(categoria);
+    mostrarEspacios(filtrados);
+  });
+  
+  cargarEspacios();
+</script>

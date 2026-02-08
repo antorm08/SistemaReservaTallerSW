@@ -1,0 +1,383 @@
+---
+// Página para ver mis reservas
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+---
+
+<Layout title="Mis Reservas">
+  <Navbar />
+  
+  <div class="container">
+    <div class="flex-between mb-4">
+      <h1>Mis Reservas</h1>
+      <a href="/reservar" class="btn btn-primary">Nueva Reserva</a>
+    </div>
+    
+    <div class="tabs">
+      <button class="tab" data-estado="pendiente">Pendientes</button>
+      <button class="tab" data-estado="confirmada">Confirmadas</button>
+      <button class="tab" data-estado="completada">Completadas</button>
+      <button class="tab" data-estado="cancelada">Canceladas</button>
+      <button class="tab active" data-estado="todas">Todas</button>
+    </div>
+    
+    <div id="loading" class="text-center" style="padding: 40px;">
+      <div class="loading" style="width: 40px; height: 40px;"></div>
+      <p class="mt-2">Cargando reservas...</p>
+    </div>
+    
+    <div id="reservasTable" style="display: none;">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Espacio</th>
+              <th>Fecha</th>
+              <th>Horario</th>
+              <th>Estado</th>
+              <th>Monto</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="reservasBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div id="noReservas" style="display: none;" class="card text-center">
+      <p style="color: var(--text-light);">No tienes reservas</p>
+      <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
+    </div>
+  </div>
+  
+  <!-- Modal para cancelar -->
+  <div id="cancelModal" class="modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 16px;">Cancelar Reserva</h3>
+      <div id="cancelAlert"></div>
+      <div class="form-group">
+        <label class="form-label">Motivo de cancelación (opcional)</label>
+        <textarea class="form-textarea" id="motivoCancelacion" placeholder="Ej: Cambio de planes, mal tiempo, etc."></textarea>
+      </div>
+      <div class="flex gap-2" style="justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn btn-danger" id="confirmarCancelar">Confirmar Cancelación</button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+}
+.tab {
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-light);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+}
+.tab:hover {
+  color: var(--primary);
+}
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: var(--radius);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+</style>
+
+<script>
+  // @ts-nocheck
+  
+  // Validar autenticación al cargar la página
+  const token = localStorage.getItem('token');
+  const userCheck = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  if (!token || !userCheck.id) {
+    sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+    
+    // Mostrar modal de confirmación y esperar respuesta del usuario
+    (async () => {
+      const wantsLogin = await showConfirm(
+        'Necesitas iniciar sesión para ver tus reservas. ¿Deseas ir a la página de inicio de sesión?',
+        'Acceso Restringido',
+        '🔒'
+      );
+      
+      if (wantsLogin) {
+        window.location.href = '/login';
+      } else {
+        window.location.href = '/';
+      }
+    })();
+    
+    // Detener la ejecución del resto del script
+    throw new Error('No authenticated');
+  }
+  
+  let reservas = [];
+  let estadoActual = 'todas';
+  let reservaACancelar = null;
+  
+  async function actualizarReservasPasadas() {
+    const ahora = new Date();
+    const token = localStorage.getItem('token');
+    
+    for (const reserva of reservas) {
+      // Solo procesar reservas confirmadas
+      if (reserva.estado !== 'confirmada') continue;
+      
+      // Parsear fecha y hora
+      const fechaReserva = new Date(reserva.fecha);
+      const [horaFin, minutoFin] = reserva.horaFin.split(':').map(Number);
+      
+      // Crear fecha/hora completa de fin de reserva
+      const fechaHoraFin = new Date(fechaReserva);
+      fechaHoraFin.setHours(horaFin, minutoFin, 0, 0);
+      
+      // Si ya pasó la hora de fin, marcar como completada
+      if (fechaHoraFin < ahora) {
+        try {
+          const response = await fetch(`/api/reservas/${reserva.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ estado: 'completada' })
+          });
+          
+          if (response.ok) {
+            reserva.estado = 'completada';
+          }
+        } catch (error) {
+          console.error(`Error al actualizar reserva ${reserva.id}:`, error);
+        }
+      }
+    }
+  }
+  
+  async function cargarReservas() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (!user.id) {
+      window.location.href = '/login';
+      return;
+    }
+    
+    const loading = document.getElementById('loading');
+    const table = document.getElementById('reservasTable');
+    const noReservas = document.getElementById('noReservas');
+    
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Siempre filtrar por usuarioId - "Mis Reservas" es personal
+      const response = await fetch(`/api/reservas?usuarioId=${user.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      
+      console.log('Respuesta de reservas:', data);
+      
+      loading.style.display = 'none';
+      
+      if (data.success) {
+        reservas = data.data || [];
+        console.log('Total reservas cargadas:', reservas.length);
+        
+        // Actualizar automáticamente las reservas pasadas a completadas
+        await actualizarReservasPasadas();
+        
+        if (reservas.length === 0) {
+          noReservas.style.display = 'block';
+          noReservas.innerHTML = `
+            <p style="color: var(--text-light);">No tienes reservas aún</p>
+            <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
+          `;
+        } else {
+          table.style.display = 'block';
+          mostrarReservas(estadoActual);
+        }
+      } else {
+        loading.innerHTML = `<div class="alert alert-error">${data.error || 'Error al cargar reservas'}</div>`;
+      }
+    } catch (error) {
+      console.error('Error al cargar reservas:', error);
+      loading.innerHTML = '<div class="alert alert-error">Error al cargar reservas. Por favor, recarga la página.</div>';
+    }
+  }
+  
+  function mostrarReservas(estado) {
+    const tbody = document.getElementById('reservasBody');
+    const table = document.getElementById('reservasTable');
+    const noReservas = document.getElementById('noReservas');
+    
+    let filtradas = estado === 'todas' ? reservas : reservas.filter(r => r.estado === estado);
+    
+    if (filtradas.length === 0) {
+      table.style.display = 'none';
+      noReservas.style.display = 'block';
+      noReservas.innerHTML = `
+        <p style="color: var(--text-light);">No tienes reservas ${estado === 'todas' ? '' : estado + 's'}</p>
+        <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
+      `;
+      return;
+    }
+    
+    noReservas.style.display = 'none';
+    table.style.display = 'block';
+    
+    tbody.innerHTML = filtradas.map(r => `
+      <tr>
+        <td>#${r.id}</td>
+        <td>${r.espacio.nombre}</td>
+        <td>${formatFecha(r.fecha)}</td>
+        <td>${r.horaInicio} - ${r.horaFin}</td>
+        <td><span class="badge badge-${getBadgeColor(r.estado)}">${r.estado.toUpperCase()}</span></td>
+        <td>$${r.montoPagado || 0}</td>
+        <td>
+          <div class="flex gap-1">
+            ${r.estado === 'pendiente' || r.estado === 'confirmada' ? 
+              `<button class="btn btn-sm btn-danger" onclick="abrirModalCancelar(${r.id})">Cancelar</button>` : 
+              ''}
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+  
+  function formatFecha(fecha) {
+    // Si la fecha ya es un objeto Date válido
+    let fechaObj = fecha;
+    
+    // Si la fecha viene como string (ISO o YYYY-MM-DD)
+    if (typeof fecha === 'string') {
+      // Intentar formato YYYY-MM-DD
+      if (fecha.includes('-') && !fecha.includes('T')) {
+        fechaObj = new Date(fecha + 'T00:00:00');
+      } else {
+        fechaObj = new Date(fecha);
+      }
+    }
+    
+    // Verificar que sea válida
+    if (isNaN(fechaObj.getTime())) {
+      return 'Fecha inválida';
+    }
+    
+    return fechaObj.toLocaleDateString('es-ES', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  }
+  
+  function getBadgeColor(estado) {
+    const colors = {
+      'pendiente': 'warning',
+      'confirmada': 'success',
+      'completada': 'info',
+      'cancelada': 'secondary'
+    };
+    return colors[estado] || 'secondary';
+  }
+  
+  window.abrirModalCancelar = (id) => {
+    reservaACancelar = id;
+    document.getElementById('cancelModal').classList.add('active');
+    document.getElementById('motivoCancelacion').value = '';
+    document.getElementById('cancelAlert').innerHTML = '';
+  };
+  
+  window.cerrarModal = () => {
+    document.getElementById('cancelModal').classList.remove('active');
+    reservaACancelar = null;
+  };
+  
+  document.getElementById('confirmarCancelar').addEventListener('click', async () => {
+    const btn = document.getElementById('confirmarCancelar');
+    const alertDiv = document.getElementById('cancelAlert');
+    const motivo = document.getElementById('motivoCancelacion').value;
+    
+    btn.disabled = true;
+    btn.textContent = 'Cancelando...';
+    alertDiv.innerHTML = '';
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/reservas/${reservaACancelar}`, {
+        method: 'DELETE',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ motivoCancelacion: motivo || null }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        alertDiv.innerHTML = '<div class="alert alert-success">Reserva cancelada exitosamente</div>';
+        setTimeout(() => {
+          cerrarModal();
+          cargarReservas();
+        }, 1500);
+      } else {
+        alertDiv.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+        btn.disabled = false;
+        btn.textContent = 'Confirmar Cancelación';
+      }
+    } catch (error) {
+      alertDiv.innerHTML = '<div class="alert alert-error">Error al cancelar reserva</div>';
+      btn.disabled = false;
+      btn.textContent = 'Confirmar Cancelación';
+    }
+  });
+  
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      estadoActual = tab.dataset.estado;
+      mostrarReservas(estadoActual);
+    });
+  });
+  
+  cargarReservas();
+</script>
