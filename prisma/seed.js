@@ -144,8 +144,8 @@ async function seed() {
       data: {
         espacioId: espacio.id,
         diaSemana: 6,
-        horaApertura: '07:00',
-        horaCierre: '22:00',
+        horaApertura: '08:00',
+        horaCierre: '18:00',
         intervalo: 60,
         activo: true,
       },
@@ -156,8 +156,8 @@ async function seed() {
       data: {
         espacioId: espacio.id,
         diaSemana: 0,
-        horaApertura: '08:00',
-        horaCierre: '20:00',
+        horaApertura: '10:00',
+        horaCierre: '16:00',
         intervalo: 60,
         activo: true,
       },

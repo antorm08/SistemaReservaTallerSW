@@ -524,7 +524,7 @@ import Navbar from '../components/Navbar.astro';
         <td>${formatFecha(r.fecha)}</td>
         <td>${r.horaInicio} - ${r.horaFin}</td>
         <td><span class="badge badge-${getBadgeColor(r.estado)}">${r.estado.toUpperCase()}</span></td>
-        <td>$${r.montoPagado || 0}</td>
+        <td>S/ ${r.montoPagado || 0}</td>
         <td>
           <div class="flex gap-1" style="flex-wrap: wrap;">
             ${r.estado === 'pendiente' ? 

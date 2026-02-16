@@ -22,7 +22,8 @@ export async function GET({ url }) {
       const horario = await prisma.horario.findFirst({
         where: {
           espacioId: espacio.id,
-          diaSemana: diaSemana
+          diaSemana: diaSemana,
+          activo: true
         }
       });
 
@@ -57,10 +58,16 @@ export async function GET({ url }) {
       }
 
       // Verificar reservas existentes
+      const fechaInicio = new Date(fecha + 'T00:00:00');
+      const fechaFin = new Date(fecha + 'T23:59:59.999');
+      
       const reservas = await prisma.reserva.findMany({
         where: {
           espacioId: espacio.id,
-          fecha: new Date(fecha + 'T12:00:00'),
+          fecha: {
+            gte: fechaInicio,
+            lte: fechaFin,
+          },
           estado: { in: ['confirmada', 'pendiente'] }
         }
       });

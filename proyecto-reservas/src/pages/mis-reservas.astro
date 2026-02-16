@@ -8,17 +8,42 @@ import Navbar from '../components/Navbar.astro';
   <Navbar />
   
   <div class="container">
-    <div class="flex-between mb-4">
-      <h1>Mis Reservas</h1>
-      <a href="/reservar" class="btn btn-primary">Nueva Reserva</a>
+    <div class="flex-between mb-2">
+      <div>
+        <h1 style="margin-bottom: 4px;">Mis Reservas</h1>
+        <p style="color: var(--text-light); font-size: 14px;">Gestiona tus próximas actividades deportivas.</p>
+      </div>
+      <a href="/reservar" class="btn btn-primary">+ Nueva Reserva</a>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="stats-grid mb-4">
+      <div class="stat-card">
+        <div class="stat-label">Total Reservas</div>
+        <div class="stat-value" id="totalReservas">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pendientes</div>
+        <div class="stat-value" id="totalPendientes" style="color: #F59E0B;">0</div>
+      </div>
+      <div class="stat-card">
+        <label class="stat-label" for="fechaFiltro">Filtrar por Fecha</label>
+        <input type="date" id="fechaFiltro" class="form-input" style="margin-top: 8px;">
+      </div>
+      <div class="stat-card">
+        <label class="stat-label" for="tipoFiltro">Tipo de Espacio</label>
+        <select id="tipoFiltro" class="form-select" style="margin-top: 8px;">
+          <option value="">Todos</option>
+        </select>
+      </div>
     </div>
     
     <div class="tabs">
-      <button class="tab" data-estado="pendiente">Pendientes</button>
+      <button class="tab active" data-estado="todas">Todas</button>
+      <button class="tab" data-estado="pendiente">Pendientes <span class="tab-badge" id="badgePendiente">0</span></button>
       <button class="tab" data-estado="confirmada">Confirmadas</button>
       <button class="tab" data-estado="completada">Completadas</button>
       <button class="tab" data-estado="cancelada">Canceladas</button>
-      <button class="tab active" data-estado="todas">Todas</button>
     </div>
     
     <div id="loading" class="text-center" style="padding: 40px;">
@@ -31,18 +56,24 @@ import Navbar from '../components/Navbar.astro';
         <table class="table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Espacio</th>
-              <th>Fecha</th>
-              <th>Horario</th>
-              <th>Estado</th>
-              <th>Monto</th>
-              <th>Acciones</th>
+              <th style="width: 60px;">ID</th>
+              <th style="min-width: 220px;">ESPACIO</th>
+              <th style="min-width: 150px;">FECHA & HORARIO</th>
+              <th style="width: 120px;">ESTADO</th>
+              <th style="width: 100px;">MONTO</th>
+              <th style="width: 120px;">ACCIONES</th>
             </tr>
           </thead>
           <tbody id="reservasBody">
           </tbody>
         </table>
+      </div>
+      
+      <!-- Paginación -->
+      <div class="pagination" id="pagination" style="margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+      </div>
+      
+      <div style="text-align: center; color: var(--text-light); font-size: 14px; margin-top: 12px;" id="paginationInfo">
       </div>
     </div>
     
@@ -70,6 +101,35 @@ import Navbar from '../components/Navbar.astro';
 </Layout>
 
 <style>
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-light);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
 .tabs {
   display: flex;
   gap: 8px;
@@ -77,6 +137,7 @@ import Navbar from '../components/Navbar.astro';
   border-bottom: 2px solid var(--border);
   overflow-x: auto;
 }
+
 .tab {
   padding: 12px 24px;
   border: none;
@@ -87,14 +148,133 @@ import Navbar from '../components/Navbar.astro';
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+
 .tab:hover {
   color: var(--primary);
 }
+
 .tab.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
 }
+
+.tab-badge {
+  background: var(--primary);
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.tab.active .tab-badge {
+  background: white;
+  color: var(--primary);
+}
+
+#reservasTable .table tbody td {
+  padding: 16px 12px !important;
+  vertical-align: middle !important;
+}
+
+.espacio-cell {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 56px;
+}
+
+.espacio-icon {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+.espacio-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0;
+  flex: 1;
+}
+
+.espacio-nombre {
+  font-weight: 600;
+  color: var(--dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.espacio-tipo {
+  font-size: 12px;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+.fecha-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fecha-date {
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 15px;
+}
+
+.fecha-time {
+  font-size: 13px;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--dark);
+  min-width: 36px;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--light);
+}
+
+.pagination button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -151,8 +331,84 @@ import Navbar from '../components/Navbar.astro';
   }
   
   let reservas = [];
+  let reservasFiltradas = [];
   let estadoActual = 'todas';
   let reservaACancelar = null;
+  let paginaActual = 1;
+  const itemsPorPagina = 5;
+  
+  function getTipoIcon(tipo) {
+    const icons = {
+      'futbol5': { 
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
+        color: '#16A34A', 
+        bg: '#DCFCE7' 
+      },
+      'futbol7': { 
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
+        color: '#16A34A', 
+        bg: '#DCFCE7' 
+      },
+      'futbol11': { 
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
+        color: '#16A34A', 
+        bg: '#DCFCE7' 
+      },
+      'basquet': { 
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/><path d="M6 6c3 3 3 9 0 12M18 6c-3 3-3 9 0 12"/></svg>',
+        color: '#F97316', 
+        bg: '#FFEDD5' 
+      },
+      'voley': { 
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20M2 12h20"/><path d="M8 4c2 4 2 12 0 16M16 4c-2 4-2 12 0 16"/></svg>',
+        color: '#F97316', 
+        bg: '#FFEDD5' 
+      },
+      'piscina': { 
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 15c1.7 0 3-1 4-1s2.3 1 4 1 2.3-1 4-1 2.3 1 4 1 2.3-1 4-1"/><path d="M2 19c1.7 0 3-1 4-1s2.3 1 4 1 2.3-1 4-1 2.3 1 4 1 2.3-1 4-1"/><circle cx="8" cy="8" r="2"/><path d="M12 6l3 3-3 3"/></svg>',
+        color: '#2563EB', 
+        bg: '#DBEAFE' 
+      },
+      'gimnasio': { 
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6v12M17.5 6v12M3 9h3M18 9h3M3 15h3M18 15h3M9 12h6"/></svg>',
+        color: '#9333EA', 
+        bg: '#F3E8FF' 
+      },
+    };
+    return icons[tipo] || { 
+      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>',
+      color: '#64748B', 
+      bg: '#F1F5F9' 
+    };
+  }
+  
+  function formatTipo(tipo) {
+    const tipos = {
+      'futbol5': 'Fútbol 5',
+      'futbol7': 'Fútbol 7',
+      'futbol11': 'Fútbol 11',
+      'basquet': 'Básquet',
+      'voley': 'Vóley',
+      'piscina': 'Piscina',
+      'gimnasio': 'Gimnasio',
+    };
+    return tipos[tipo] || tipo;
+  }
+  
+  function actualizarEstadisticas() {
+    const total = reservas.length;
+    const pendientes = reservas.filter(r => r.estado === 'pendiente').length;
+    
+    document.getElementById('totalReservas').textContent = total;
+    document.getElementById('totalPendientes').textContent = pendientes;
+    document.getElementById('badgePendiente').textContent = pendientes;
+    
+    // Llenar el select de tipos
+    const tipos = [...new Set(reservas.map(r => r.espacio.tipo))];
+    const tipoSelect = document.getElementById('tipoFiltro');
+    tipoSelect.innerHTML = '<option value="">Todos</option>' + 
+      tipos.map(tipo => `<option value="${tipo}">${formatTipo(tipo)}</option>`).join('');
+  }
   
   async function actualizarReservasPasadas() {
     const ahora = new Date();
@@ -231,8 +487,9 @@ import Navbar from '../components/Navbar.astro';
             <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
           `;
         } else {
+          actualizarEstadisticas();
           table.style.display = 'block';
-          mostrarReservas(estadoActual);
+          aplicarFiltros();
         }
       } else {
         loading.innerHTML = `<div class="alert alert-error">${data.error || 'Error al cargar reservas'}</div>`;
@@ -243,18 +500,44 @@ import Navbar from '../components/Navbar.astro';
     }
   }
   
-  function mostrarReservas(estado) {
+  function aplicarFiltros() {
+    let filtradas = reservas;
+    
+    // Filtrar por estado
+    if (estadoActual !== 'todas') {
+      filtradas = filtradas.filter(r => r.estado === estadoActual);
+    }
+    
+    // Filtrar por fecha
+    const fechaFiltro = document.getElementById('fechaFiltro').value;
+    if (fechaFiltro) {
+      filtradas = filtradas.filter(r => {
+        const fechaReserva = new Date(r.fecha).toISOString().split('T')[0];
+        return fechaReserva === fechaFiltro;
+      });
+    }
+    
+    // Filtrar por tipo
+    const tipoFiltro = document.getElementById('tipoFiltro').value;
+    if (tipoFiltro) {
+      filtradas = filtradas.filter(r => r.espacio.tipo === tipoFiltro);
+    }
+    
+    reservasFiltradas = filtradas;
+    paginaActual = 1;
+    mostrarReservas();
+  }
+  
+  function mostrarReservas() {
     const tbody = document.getElementById('reservasBody');
     const table = document.getElementById('reservasTable');
     const noReservas = document.getElementById('noReservas');
     
-    let filtradas = estado === 'todas' ? reservas : reservas.filter(r => r.estado === estado);
-    
-    if (filtradas.length === 0) {
+    if (reservasFiltradas.length === 0) {
       table.style.display = 'none';
       noReservas.style.display = 'block';
       noReservas.innerHTML = `
-        <p style="color: var(--text-light);">No tienes reservas ${estado === 'todas' ? '' : estado + 's'}</p>
+        <p style="color: var(--text-light);">No tienes reservas ${estadoActual === 'todas' ? '' : estadoActual + 's'}</p>
         <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
       `;
       return;
@@ -263,24 +546,106 @@ import Navbar from '../components/Navbar.astro';
     noReservas.style.display = 'none';
     table.style.display = 'block';
     
-    tbody.innerHTML = filtradas.map(r => `
+    // Calcular paginación
+    const inicio = (paginaActual - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    const reservasPagina = reservasFiltradas.slice(inicio, fin);
+    
+    tbody.innerHTML = reservasPagina.map(r => {
+      const iconInfo = getTipoIcon(r.espacio.tipo);
+      return `
       <tr>
-        <td>#${r.id}</td>
-        <td>${r.espacio.nombre}</td>
-        <td>${formatFecha(r.fecha)}</td>
-        <td>${r.horaInicio} - ${r.horaFin}</td>
+        <td style="font-weight: 600; color: var(--text-light);">#${r.id}</td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; min-width: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: ${iconInfo.bg}; color: ${iconInfo.color}; flex-shrink: 0;">
+              ${iconInfo.icon}
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div style="font-weight: 600; color: var(--dark);">${r.espacio.nombre}</div>
+              <div style="font-size: 12px; color: var(--text-light);">${formatTipo(r.espacio.tipo)}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="fecha-cell">
+            <div class="fecha-date" style="font-weight: 700;">${formatFecha(r.fecha)}</div>
+            <div class="fecha-time">${r.horaInicio} - ${r.horaFin}</div>
+          </div>
+        </td>
         <td><span class="badge badge-${getBadgeColor(r.estado)}">${r.estado.toUpperCase()}</span></td>
-        <td>$${r.montoPagado || 0}</td>
+        <td style="font-weight: 600;">S/ ${r.montoPagado || 0}</td>
         <td>
           <div class="flex gap-1">
-            ${r.estado === 'pendiente' || r.estado === 'confirmada' ? 
+            ${r.estado === 'pendiente' ? 
               `<button class="btn btn-sm btn-danger" onclick="abrirModalCancelar(${r.id})">Cancelar</button>` : 
-              ''}
+              r.estado === 'confirmada' ? '<span style="color: var(--text-light); font-size: 13px;">Comprometido</span>' : ''}
           </div>
         </td>
       </tr>
-    `).join('');
+    `}).join('');
+    
+    mostrarPaginacion();
   }
+  
+  function mostrarPaginacion() {
+    const totalPaginas = Math.ceil(reservasFiltradas.length / itemsPorPagina);
+    const paginacion = document.getElementById('pagination');
+    const info = document.getElementById('paginationInfo');
+    
+    if (totalPaginas <= 1) {
+      paginacion.style.display = 'none';
+      info.style.display = 'none';
+      return;
+    }
+    
+    paginacion.style.display = 'flex';
+    info.style.display = 'block';
+    
+    const inicio = (paginaActual - 1) * itemsPorPagina + 1;
+    const fin = Math.min(paginaActual * itemsPorPagina, reservasFiltradas.length);
+    info.textContent = `Mostrando ${inicio} a ${fin} de ${reservasFiltradas.length} resultados`;
+    
+    let html = `
+      <button onclick="cambiarPagina(${paginaActual - 1})" ${paginaActual === 1 ? 'disabled' : ''}>
+        ‹
+      </button>
+    `;
+    
+    for (let i = 1; i <= totalPaginas; i++) {
+      if (
+        i === 1 || 
+        i === totalPaginas || 
+        (i >= paginaActual - 1 && i <= paginaActual + 1)
+      ) {
+        html += `
+          <button 
+            onclick="cambiarPagina(${i})" 
+            class="${i === paginaActual ? 'active' : ''}"
+          >
+            ${i}
+          </button>
+        `;
+      } else if (i === paginaActual - 2 || i === paginaActual + 2) {
+        html += '<span style="padding: 8px;">...</span>';
+      }
+    }
+    
+    html += `
+      <button onclick="cambiarPagina(${paginaActual + 1})" ${paginaActual === totalPaginas ? 'disabled' : ''}>
+        ›
+      </button>
+    `;
+    
+    paginacion.innerHTML = html;
+  }
+  
+  window.cambiarPagina = (pagina) => {
+    const totalPaginas = Math.ceil(reservasFiltradas.length / itemsPorPagina);
+    if (pagina < 1 || pagina > totalPaginas) return;
+    paginaActual = pagina;
+    mostrarReservas();
+  };
   
   function formatFecha(fecha) {
     // Si la fecha ya es un objeto Date válido
@@ -375,9 +740,13 @@ import Navbar from '../components/Navbar.astro';
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       estadoActual = tab.dataset.estado;
-      mostrarReservas(estadoActual);
+      aplicarFiltros();
     });
   });
+  
+  // Event listeners para filtros
+  document.getElementById('fechaFiltro').addEventListener('change', aplicarFiltros);
+  document.getElementById('tipoFiltro').addEventListener('change', aplicarFiltros);
   
   cargarReservas();
 </script>

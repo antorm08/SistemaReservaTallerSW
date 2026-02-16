@@ -9,11 +9,18 @@ const prisma = new PrismaClient();
  * Valida que no existan conflictos de horario
  */
 async function validarDisponibilidad(espacioId, fecha, horaInicio, horaFin) {
+  // Convertir fecha string a DateTime para consultas
+  const fechaInicio = new Date(fecha + 'T00:00:00');
+  const fechaFin = new Date(fecha + 'T23:59:59.999');
+  
   // Verificar reservas existentes
   const reservaExistente = await prisma.reserva.findFirst({
     where: {
       espacioId,
-      fecha,
+      fecha: {
+        gte: fechaInicio,
+        lte: fechaFin,
+      },
       horaInicio,
       estado: {
         in: ['pendiente', 'confirmada'],
@@ -29,8 +36,6 @@ async function validarDisponibilidad(espacioId, fecha, horaInicio, horaFin) {
   }
 
   // Verificar horarios bloqueados
-  const fechaInicio = new Date(fecha + 'T00:00:00.000Z');
-  const fechaFin = new Date(fecha + 'T23:59:59.999Z');
 
   const bloqueos = await prisma.horarioBloqueado.findMany({
     where: {
@@ -151,7 +156,7 @@ export async function POST({ request }) {
     }
 
     // Validar formato de fecha
-    const fechaObj = new Date(fecha + 'T00:00:00.000Z');
+    const fechaObj = new Date(fecha + 'T00:00:00');
     if (isNaN(fechaObj.getTime())) {
       return new Response(
         JSON.stringify({
@@ -168,7 +173,9 @@ export async function POST({ request }) {
     // Validar que no sea una fecha pasada
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
-    if (fechaObj < hoy) {
+    const fechaReserva = new Date(fechaObj);
+    fechaReserva.setHours(0, 0, 0, 0);
+    if (fechaReserva < hoy) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -260,7 +267,7 @@ export async function POST({ request }) {
     // Validar horario de operación
     const validacionHorario = await validarHorarioOperacion(
       parseInt(espacioId),
-      fechaObj,
+      fecha,
       horaInicio,
       horaFin
     );
@@ -281,7 +288,7 @@ export async function POST({ request }) {
     // Validar disponibilidad
     const validacion = await validarDisponibilidad(
       parseInt(espacioId),
-      fechaObj,
+      fecha,
       horaInicio,
       horaFin
     );

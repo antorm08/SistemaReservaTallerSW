@@ -156,10 +156,16 @@ export async function GET({ params, request }) {
     let slots = generarSlots(horario, fecha);
 
     // Obtener reservas existentes para esa fecha
+    const fechaInicio = new Date(fechaStr + 'T00:00:00');
+    const fechaFin = new Date(fechaStr + 'T23:59:59.999');
+    
     const reservasExistentes = await prisma.reserva.findMany({
       where: {
         espacioId: parseInt(id),
-        fecha,
+        fecha: {
+          gte: fechaInicio,
+          lte: fechaFin,
+        },
         estado: {
           in: ['pendiente', 'confirmada'],
         },
@@ -171,8 +177,6 @@ export async function GET({ params, request }) {
     });
 
     // Obtener horarios bloqueados
-    const fechaInicio = new Date(fechaStr + 'T00:00:00.000Z');
-    const fechaFin = new Date(fechaStr + 'T23:59:59.999Z');
 
     const bloqueos = await prisma.horarioBloqueado.findMany({
       where: {

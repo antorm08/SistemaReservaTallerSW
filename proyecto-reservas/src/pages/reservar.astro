@@ -86,7 +86,7 @@ import Navbar from '../components/Navbar.astro';
         espacios = data.data;
         const select = document.getElementById('espacioSelect');
         select.innerHTML = '<option value="">Selecciona un espacio...</option>' +
-          espacios.map(e => `<option value="${e.id}">${e.nombre} - $${e.precioHora}/hora</option>`).join('');
+          espacios.map(e => `<option value="${e.id}">${e.nombre} - S/ ${e.precioHora}/hora</option>`).join('');
         
         // Si hay espacioId en URL, seleccionarlo
         const params = new URLSearchParams(window.location.search);
@@ -198,7 +198,7 @@ import Navbar from '../components/Navbar.astro';
         <div style="padding: 12px; background: var(--light); border-radius: var(--radius); margin-top: 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 18px; font-weight: 600;">Total:</span>
-            <span style="font-size: 24px; font-weight: 700; color: var(--primary);">$${espacioSeleccionado.precioHora}</span>
+            <span style="font-size: 24px; font-weight: 700; color: var(--primary);">S/ ${espacioSeleccionado.precioHora}</span>
           </div>
         </div>
       `;
