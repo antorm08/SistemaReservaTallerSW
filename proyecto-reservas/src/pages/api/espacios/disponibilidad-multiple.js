@@ -72,28 +72,50 @@ export async function GET({ url }) {
         }
       });
 
-      // Contar slots disponibles
+      // Obtener hora actual si es hoy
+      const ahora = new Date();
+      const esHoy = fecha === ahora.toISOString().split('T')[0];
+      const horaActual = esHoy ? `${String(ahora.getHours()).padStart(2, '0')}:${String(ahora.getMinutes()).padStart(2, '0')}` : null;
+
+      // Contar slots disponibles solo si no han pasado
       let disponibles = 0;
+      let proximoHorario = null;
+      
       for (const slot of slots) {
+        // Si es hoy, solo contar slots que aún no pasaron
+        if (esHoy && slot.horaInicio <= horaActual) {
+          continue;
+        }
+        
         const tieneReserva = reservas.some(r => {
           const reservaInicio = r.horaInicio;
           const reservaFin = r.horaFin;
           return (slot.horaInicio >= reservaInicio && slot.horaInicio < reservaFin) ||
                  (slot.horaFin > reservaInicio && slot.horaFin <= reservaFin);
         });
-        if (!tieneReserva) disponibles++;
+        
+        if (!tieneReserva) {
+          disponibles++;
+          if (!proximoHorario) {
+            proximoHorario = slot.horaInicio;
+          }
+        }
       }
 
       return {
         espacioId: espacio.id,
-        disponibles
+        disponibles,
+        proximoHorario
       };
     }));
 
     // Convertir a objeto para búsqueda rápida
     const disponibilidadMap = {};
     resultados.forEach(r => {
-      disponibilidadMap[r.espacioId] = r.disponibles;
+      disponibilidadMap[r.espacioId] = {
+        disponibles: r.disponibles,
+        proximoHorario: r.proximoHorario
+      };
     });
 
     return new Response(JSON.stringify({

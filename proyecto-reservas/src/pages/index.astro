@@ -14,9 +14,6 @@ import Navbar from '../components/Navbar.astro';
         <h1 class="welcome-title">Bienvenido</h1>
         <p class="welcome-subtitle">¿Qué deporte te gustaría practicar hoy?</p>
       </div>
-      <div class="notification-badge" id="notificationBadge" style="display: none;">
-        🔔 Notificaciones
-      </div>
     </div>
     
     <!-- Reserva Rápida -->
@@ -91,7 +88,6 @@ import Navbar from '../components/Navbar.astro';
               <th>Actividad</th>
               <th>Fecha</th>
               <th>Hora</th>
-              <th>Duración</th>
               <th>Estado</th>
               <th></th>
             </tr>
@@ -284,6 +280,41 @@ import Navbar from '../components/Navbar.astro';
   background: var(--light);
 }
 
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: var(--light);
+  color: var(--dark);
+}
+
 .loading-state, .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -368,9 +399,24 @@ import Navbar from '../components/Navbar.astro';
       if (loadingEl) loadingEl.style.display = 'none';
       
       if (data.success && data.data.length > 0) {
+        // Filtro consistente con mis-reservas.astro
+        const ahora = new Date();
+        ahora.setHours(0, 0, 0, 0); // Comparar solo días, no horas
+        
         const reservasProximas = data.data
-          .filter(r => r.estado !== 'cancelada' && new Date(r.fecha) >= new Date())
+          .filter(r => {
+            // Solo 'pendiente' y 'confirmada' (no incluir 'completada' ni 'cancelada')
+            if (r.estado !== 'pendiente' && r.estado !== 'confirmada') return false;
+            
+            // Comparar solo fechas, no horas
+            const fechaReserva = new Date(r.fecha);
+            fechaReserva.setHours(0, 0, 0, 0);
+            
+            return fechaReserva >= ahora;
+          })
           .slice(0, 5);
+        
+        console.log('Próximas reservas en index:', reservasProximas.length);
         
         if (reservasProximas.length === 0) {
           if (noDataEl) noDataEl.style.display = 'block';
@@ -384,7 +430,6 @@ import Navbar from '../components/Navbar.astro';
               day: 'numeric', 
               month: 'short' 
             });
-            const duracion = calcularDuracion(r.horaInicio, r.horaFin);
             const estadoBadge = r.estado === 'confirmada' ? 
               '<span class="badge badge-success">Aprobado</span>' :
               '<span class="badge badge-warning">Pendiente</span>';
@@ -393,11 +438,10 @@ import Navbar from '../components/Navbar.astro';
               <tr>
                 <td>
                   <strong>${r.espacio.nombre}</strong><br>
-                  <small style="color: var(--text-light);">${r.espacio.tipo}</small>
+                  <small style="color: var(--text-light);">${formatTipo(r.espacio.tipo)}</small>
                 </td>
                 <td>${fecha}</td>
                 <td>${r.horaInicio}</td>
-                <td>${duracion}</td>
                 <td>${estadoBadge}</td>
                 <td>
                   <button class="btn-icon" onclick="window.location.href='/mis-reservas'">⋮</button>
@@ -422,6 +466,19 @@ import Navbar from '../components/Navbar.astro';
     const minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
     const horas = Math.floor(minutos / 60);
     return horas > 1 ? `${horas} Horas` : '1 Hora';
+  }
+  
+  function formatTipo(tipo) {
+    const tipos = {
+      'futbol5': 'Fútbol 5',
+      'futbol7': 'Fútbol 7', 
+      'futbol11': 'Fútbol 11',
+      'basquet': 'Básquet',
+      'voley': 'Vóley',
+      'piscina': 'Piscina',
+      'gimnasio': 'Gimnasio'
+    };
+    return tipos[tipo] || tipo;
   }
   
   cargarReservasUsuario();

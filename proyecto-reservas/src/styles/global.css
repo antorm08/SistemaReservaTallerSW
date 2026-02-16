@@ -437,6 +437,10 @@ body {
   border-color: var(--primary);
 }
 
+.time-slot.selected div {
+  color: var(--white) !important;
+}
+
 .time-slot.disabled {
   opacity: 0.5;
   cursor: not-allowed;

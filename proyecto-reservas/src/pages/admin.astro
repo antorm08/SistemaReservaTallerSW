@@ -667,9 +667,25 @@ import Navbar from '../components/Navbar.astro';
         
         if (data.success) {
           if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-success">Operación exitosa</div>';
+          
+          // Actualizar la reserva en la lista local en lugar de recargar todo
+          if (accionActual.tipo === 'cambiarEstado') {
+            const reserva = todasReservas.find(r => r.id === accionActual.id);
+            if (reserva) {
+              reserva.estado = accionActual.estado;
+            }
+          } else if (accionActual.tipo === 'cancelar') {
+            const reserva = todasReservas.find(r => r.id === accionActual.id);
+            if (reserva) {
+              reserva.estado = 'cancelada';
+            }
+          }
+          
           setTimeout(() => {
             cerrarModal();
-            cargarReservas();
+            // Solo actualizar la vista, no recargar desde el servidor
+            aplicarFiltros();
+            actualizarEstadisticas();
           }, 1000);
         } else {
           if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
@@ -717,6 +733,8 @@ import Navbar from '../components/Navbar.astro';
   // ============================================
   
   window.cambiarTab = (tab) => {
+    console.log('🔄 Cambiando a tab:', tab);
+    
     // Actualizar botones
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns.forEach(btn => btn.classList.remove('active'));
@@ -727,8 +745,23 @@ import Navbar from '../components/Navbar.astro';
     document.getElementById('tabBloqueos').style.display = tab === 'bloqueos' ? 'block' : 'none';
     
     if (tab === 'bloqueos') {
-      cargarEspaciosBloqueo();
-      cargarBloqueos();
+      console.log('🔧 Inicializando tab de bloqueos...');
+      
+      // Forzar inicialización completa
+      setTimeout(() => {
+        console.log('⚡ Iniciando carga de espacios y bloqueos...');
+        cargarEspaciosBloqueo();
+        cargarBloqueos();
+        
+        // Verificar estado tras 2 segundos
+        setTimeout(() => {
+          const selectEspacio = document.getElementById('bloqueoEspacio');
+          const selectFilter = document.getElementById('bloqueoEspacioFilter');
+          console.log('🏢 Estado de selects:');
+          console.log('  Modal select opciones:', selectEspacio?.options?.length || 0);
+          console.log('  Filter select opciones:', selectFilter?.options?.length || 0);
+        }, 2000);
+      }, 100);
     }
   };
   
@@ -744,12 +777,16 @@ import Navbar from '../components/Navbar.astro';
     const tableEl = document.getElementById('bloqueosTable');
     const noDataEl = document.getElementById('noBloqueos');
     
+    console.log('🔧 Iniciando carga de bloqueos...');
+    
     if (loadingEl) loadingEl.style.display = 'block';
     if (tableEl) tableEl.style.display = 'none';
     if (noDataEl) noDataEl.style.display = 'none';
     
     try {
       const token = localStorage.getItem('token');
+      console.log('🔑 Token disponible:', !!token);
+      
       const espacioFilter = document.getElementById('bloqueoEspacioFilter')?.value || '';
       const activoFilter = document.getElementById('bloqueoActivoFilter')?.value || '';
       
@@ -759,23 +796,34 @@ import Navbar from '../components/Navbar.astro';
       if (activoFilter) params.push(`activo=${activoFilter}`);
       if (params.length > 0) url += '?' + params.join('&');
       
+      console.log('🌐 Haciendo petición a:', url);
+      
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
+      console.log('📡 Response status:', response.status);
       const data = await response.json();
+      console.log('📄 Response data:', data);
       
       if (data.success) {
         todosBloqueos = data.data;
         bloqueosFiltrados = todosBloqueos;
+        console.log('✅ Bloqueos cargados:', todosBloqueos.length);
         mostrarBloqueos();
+      } else {
+        console.error('❌ Error en response:', data.error);
+        if (noDataEl) {
+          noDataEl.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+          noDataEl.style.display = 'block';
+        }
       }
     } catch (error) {
-      console.error('Error al cargar bloqueos:', error);
+      console.error('💥 Error al cargar bloqueos:', error);
       if (noDataEl) {
-        noDataEl.textContent = 'Error al cargar bloqueos';
+        noDataEl.innerHTML = `<p style="color: red;">Error al cargar bloqueos: ${error.message}</p>`;
         noDataEl.style.display = 'block';
       }
     } finally {
@@ -788,13 +836,39 @@ import Navbar from '../components/Navbar.astro';
     const bodyEl = document.getElementById('bloqueosBody');
     const noDataEl = document.getElementById('noBloqueos');
     
-    if (!bodyEl) return;
+    console.log('📋 Mostrando bloqueos. Total encontrados:', bloqueosFiltrados.length);
     
-    if (bloqueosFiltrados.length === 0) {
-      if (tableEl) tableEl.style.display = 'none';
-      if (noDataEl) noDataEl.style.display = 'block';
+    if (!bodyEl) {
+      console.error('❌ Element bloqueosBody not found');
       return;
     }
+    
+    if (bloqueosFiltrados.length === 0) {
+      console.log('📝 No hay bloqueos para mostrar');
+      if (tableEl) tableEl.style.display = 'none';
+      if (noDataEl) {
+        noDataEl.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text-light);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 16px; opacity: 0.5;">
+              <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p style="margin-bottom: 16px; font-size: 16px; font-weight: 500;">📅 No hay bloqueos de mantenimiento</p>
+            <p style="font-size: 14px; margin-bottom: 24px; opacity: 0.8;">Los espacios están disponibles para reservas en todos los horarios habilitados.</p>
+            <button class="btn btn-primary" onclick="abrirModalBloqueo()" style="padding: 12px 24px; font-weight: 600;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Crear Primer Bloqueo
+            </button>
+          </div>
+        `;
+        noDataEl.style.display = 'block';
+      }
+      return;
+    }
+    
+    console.log('🔧 Generando tabla con bloqueos...');
     
     if (tableEl) tableEl.style.display = 'block';
     if (noDataEl) noDataEl.style.display = 'none';
@@ -822,6 +896,8 @@ import Navbar from '../components/Navbar.astro';
         </tr>
       `;
     }).join('');
+    
+    console.log('✅ Tabla generada correctamente');
   }
   
   window.desactivarBloqueo = async (id) => {
@@ -872,49 +948,166 @@ import Navbar from '../components/Navbar.astro';
   
   if (bloqueoEspacioFilter) bloqueoEspacioFilter.addEventListener('change', cargarBloqueos);
   if (bloqueoActivoFilter) bloqueoActivoFilter.addEventListener('change', cargarBloqueos);
+
+  window.limpiarFiltrosBloqueos = () => {
+    if (bloqueoEspacioFilter) bloqueoEspacioFilter.value = '';
+    if (bloqueoActivoFilter) bloqueoActivoFilter.value = '';
+    cargarBloqueos();
+  };
+  
+  // DIAGNÓSTICO COMPLETO
+  setTimeout(() => {
+    console.log('🧪 === DIAGNÓSTICO DE BLOQUEOS ===');
+    
+    // 1. Verificar elementos DOM
+    const elementosDOM = {
+      'tabBloqueos': document.getElementById('tabBloqueos'),
+      'loadingBloqueos': document.getElementById('loadingBloqueos'), 
+      'bloqueosTable': document.getElementById('bloqueosTable'),
+      'noBloqueos': document.getElementById('noBloqueos'),
+      'bloqueoEspacio': document.getElementById('bloqueoEspacio'),
+      'bloqueoEspacioFilter': document.getElementById('bloqueoEspacioFilter')
+    };
+    
+    console.log('📋 Elementos DOM:');
+    Object.entries(elementosDOM).forEach(([name, el]) => {
+      console.log(`  ${name}: ${!!el} ${el ? '✅' : '❌'}`);
+    });
+    
+    // 2. Test API espacios
+    async function testEspacios() {
+      try {
+        console.log('🏢 Testeando API de espacios...');
+        const response = await fetch('/api/espacios');
+        const data = await response.json();
+        console.log('🏢 Respuesta espacios:', data.success ? `${data.data.length} espacios` : 'ERROR');
+      } catch (error) {
+        console.error('❌ Error en API espacios:', error);
+      }
+    }
+    
+    // 3. Test API bloqueos
+    async function testBloqueos() {
+      try {
+        console.log('🔧 Testeando API de bloqueos...');
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/bloqueos', {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        const data = await response.json();
+        console.log('🔧 Respuesta bloqueos:', response.status, data);
+      } catch (error) {
+        console.error('❌ Error en API bloqueos:', error);
+      }
+    }
+    
+    testEspacios();
+    testBloqueos();
+    
+    // Si estamos en el tab de bloqueos, inicializar automáticamente
+    const tabBloqueos = document.getElementById('tabBloqueos');
+    if (tabBloqueos && tabBloqueos.style.display !== 'none') {
+      console.log('🔧 Tab de bloqueos visible, inicializando...');
+      cargarEspaciosBloqueo();
+      cargarBloqueos();
+    }
+  }, 1000);
+  
+  // INICIALIZACIÓN AL CARGAR LA PÁGINA
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOM cargado, verificando estado inicial...');
+    
+    // Si el tab de bloqueos está activo por defecto, inicializarlo
+    setTimeout(() => {
+      const tabBloqueos = document.getElementById('tabBloqueos');
+      const activeTabBtn = document.querySelector('.tab-btn.active');
+      
+      if (activeTabBtn && activeTabBtn.textContent.includes('Bloqueos')) {
+        console.log('🎯 Tab de bloqueos activo al cargar, inicializando...');
+        cargarEspaciosBloqueo();
+        cargarBloqueos();
+      }
+    }, 500);
+  });
   
   // ============================================
   // MODAL DE BLOQUEO
   // ============================================
   
   async function cargarEspaciosBloqueo() {
+    console.log('🏢 Cargando espacios para bloqueos...');
     try {
       const response = await fetch('/api/espacios');
       const data = await response.json();
+      
+      console.log('🏢 Response espacios:', data);
       
       if (data.success) {
         const selectEspacio = document.getElementById('bloqueoEspacio');
         const selectFilter = document.getElementById('bloqueoEspacioFilter');
         
+        console.log('🏢 Elementos encontrados - Modal Select:', !!selectEspacio, 'Filter Select:', !!selectFilter);
+        
         if (selectEspacio) {
           selectEspacio.innerHTML = '<option value="">Seleccione un espacio</option>' +
             data.data.map(e => `<option value="${e.id}">${e.nombre} (${e.tipo})</option>`).join('');
+          console.log('✅ Select del modal actualizado');
         }
         
         if (selectFilter) {
           selectFilter.innerHTML = '<option value="">Todos los espacios</option>' +
             data.data.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
+          console.log('✅ Select del filtro actualizado');
         }
+      } else {
+        console.error('❌ Error al cargar espacios:', data.error);
       }
     } catch (error) {
-      console.error('Error al cargar espacios:', error);
+      console.error('💥 Error al cargar espacios:', error);
     }
   }
   
   window.abrirModalBloqueo = () => {
+    console.log('🎯 Abriendo modal de bloqueo...');
+    
     const modal = document.getElementById('bloqueoModal');
-    if (modal) modal.classList.add('active');
+    console.log('🎯 Modal encontrado:', !!modal);
+    
+    if (modal) {
+      modal.classList.add('active');
+      console.log('✅ Modal activado');
+    }
     
     // Resetear formulario
     const form = document.getElementById('bloqueoForm');
-    if (form) form.reset();
+    if (form) {
+      form.reset();
+      console.log('🔄 Formulario reseteado');
+    }
     
-    // Fecha mínima: hoy
+    // Configurar fechas mínimas
     const fechaInicio = document.getElementById('bloqueoFechaInicio');
     const fechaFin = document.getElementById('bloqueoFechaFin');
     const hoy = new Date().toISOString().split('T')[0];
-    if (fechaInicio) fechaInicio.min = hoy;
-    if (fechaFin) fechaFin.min = hoy;
+    
+    if (fechaInicio) {
+      fechaInicio.min = hoy;
+      fechaInicio.value = hoy;
+      console.log('📅 Fecha inicio configurada');
+    }
+    
+    if (fechaFin) {
+      fechaFin.min = hoy;
+      fechaFin.value = hoy;
+      console.log('📅 Fecha fin configurada');
+    }
+    
+    // Verificar que los espacios estén cargados
+    const selectEspacio = document.getElementById('bloqueoEspacio');
+    if (selectEspacio && selectEspacio.options.length <= 1) {
+      console.log('🔄 Recargando espacios porque el select está vacío...');
+      cargarEspaciosBloqueo();
+    }
   };
   
   window.cerrarModalBloqueo = () => {

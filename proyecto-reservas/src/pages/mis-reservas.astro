@@ -41,7 +41,7 @@ import Navbar from '../components/Navbar.astro';
     <div class="tabs">
       <button class="tab active" data-estado="todas">Todas</button>
       <button class="tab" data-estado="pendiente">Pendientes <span class="tab-badge" id="badgePendiente">0</span></button>
-      <button class="tab" data-estado="confirmada">Confirmadas</button>
+      <button class="tab" data-estado="proximas">Próximas</button>
       <button class="tab" data-estado="completada">Completadas</button>
       <button class="tab" data-estado="cancelada">Canceladas</button>
     </div>
@@ -70,10 +70,10 @@ import Navbar from '../components/Navbar.astro';
       </div>
       
       <!-- Paginación -->
-      <div class="pagination" id="pagination" style="margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+      <div class="pagination-wrapper" id="pagination">
       </div>
       
-      <div style="text-align: center; color: var(--text-light); font-size: 14px; margin-top: 12px;" id="paginationInfo">
+      <div id="paginationInfo">
       </div>
     </div>
     
@@ -100,7 +100,7 @@ import Navbar from '../components/Navbar.astro';
   </div>
 </Layout>
 
-<style>
+<style is:global>
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -242,37 +242,220 @@ import Navbar from '../components/Navbar.astro';
   font-weight: 400;
 }
 
-.pagination {
+/* === PAGINACIÓN PREMIUM === */
+.pagination-wrapper {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 20px;
+  margin-top: 32px;
+  padding: 0;
 }
 
-.pagination button {
+.pagination-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
   padding: 8px 12px;
-  border: 1px solid var(--border);
-  background: white;
-  border-radius: var(--radius);
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    0 4px 10px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.pagination-container:hover {
+  box-shadow: 
+    0 12px 35px rgba(0, 0, 0, 0.12),
+    0 6px 15px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.pagination-btn {
+  position: relative;
+  padding: 0;
+  border: none;
+  background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 500;
-  color: var(--dark);
-  min-width: 36px;
+  font-weight: 600;
+  color: #475569;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  overflow: hidden;
 }
 
-.pagination button:hover:not(:disabled) {
-  background: var(--light);
+.pagination-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.pagination button.active {
-  background: var(--primary);
+.pagination-btn:hover:not(:disabled) {
+  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+  color: #334155;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.pagination-btn:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.pagination-btn.active {
+  background: linear-gradient(145deg, #10B981 0%, #059669 100%);
   color: white;
-  border-color: var(--primary);
+  box-shadow: 
+    0 8px 25px rgba(16, 185, 129, 0.35),
+    0 4px 12px rgba(5, 150, 105, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  border: 1px solid rgba(5, 150, 105, 0.6);
+  z-index: 2;
 }
 
-.pagination button:disabled {
-  opacity: 0.5;
+.pagination-btn.active::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+  opacity: 1;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.35;
   cursor: not-allowed;
+  color: #94a3b8;
+  background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+  box-shadow: none;
+  transform: none;
+}
+
+.pagination-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination-btn:disabled::before {
+  display: none;
+}
+
+.pagination-dots {
+  padding: 0 8px;
+  color: #94a3b8;
+  font-weight: 700;
+  font-size: 16px;
+  user-select: none;
+  letter-spacing: 2px;
+}
+
+.pagination-nav {
+  position: relative;
+  padding: 0;
+  border: none;
+  background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #64748b;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+}
+
+.pagination-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(49, 130, 206, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.pagination-nav:hover:not(:disabled) {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  color: #475569;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.pagination-nav:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.pagination-nav:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination-nav:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination-nav:disabled::before {
+  display: none;
+}
+
+.pagination-nav svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+}
+
+/* Información de paginación con estilo */
+#paginationInfo {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  letter-spacing: 0.3px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+  margin-top: 8px;
+  display: none;
 }
 
 .modal {
@@ -399,9 +582,34 @@ import Navbar from '../components/Navbar.astro';
     const total = reservas.length;
     const pendientes = reservas.filter(r => r.estado === 'pendiente').length;
     
+    // Debug: mostrar estados actuales
+    const estadosCount = {};
+    reservas.forEach(r => {
+      estadosCount[r.estado] = (estadosCount[r.estado] || 0) + 1;
+    });
+    console.log('Estados de reservas:', estadosCount);
+    
+    // Calcular próximas reservas (pendientes y confirmadas futuras)
+    const ahora = new Date();
+    ahora.setHours(0, 0, 0, 0);
+    const proximas = reservas.filter(r => {
+      // Solo 'pendiente' y 'confirmada' (no incluir 'completada' ni 'cancelada')
+      if (r.estado !== 'pendiente' && r.estado !== 'confirmada') return false;
+      
+      // Comparar solo fechas, no horas  
+      const fechaReserva = new Date(r.fecha);
+      fechaReserva.setHours(0, 0, 0, 0);
+      
+      return fechaReserva >= ahora;
+    }).length;
+    
+    console.log('Próximas reservas en mis-reservas:', proximas);
+    
     document.getElementById('totalReservas').textContent = total;
     document.getElementById('totalPendientes').textContent = pendientes;
     document.getElementById('badgePendiente').textContent = pendientes;
+    
+    console.log(`Estadísticas actualizadas: Total=${total}, Pendientes=${pendientes}, Próximas=${proximas}`);
     
     // Llenar el select de tipos
     const tipos = [...new Set(reservas.map(r => r.espacio.tipo))];
@@ -413,6 +621,7 @@ import Navbar from '../components/Navbar.astro';
   async function actualizarReservasPasadas() {
     const ahora = new Date();
     const token = localStorage.getItem('token');
+    let actualizadas = 0;
     
     for (const reserva of reservas) {
       // Solo procesar reservas confirmadas
@@ -440,11 +649,17 @@ import Navbar from '../components/Navbar.astro';
           
           if (response.ok) {
             reserva.estado = 'completada';
+            actualizadas++;
+            console.log(`Reserva ${reserva.id} actualizada a completada`);
           }
         } catch (error) {
           console.error(`Error al actualizar reserva ${reserva.id}:`, error);
         }
       }
+    }
+    
+    if (actualizadas > 0) {
+      console.log(`${actualizadas} reservas actualizadas automáticamente a completadas`);
     }
   }
   
@@ -480,6 +695,9 @@ import Navbar from '../components/Navbar.astro';
         // Actualizar automáticamente las reservas pasadas a completadas
         await actualizarReservasPasadas();
         
+        // Recalcular estadísticas después de actualizar estados
+        actualizarEstadisticas();
+        
         if (reservas.length === 0) {
           noReservas.style.display = 'block';
           noReservas.innerHTML = `
@@ -487,7 +705,6 @@ import Navbar from '../components/Navbar.astro';
             <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
           `;
         } else {
-          actualizarEstadisticas();
           table.style.display = 'block';
           aplicarFiltros();
         }
@@ -505,7 +722,24 @@ import Navbar from '../components/Navbar.astro';
     
     // Filtrar por estado
     if (estadoActual !== 'todas') {
-      filtradas = filtradas.filter(r => r.estado === estadoActual);
+      if (estadoActual === 'proximas') {
+        // Próximas: reservas pendientes o confirmadas con fecha futura
+        const ahora = new Date();
+        ahora.setHours(0, 0, 0, 0); // Comparar solo días
+        
+        filtradas = filtradas.filter(r => {
+          // Solo 'pendiente' y 'confirmada' (no incluir 'completada')
+          if (r.estado !== 'pendiente' && r.estado !== 'confirmada') return false;
+          
+          // Comparar solo fechas, no horas
+          const fechaReserva = new Date(r.fecha);
+          fechaReserva.setHours(0, 0, 0, 0);
+          
+          return fechaReserva >= ahora;
+        });
+      } else {
+        filtradas = filtradas.filter(r => r.estado === estadoActual);
+      }
     }
     
     // Filtrar por fecha
@@ -536,8 +770,18 @@ import Navbar from '../components/Navbar.astro';
     if (reservasFiltradas.length === 0) {
       table.style.display = 'none';
       noReservas.style.display = 'block';
+      
+      let mensaje = '';
+      if (estadoActual === 'todas') {
+        mensaje = 'No tienes reservas';
+      } else if (estadoActual === 'proximas') {
+        mensaje = 'No tienes próximas reservas';
+      } else {
+        mensaje = `No tienes reservas ${estadoActual}s`;
+      }
+      
       noReservas.innerHTML = `
-        <p style="color: var(--text-light);">No tienes reservas ${estadoActual === 'todas' ? '' : estadoActual + 's'}</p>
+        <p style="color: var(--text-light);">${mensaje}</p>
         <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
       `;
       return;
@@ -590,54 +834,120 @@ import Navbar from '../components/Navbar.astro';
   
   function mostrarPaginacion() {
     const totalPaginas = Math.ceil(reservasFiltradas.length / itemsPorPagina);
-    const paginacion = document.getElementById('pagination');
+    const wrapper = document.getElementById('pagination');
     const info = document.getElementById('paginationInfo');
     
     if (totalPaginas <= 1) {
-      paginacion.style.display = 'none';
+      wrapper.style.display = 'none';
       info.style.display = 'none';
       return;
     }
     
-    paginacion.style.display = 'flex';
-    info.style.display = 'block';
+    wrapper.style.display = 'flex';
+    info.style.display = 'none';
     
-    const inicio = (paginaActual - 1) * itemsPorPagina + 1;
-    const fin = Math.min(paginaActual * itemsPorPagina, reservasFiltradas.length);
-    info.textContent = `Mostrando ${inicio} a ${fin} de ${reservasFiltradas.length} resultados`;
+    // Crear el contenedor de paginación
+    let html = '<div class="pagination-container">';
     
-    let html = `
-      <button onclick="cambiarPagina(${paginaActual - 1})" ${paginaActual === 1 ? 'disabled' : ''}>
-        ‹
+    html += `
+      <button 
+        class="pagination-nav" 
+        onclick="cambiarPagina(1)" 
+        ${paginaActual === 1 ? 'disabled' : ''}
+        title="Primera página"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="m11 17-5-5 5-5M18 17l-5-5 5-5"/>
+        </svg>
+      </button>
+      <button 
+        class="pagination-nav" 
+        onclick="cambiarPagina(${paginaActual - 1})" 
+        ${paginaActual === 1 ? 'disabled' : ''}
+        title="Página anterior"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
       </button>
     `;
     
-    for (let i = 1; i <= totalPaginas; i++) {
-      if (
-        i === 1 || 
-        i === totalPaginas || 
-        (i >= paginaActual - 1 && i <= paginaActual + 1)
-      ) {
-        html += `
-          <button 
-            onclick="cambiarPagina(${i})" 
-            class="${i === paginaActual ? 'active' : ''}"
-          >
-            ${i}
-          </button>
-        `;
-      } else if (i === paginaActual - 2 || i === paginaActual + 2) {
-        html += '<span style="padding: 8px;">...</span>';
+    // Lógica para mostrar páginas
+    const mostrarPaginas = [];
+    
+    if (totalPaginas <= 7) {
+      // Mostrar todas las páginas si son 7 o menos
+      for (let i = 1; i <= totalPaginas; i++) {
+        mostrarPaginas.push(i);
+      }
+    } else {
+      // Lógica más inteligente para muchas páginas
+      mostrarPaginas.push(1);
+      
+      if (paginaActual <= 4) {
+        for (let i = 2; i <= 5; i++) {
+          mostrarPaginas.push(i);
+        }
+        mostrarPaginas.push('...');
+      } else if (paginaActual >= totalPaginas - 3) {
+        mostrarPaginas.push('...');
+        for (let i = totalPaginas - 4; i <= totalPaginas - 1; i++) {
+          mostrarPaginas.push(i);
+        }
+      } else {
+        mostrarPaginas.push('...');
+        for (let i = paginaActual - 1; i <= paginaActual + 1; i++) {
+          mostrarPaginas.push(i);
+        }
+        mostrarPaginas.push('...');
+      }
+      
+      if (!mostrarPaginas.includes(totalPaginas)) {
+        mostrarPaginas.push(totalPaginas);
       }
     }
     
+    mostrarPaginas.forEach(pagina => {
+      if (pagina === '...') {
+        html += '<span class="pagination-dots">•••</span>';
+      } else {
+        html += `
+          <button 
+            class="pagination-btn ${pagina === paginaActual ? 'active' : ''}"
+            onclick="cambiarPagina(${pagina})"
+          >
+            ${pagina}
+          </button>
+        `;
+      }
+    });
+    
     html += `
-      <button onclick="cambiarPagina(${paginaActual + 1})" ${paginaActual === totalPaginas ? 'disabled' : ''}>
-        ›
+      <button 
+        class="pagination-nav" 
+        onclick="cambiarPagina(${paginaActual + 1})" 
+        ${paginaActual === totalPaginas ? 'disabled' : ''}
+        title="Página siguiente"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </button>
+      <button 
+        class="pagination-nav" 
+        onclick="cambiarPagina(${totalPaginas})" 
+        ${paginaActual === totalPaginas ? 'disabled' : ''}
+        title="Última página"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="m6 17 5-5-5-5M13 17l5-5-5-5"/>
+        </svg>
       </button>
     `;
     
-    paginacion.innerHTML = html;
+    html += '</div>'; // Cerrar pagination-container
+    
+    wrapper.innerHTML = html;
   }
   
   window.cambiarPagina = (pagina) => {
