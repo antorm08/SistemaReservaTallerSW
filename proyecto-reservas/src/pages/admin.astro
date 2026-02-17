@@ -1,17 +1,20 @@
 ---
 // Panel de administrador
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
 ---
 
 <Layout title="Panel de Administración">
   <Navbar />
-  
+
   <div class="container">
     <h1 class="mb-4">Panel de Administración</h1>
-    
+
     <!-- Tabs de navegación -->
-    <div class="mb-4" style="border-bottom: 2px solid var(--border); display: flex; gap: 16px;">
+    <div
+      class="mb-4"
+      style="border-bottom: 2px solid var(--border); display: flex; gap: 16px;"
+    >
       <button class="tab-btn active" onclick="cambiarTab('reservas')">
         Reservas
       </button>
@@ -19,139 +22,236 @@ import Navbar from '../components/Navbar.astro';
         Bloqueos de Mantenimiento
       </button>
     </div>
-    
+
     <!-- Tab: Reservas -->
     <div id="tabReservas" class="tab-content active">
-    
-    <!-- Estadísticas -->
-    <div class="grid grid-4 mb-4" id="statsGrid">
-      <div class="card stat-card">
-        <div class="stat-icon" style="background: #FEF3C7;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <!-- Estadísticas -->
+      <div class="grid grid-4 mb-4" id="statsGrid">
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: #FEF3C7;">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#F59E0B"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path
+                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              ></path><line x1="12" y1="9" x2="12" y2="13"></line><line
+                x1="12"
+                y1="17"
+                x2="12.01"
+                y2="17"></line></svg
+            >
+          </div>
+          <div>
+            <div
+              style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;"
+            >
+              Pendientes
+            </div>
+            <div
+              style="font-size: 32px; font-weight: 700; color: var(--dark);"
+              id="statPendientes"
+            >
+              -
+            </div>
+          </div>
         </div>
-        <div>
-          <div style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Pendientes</div>
-          <div style="font-size: 32px; font-weight: 700; color: var(--dark);" id="statPendientes">-</div>
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: #D1FAE5;">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#10B981"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline
+                points="22 4 12 14.01 9 11.01"></polyline></svg
+            >
+          </div>
+          <div>
+            <div
+              style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;"
+            >
+              Confirmadas
+            </div>
+            <div
+              style="font-size: 32px; font-weight: 700; color: var(--dark);"
+              id="statConfirmadas"
+            >
+              -
+            </div>
+          </div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: #DBEAFE;">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#3B82F6"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+              ></rect><line x1="16" y1="2" x2="16" y2="6"></line><line
+                x1="8"
+                y1="2"
+                x2="8"
+                y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg
+            >
+          </div>
+          <div>
+            <div
+              style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;"
+            >
+              Hoy
+            </div>
+            <div
+              style="font-size: 32px; font-weight: 700; color: var(--dark);"
+              id="statHoy"
+            >
+              -
+            </div>
+          </div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: #E0E7FF;">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#6366F1"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+              ></rect><line x1="16" y1="2" x2="16" y2="6"></line><line
+                x1="8"
+                y1="2"
+                x2="8"
+                y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg
+            >
+          </div>
+          <div>
+            <div
+              style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;"
+            >
+              Total Mes
+            </div>
+            <div
+              style="font-size: 32px; font-weight: 700; color: var(--dark);"
+              id="statTotal"
+            >
+              -
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card stat-card">
-        <div class="stat-icon" style="background: #D1FAE5;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <div>
-          <div style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Confirmadas</div>
-          <div style="font-size: 32px; font-weight: 700; color: var(--dark);" id="statConfirmadas">-</div>
-        </div>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-icon" style="background: #DBEAFE;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div>
-          <div style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Hoy</div>
-          <div style="font-size: 32px; font-weight: 700; color: var(--dark);" id="statHoy">-</div>
-        </div>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-icon" style="background: #E0E7FF;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div>
-          <div style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Total Mes</div>
-          <div style="font-size: 32px; font-weight: 700; color: var(--dark);" id="statTotal">-</div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Filtros -->
-    <div class="card mb-4">
-      <div class="grid grid-4 gap-3">
-        <div>
-          <label class="form-label">Fecha</label>
-          <input type="date" class="form-input" id="fechaFilter">
-        </div>
-        <div>
-          <label class="form-label">Espacio</label>
-          <select class="form-select" id="espacioFilter">
-            <option value="">Todos los espacios</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Estado</label>
-          <select class="form-select" id="estadoFilter">
-            <option value="">Todos los estados</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="confirmada">Confirmada</option>
-            <option value="completada">Completada</option>
-            <option value="cancelada">Cancelada</option>
-          </select>
-        </div>
-        <div style="display: flex; align-items: flex-end;">
-          <button class="btn btn-secondary btn-block" onclick="limpiarFiltros()">Limpiar</button>
+
+      <!-- Filtros -->
+      <div class="card mb-4">
+        <div class="grid grid-4 gap-3">
+          <div>
+            <label class="form-label" for="fechaFilter">Fecha</label>
+            <input type="date" class="form-input" id="fechaFilter" />
+          </div>
+          <div>
+            <label class="form-label" for="espacioFilter">Espacio</label>
+            <select class="form-select" id="espacioFilter">
+              <option value="">Todos los espacios</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" for="estadoFilter">Estado</label>
+            <select class="form-select" id="estadoFilter">
+              <option value="">Todos los estados</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+          <div style="display: flex; align-items: flex-end;">
+            <button
+              class="btn btn-secondary btn-block"
+              onclick="limpiarFiltros()">Limpiar</button
+            >
+          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Tabla de reservas -->
-    <div class="card">
-      <div class="flex-between mb-3">
-        <h2 class="card-title">Todas las Reservas</h2>
-        <div id="conteoReservas" style="color: var(--text-light);"></div>
-      </div>
-      
-      <div id="loading" class="text-center" style="padding: 40px;">
-        <div class="loading" style="width: 40px; height: 40px;"></div>
-        <p class="mt-2">Cargando reservas...</p>
-      </div>
-      
-      <div id="reservasTable" style="display: none;">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Usuario</th>
-                <th>Espacio</th>
-                <th>Fecha</th>
-                <th>Horario</th>
-                <th>Estado</th>
-                <th>Monto</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="reservasBody">
-            </tbody>
-          </table>
+
+      <!-- Tabla de reservas -->
+      <div class="card">
+        <div class="flex-between mb-3">
+          <h2 class="card-title">Todas las Reservas</h2>
+          <div id="conteoReservas" style="color: var(--text-light);"></div>
         </div>
-      </div>
-      
-      <div id="noReservas" style="display: none; text-align: center; padding: 40px; color: var(--text-light);">
-        No hay reservas que coincidan con los filtros
+
+        <div id="loading" class="text-center" style="padding: 40px;">
+          <div class="loading" style="width: 40px; height: 40px;"></div>
+          <p class="mt-2">Cargando reservas...</p>
+        </div>
+
+        <div id="reservasTable" style="display: none;">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Usuario</th>
+                  <th>Espacio</th>
+                  <th>Fecha</th>
+                  <th>Horario</th>
+                  <th>Estado</th>
+                  <th>Monto</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="reservasBody"> </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div
+          id="noReservas"
+          style="display: none; text-align: center; padding: 40px; color: var(--text-light);"
+        >
+          No hay reservas que coincidan con los filtros
+        </div>
       </div>
     </div>
     <!-- Fin Tab: Reservas -->
-    
+
     <!-- Tab: Bloqueos -->
     <div id="tabBloqueos" class="tab-content" style="display: none;">
-      
       <!-- Botón crear bloqueo -->
       <div class="mb-4">
         <button class="btn btn-primary" onclick="abrirModalBloqueo()">
           + Nuevo Bloqueo de Mantenimiento
         </button>
       </div>
-      
+
       <!-- Filtros de bloqueos -->
       <div class="card mb-4">
         <div class="grid grid-3 gap-3">
           <div>
-            <label class="form-label">Espacio</label>
+            <label class="form-label" for="bloqueoEspacioFilter">Espacio</label>
             <select class="form-select" id="bloqueoEspacioFilter">
               <option value="">Todos los espacios</option>
             </select>
           </div>
           <div>
-            <label class="form-label">Estado</label>
+            <label class="form-label" for="bloqueoActivoFilter">Estado</label>
             <select class="form-select" id="bloqueoActivoFilter">
               <option value="">Todos</option>
               <option value="true">Activos</option>
@@ -159,17 +259,19 @@ import Navbar from '../components/Navbar.astro';
             </select>
           </div>
           <div style="display: flex; align-items: flex-end;">
-            <button class="btn btn-secondary" onclick="limpiarFiltrosBloqueos()">Limpiar</button>
+            <button class="btn btn-secondary" onclick="limpiarFiltrosBloqueos()"
+              >Limpiar</button
+            >
           </div>
         </div>
       </div>
-      
+
       <!-- Lista de bloqueos -->
       <div id="loadingBloqueos" class="text-center" style="padding: 40px;">
         <div class="loading" style="width: 40px; height: 40px;"></div>
         <p class="mt-2">Cargando bloqueos...</p>
       </div>
-      
+
       <div id="bloqueosTable" style="display: none;">
         <div class="table-responsive">
           <table class="table">
@@ -185,142 +287,277 @@ import Navbar from '../components/Navbar.astro';
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody id="bloqueosBody">
-            </tbody>
+            <tbody id="bloqueosBody"> </tbody>
           </table>
         </div>
       </div>
-      
-      <div id="noBloqueos" style="display: none; text-align: center; padding: 40px; color: var(--text-light);">
+
+      <div
+        id="noBloqueos"
+        style="display: none; text-align: center; padding: 40px; color: var(--text-light);"
+      >
         No hay bloqueos registrados
       </div>
-      
     </div>
     <!-- Fin Tab: Bloqueos -->
-    </div>
   </div>
-  
+  <!-- Fin container -->
+
   <!-- Modal de confirmación -->
   <div id="actionModal" class="modal">
     <div class="modal-content">
-      <h3 style="margin-bottom: 16px;" id="modalTitle"></h3>
-      <div id="modalAlert"></div>
-      <p id="modalMessage" style="margin-bottom: 16px;"></p>
+      <h3 style="margin-bottom: 16px;" id="actionModalTitle"></h3>
+      <div id="actionModalAlert"></div>
+      <p id="actionModalMessage" style="margin-bottom: 16px;"></p>
       <div class="form-group" id="motivoGroup" style="display: none;">
-        <label class="form-label">Motivo</label>
+        <label class="form-label" for="motivoInput">Motivo</label>
         <textarea class="form-textarea" id="motivoInput"></textarea>
       </div>
       <div class="flex gap-2" style="justify-content: flex-end;">
-        <button class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn btn-secondary" onclick="cerrarModal()"
+          >Cancelar</button
+        >
         <button class="btn btn-primary" id="confirmarAccion">Confirmar</button>
       </div>
     </div>
   </div>
-  
+
   <!-- Modal de bloqueo -->
   <div id="bloqueoModal" class="modal">
-    <div class="modal-content" style="max-width: 600px;">
-      <h3 style="margin-bottom: 16px;">Nuevo Bloqueo de Mantenimiento</h3>
-      <div id="bloqueoAlert"></div>
-      
-      <form id="bloqueoForm">
-        <div class="form-group">
-          <label class="form-label">Espacio *</label>
-          <select class="form-select" id="bloqueoEspacio" required>
-            <option value="">Seleccione un espacio</option>
-          </select>
-        </div>
-        
-        <div class="grid grid-2 gap-3">
-          <div class="form-group">
-            <label class="form-label">Fecha Inicio *</label>
-            <input type="date" class="form-input" id="bloqueoFechaInicio" required>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin: 0;">Nuevo Bloqueo de Mantenimiento</h3>
+      </div>
+
+      <div class="modal-body">
+        <div id="bloqueoAlert"></div>
+
+        <form id="bloqueoForm">
+          <div class="form-group-modal">
+            <label class="form-label" for="bloqueoEspacio">Espacio *</label>
+            <select class="form-select" id="bloqueoEspacio" required>
+              <option value="">Seleccione un espacio</option>
+            </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Fecha Fin *</label>
-            <input type="date" class="form-input" id="bloqueoFechaFin" required>
+
+          <div class="grid grid-2 gap-3">
+            <div class="form-group-modal">
+              <label class="form-label" for="bloqueoFechaInicio">Fecha Inicio *</label>
+              <input
+                type="date"
+                class="form-input"
+                id="bloqueoFechaInicio"
+                required
+              />
+            </div>
+            <div class="form-group-modal">
+              <label class="form-label" for="bloqueoFechaFin">Fecha Fin *</label>
+              <input
+                type="date"
+                class="form-input"
+                id="bloqueoFechaFin"
+                required
+              />
+            </div>
           </div>
-        </div>
-        
-        <div class="form-group">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="bloqueoTodoElDia">
-            <span>Bloquear todo el día</span>
-          </label>
-        </div>
-        
-        <div class="grid grid-2 gap-3" id="horariosGroup">
-          <div class="form-group">
-            <label class="form-label">Hora Inicio *</label>
-            <input type="time" class="form-input" id="bloqueoHoraInicio" required>
+
+          <!-- Mensaje cuando es rango de días -->
+          <div
+            id="mensajeRangoDias"
+            style="display: none; padding: 12px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; color: #1E40AF; font-size: 14px; margin-bottom: 12px;"
+          >
+            ℹ️ <strong>Bloqueo de varios días:</strong> Se bloqueará todo el día para
+            el rango de fechas seleccionado.
           </div>
-          <div class="form-group">
-            <label class="form-label">Hora Fin *</label>
-            <input type="time" class="form-input" id="bloqueoHoraFin" required>
+
+          <!-- Opciones de horario (solo para un día) -->
+          <div id="opcionesHorario">
+            <div class="form-group-modal">
+              <label
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;"
+              >
+                <input type="checkbox" id="bloqueoTodoElDia" />
+                <span>Bloquear todo el día</span>
+              </label>
+            </div>
+
+            <div class="grid grid-2 gap-3" id="horariosGroup">
+              <div class="form-group-modal">
+                <label class="form-label" for="bloqueoHoraInicio">Hora Inicio *</label>
+                <input
+                  type="time"
+                  class="form-input"
+                  id="bloqueoHoraInicio"
+                  required
+                />
+              </div>
+              <div class="form-group-modal">
+                <label class="form-label" for="bloqueoHoraFin">Hora Fin *</label>
+                <input
+                  type="time"
+                  class="form-input"
+                  id="bloqueoHoraFin"
+                  required
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Motivo *</label>
-          <input type="text" class="form-input" id="bloqueoMotivo" placeholder="Ej: Mantenimiento de pasto" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Descripción (opcional)</label>
-          <textarea class="form-textarea" id="bloqueoDescripcion" rows="3"></textarea>
-        </div>
-        
+
+          <div class="form-group-modal" style="margin-bottom: 0;">
+            <label class="form-label" for="bloqueoMotivo">Motivo *</label>
+            <input
+              type="text"
+              class="form-input"
+              id="bloqueoMotivo"
+              placeholder="Ej: Mantenimiento de pasto"
+              required
+            />
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
         <div class="flex gap-2" style="justify-content: flex-end;">
-          <button type="button" class="btn btn-secondary" onclick="cerrarModalBloqueo()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Crear Bloqueo</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="cerrarModalBloqueo()">Cancelar</button
+          >
+          <button type="submit" form="bloqueoForm" class="btn btn-primary"
+            >Crear Bloqueo</button
+          >
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </Layout>
 
 <style>
-.stat-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-}
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+  }
 
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-}
-.modal.active {
-  display: flex;
-}
-.modal-content {
-  background: white;
-  padding: 24px;
-  border-radius: var(--radius);
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal.active {
+    display: flex;
+  }
+  .modal-content {
+    background: white;
+    padding: 0;
+    border-radius: var(--radius);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-header {
+    border-bottom: 2px solid #e5e7eb;
+    padding: 24px 24px 16px 24px;
+    margin-bottom: 0;
+  }
+
+  .modal-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .modal-footer {
+    border-top: 2px solid #e5e7eb;
+    padding: 16px 24px 24px 24px;
+    margin-top: 0;
+    background: white;
+  }
+
+  .form-group-modal {
+    margin-bottom: 14px;
+  }
+
+  /* === ESTILOS DE TABS === */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 24px;
+    gap: 0;
+  }
+
+  .tab-btn {
+    padding: 14px 28px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    position: relative;
+    outline: none;
+  }
+
+  .tab-btn:hover {
+    color: #374151;
+    background: rgba(59, 130, 246, 0.08);
+    border-bottom-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .tab-btn.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  .tab-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+  }
+
+  .tab-content.active {
+    display: block !important;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  #tabBloqueos.active {
+    display: block !important;
+    visibility: visible !important;
+    min-height: 400px;
+  }
+
+  #tabReservas.active {
+    display: block !important;
+    visibility: visible !important;
+  }
 </style>
 
 <script>
@@ -329,105 +566,110 @@ import Navbar from '../components/Navbar.astro';
   let reservasFiltradas = [];
   let espacios = [];
   let accionActual = null;
-  
+
   async function verificarAdmin() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+
     if (!user.id) {
-      window.location.href = '/login';
+      window.location.href = "/login";
       return false;
     }
-    
-    if (user.rol !== 'admin') {
-      showError('No tienes permisos de administrador', 'Acceso Denegado', '🚫');
+
+    if (user.rol !== "admin") {
+      showError("No tienes permisos de administrador", "Acceso Denegado", "🚫");
       setTimeout(() => {
-        window.location.href = '/espacios';
+        window.location.href = "/espacios";
       }, 2000);
       return false;
     }
-    
+
     return true;
   }
-  
+
   async function cargarEspacios() {
     try {
-      const response = await fetch('/api/espacios');
+      const response = await fetch("/api/espacios");
       const data = await response.json();
-      
+
       if (data.success) {
         espacios = data.data;
-        const select = document.getElementById('espacioFilter');
+        const select = document.getElementById("espacioFilter");
         if (select) {
-          select.innerHTML = '<option value="">Todos los espacios</option>' +
-            espacios.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
+          select.innerHTML =
+            '<option value="">Todos los espacios</option>' +
+            espacios
+              .map((e) => `<option value="${e.id}">${e.nombre}</option>`)
+              .join("");
         }
       }
     } catch (error) {
-      console.error('Error al cargar espacios:', error);
+      console.error("Error al cargar espacios:", error);
     }
   }
-  
+
   async function cargarReservas() {
-    if (!await verificarAdmin()) return;
-    
-    const loading = document.getElementById('loading');
-    const table = document.getElementById('reservasTable');
-    
+    if (!(await verificarAdmin())) return;
+
+    const loading = document.getElementById("loading");
+    const table = document.getElementById("reservasTable");
+
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/reservas', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/reservas", {
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      
-      if (loading) loading.style.display = 'none';
-      
+
+      if (loading) loading.style.display = "none";
+
       if (data.success) {
         todasReservas = data.data;
-        
+
         // Marcar automáticamente como completadas las reservas pasadas
         await marcarReservasPasadasComoCompletadas();
-        
+
         reservasFiltradas = todasReservas;
-        if (table) table.style.display = 'block';
+        if (table) table.style.display = "block";
         mostrarReservas();
         actualizarEstadisticas();
       }
     } catch (error) {
-      if (loading) loading.innerHTML = '<div class="alert alert-error">Error al cargar reservas</div>';
+      if (loading)
+        loading.innerHTML =
+          '<div class="alert alert-error">Error al cargar reservas</div>';
     }
   }
-  
+
   async function marcarReservasPasadasComoCompletadas() {
     const ahora = new Date();
-    const token = localStorage.getItem('token');
-    
+    const token = localStorage.getItem("token");
+
     for (const reserva of todasReservas) {
       // Solo procesar reservas confirmadas
-      if (reserva.estado !== 'confirmada') continue;
-      
+      if (reserva.estado !== "confirmada") continue;
+
       // Parsear fecha y hora
       const fechaReserva = new Date(reserva.fecha);
-      const [horaFin, minutoFin] = reserva.horaFin.split(':').map(Number);
-      
+      const [horaFin, minutoFin] = reserva.horaFin.split(":").map(Number);
+
       // Crear fecha/hora completa de fin de reserva
       const fechaHoraFin = new Date(fechaReserva);
       fechaHoraFin.setHours(horaFin, minutoFin, 0, 0);
-      
+
       // Si ya pasó la hora de fin, marcar como completada
       if (fechaHoraFin < ahora) {
         try {
           const response = await fetch(`/api/reservas/${reserva.id}`, {
-            method: 'PATCH',
+            method: "PATCH",
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ estado: 'completada' })
+            body: JSON.stringify({ estado: "completada" }),
           });
-          
+
           if (response.ok) {
-            reserva.estado = 'completada';
+            reserva.estado = "completada";
           }
         } catch (error) {
           console.error(`Error al actualizar reserva ${reserva.id}:`, error);
@@ -435,89 +677,100 @@ import Navbar from '../components/Navbar.astro';
       }
     }
   }
-  
+
   function actualizarEstadisticas() {
-    const hoy = new Date().toISOString().split('T')[0];
+    const hoy = new Date().toISOString().split("T")[0];
     const mesActual = new Date().getMonth();
     const añoActual = new Date().getFullYear();
-    
-    const statPendientes = document.getElementById('statPendientes');
-    const statConfirmadas = document.getElementById('statConfirmadas');
-    const statHoy = document.getElementById('statHoy');
-    const statTotal = document.getElementById('statTotal');
-    
+
+    const statPendientes = document.getElementById("statPendientes");
+    const statConfirmadas = document.getElementById("statConfirmadas");
+    const statHoy = document.getElementById("statHoy");
+    const statTotal = document.getElementById("statTotal");
+
     if (statPendientes) {
-      statPendientes.textContent = todasReservas.filter(r => r.estado === 'pendiente').length.toString();
+      statPendientes.textContent = todasReservas
+        .filter((r) => r.estado === "pendiente")
+        .length.toString();
     }
-    
+
     if (statConfirmadas) {
-      statConfirmadas.textContent = todasReservas.filter(r => r.estado === 'confirmada').length.toString();
+      statConfirmadas.textContent = todasReservas
+        .filter((r) => r.estado === "confirmada")
+        .length.toString();
     }
-    
+
     if (statHoy) {
-      statHoy.textContent = todasReservas.filter(r => r.fecha === hoy).length.toString();
+      statHoy.textContent = todasReservas
+        .filter((r) => r.fecha === hoy)
+        .length.toString();
     }
-    
+
     if (statTotal) {
-      statTotal.textContent = todasReservas.filter(r => {
-        const fecha = new Date(r.fecha);
-        return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
-      }).length.toString();
+      statTotal.textContent = todasReservas
+        .filter((r) => {
+          const fecha = new Date(r.fecha);
+          return (
+            fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual
+          );
+        })
+        .length.toString();
     }
   }
-  
+
   function aplicarFiltros() {
-    const fechaFilter = document.getElementById('fechaFilter');
-    const espacioFilter = document.getElementById('espacioFilter');
-    const estadoFilter = document.getElementById('estadoFilter');
-    
-    const fecha = fechaFilter?.value || '';
-    const espacioId = espacioFilter?.value || '';
-    const estado = estadoFilter?.value || '';
-    
-    reservasFiltradas = todasReservas.filter(r => {
+    const fechaFilter = document.getElementById("fechaFilter");
+    const espacioFilter = document.getElementById("espacioFilter");
+    const estadoFilter = document.getElementById("estadoFilter");
+
+    const fecha = fechaFilter?.value || "";
+    const espacioId = espacioFilter?.value || "";
+    const estado = estadoFilter?.value || "";
+
+    reservasFiltradas = todasReservas.filter((r) => {
       if (fecha && r.fecha !== fecha) return false;
       if (espacioId && r.espacioId !== parseInt(espacioId)) return false;
       if (estado && r.estado !== estado) return false;
       return true;
     });
-    
+
     mostrarReservas();
   }
-  
+
   function mostrarReservas() {
-    const tbody = document.getElementById('reservasBody');
-    const noReservas = document.getElementById('noReservas');
-    const table = document.getElementById('reservasTable');
-    const conteo = document.getElementById('conteoReservas');
-    
+    const tbody = document.getElementById("reservasBody");
+    const noReservas = document.getElementById("noReservas");
+    const table = document.getElementById("reservasTable");
+    const conteo = document.getElementById("conteoReservas");
+
     if (conteo) {
       conteo.textContent = `Mostrando ${reservasFiltradas.length} de ${todasReservas.length} reservas`;
     }
-    
+
     if (reservasFiltradas.length === 0) {
-      if (table) table.style.display = 'none';
-      if (noReservas) noReservas.style.display = 'block';
+      if (table) table.style.display = "none";
+      if (noReservas) noReservas.style.display = "block";
       return;
     }
-    
-    if (table) table.style.display = 'block';
-    if (noReservas) noReservas.style.display = 'none';
-    
+
+    if (table) table.style.display = "block";
+    if (noReservas) noReservas.style.display = "none";
+
     if (tbody) {
-      tbody.innerHTML = reservasFiltradas.map(r => {
-        // Verificar si la reserva ya pasó
-        const fechaReserva = new Date(r.fecha);
-        const [horaFin, minutoFin] = r.horaFin.split(':').map(Number);
-        const fechaHoraFin = new Date(fechaReserva);
-        fechaHoraFin.setHours(horaFin, minutoFin, 0, 0);
-        const yaPaso = fechaHoraFin < new Date();
-        
-        return `
+      tbody.innerHTML = reservasFiltradas
+        .map((r) => {
+          // Verificar si la reserva ya pasó
+          const fechaReserva = new Date(r.fecha);
+          const [horaFin, minutoFin] = r.horaFin.split(":").map(Number);
+          const fechaHoraFin = new Date(fechaReserva);
+          fechaHoraFin.setHours(horaFin, minutoFin, 0, 0);
+          const yaPaso = fechaHoraFin < new Date();
+
+          return `
       <tr>
         <td>#${r.id}</td>
         <td>
-          <div>${r.usuario.nombre} ${r.usuario.apellido || ''}</div>
+          <div>${r.usuario.nombre} ${r.usuario.apellido || ""}</div>
           <div style="font-size: 12px; color: var(--text-light);">${r.usuario.email}</div>
         </td>
         <td>${r.espacio.nombre}</td>
@@ -527,160 +780,175 @@ import Navbar from '../components/Navbar.astro';
         <td>S/ ${r.montoPagado || 0}</td>
         <td>
           <div class="flex gap-1" style="flex-wrap: wrap;">
-            ${r.estado === 'pendiente' ? 
-              `<button class="btn btn-sm btn-success" onclick="cambiarEstado(${r.id}, 'confirmada')">Confirmar</button>` : ''}
-            ${r.estado === 'confirmada' && yaPaso ? 
-              `<button class="btn btn-sm btn-info" onclick="cambiarEstado(${r.id}, 'completada')">Completar</button>` : ''}
-            ${r.estado !== 'cancelada' && r.estado !== 'completada' ? 
-              `<button class="btn btn-sm btn-danger" onclick="abrirModalCancelar(${r.id})">Cancelar</button>` : ''}
+            ${
+              r.estado === "pendiente"
+                ? `<button class="btn btn-sm btn-success" onclick="cambiarEstado(${r.id}, 'confirmada')">Confirmar</button>`
+                : ""
+            }
+            ${
+              r.estado === "confirmada" && yaPaso
+                ? `<button class="btn btn-sm btn-info" onclick="cambiarEstado(${r.id}, 'completada')">Completar</button>`
+                : ""
+            }
+            ${
+              r.estado !== "cancelada" && r.estado !== "completada"
+                ? `<button class="btn btn-sm btn-danger" onclick="abrirModalCancelar(${r.id})">Cancelar</button>`
+                : ""
+            }
           </div>
         </td>
       </tr>
     `;
-      }).join('');
+        })
+        .join("");
     }
   }
-  
+
   function formatFecha(fecha) {
     // Si la fecha ya es un objeto Date válido
     let fechaObj = fecha;
-    
+
     // Si la fecha viene como string (ISO o YYYY-MM-DD)
-    if (typeof fecha === 'string') {
+    if (typeof fecha === "string") {
       // Intentar formato YYYY-MM-DD
-      if (fecha.includes('-') && !fecha.includes('T')) {
-        fechaObj = new Date(fecha + 'T00:00:00');
+      if (fecha.includes("-") && !fecha.includes("T")) {
+        fechaObj = new Date(fecha + "T00:00:00");
       } else {
         fechaObj = new Date(fecha);
       }
     }
-    
+
     // Verificar que sea válida
     if (isNaN(fechaObj.getTime())) {
-      return 'Fecha inválida';
+      return "Fecha inválida";
     }
-    
-    return fechaObj.toLocaleDateString('es-ES', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric' 
+
+    return fechaObj.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
   }
-  
+
   function getBadgeColor(estado) {
     const colors = {
-      'pendiente': 'warning',
-      'confirmada': 'success',
-      'completada': 'info',
-      'cancelada': 'secondary'
+      pendiente: "warning",
+      confirmada: "success",
+      completada: "info",
+      cancelada: "secondary",
     };
-    return colors[estado] || 'secondary';
+    return colors[estado] || "secondary";
   }
-  
+
   window.cambiarEstado = (id, nuevoEstado) => {
-    accionActual = { id, tipo: 'cambiarEstado', estado: nuevoEstado };
-    
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const motivoGroup = document.getElementById('motivoGroup');
-    const confirmarBtn = document.getElementById('confirmarAccion');
-    const modalAlert = document.getElementById('modalAlert');
-    const modal = document.getElementById('actionModal');
-    
-    if (modalTitle) modalTitle.textContent = 'Cambiar Estado';
-    if (modalMessage) modalMessage.textContent = `¿Confirmar cambio de estado a ${nuevoEstado.toUpperCase()}?`;
-    if (motivoGroup) motivoGroup.style.display = 'none';
-    if (confirmarBtn) confirmarBtn.className = 'btn btn-primary';
-    if (modalAlert) modalAlert.innerHTML = '';
-    if (modal) modal.classList.add('active');
+    accionActual = { id, tipo: "cambiarEstado", estado: nuevoEstado };
+
+    const modalTitle = document.getElementById("actionModalTitle");
+    const modalMessage = document.getElementById("actionModalMessage");
+    const motivoGroup = document.getElementById("motivoGroup");
+    const confirmarBtn = document.getElementById("confirmarAccion");
+    const modalAlert = document.getElementById("actionModalAlert");
+    const modal = document.getElementById("actionModal");
+
+    if (modalTitle) modalTitle.textContent = "Cambiar Estado";
+    if (modalMessage)
+      modalMessage.textContent = `¿Confirmar cambio de estado a ${nuevoEstado.toUpperCase()}?`;
+    if (motivoGroup) motivoGroup.style.display = "none";
+    if (confirmarBtn) confirmarBtn.className = "btn btn-primary";
+    if (modalAlert) modalAlert.innerHTML = "";
+    if (modal) modal.classList.add("active");
   };
-  
+
   window.abrirModalCancelar = (id) => {
-    accionActual = { id, tipo: 'cancelar' };
-    
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMessage = document.getElementById('modalMessage');
-    const motivoGroup = document.getElementById('motivoGroup');
-    const motivoInput = document.getElementById('motivoInput');
-    const confirmarBtn = document.getElementById('confirmarAccion');
-    const modalAlert = document.getElementById('modalAlert');
-    const modal = document.getElementById('actionModal');
-    
-    if (modalTitle) modalTitle.textContent = 'Cancelar Reserva';
-    if (modalMessage) modalMessage.textContent = '¿Estás seguro de cancelar esta reserva?';
-    if (motivoGroup) motivoGroup.style.display = 'block';
-    if (motivoInput) motivoInput.value = '';
-    if (confirmarBtn) confirmarBtn.className = 'btn btn-danger';
-    if (modalAlert) modalAlert.innerHTML = '';
-    if (modal) modal.classList.add('active');
+    accionActual = { id, tipo: "cancelar" };
+
+    const modalTitle = document.getElementById("actionModalTitle");
+    const modalMessage = document.getElementById("actionModalMessage");
+    const motivoGroup = document.getElementById("motivoGroup");
+    const motivoInput = document.getElementById("motivoInput");
+    const confirmarBtn = document.getElementById("confirmarAccion");
+    const modalAlert = document.getElementById("actionModalAlert");
+    const modal = document.getElementById("actionModal");
+
+    if (modalTitle) modalTitle.textContent = "Cancelar Reserva";
+    if (modalMessage)
+      modalMessage.textContent = "¿Estás seguro de cancelar esta reserva?";
+    if (motivoGroup) motivoGroup.style.display = "block";
+    if (motivoInput) motivoInput.value = "";
+    if (confirmarBtn) confirmarBtn.className = "btn btn-danger";
+    if (modalAlert) modalAlert.innerHTML = "";
+    if (modal) modal.classList.add("active");
   };
-  
+
   window.cerrarModal = () => {
-    const modal = document.getElementById('actionModal');
-    if (modal) modal.classList.remove('active');
+    const modal = document.getElementById("actionModal");
+    if (modal) modal.classList.remove("active");
     accionActual = null;
   };
-  
-  const btnConfirmar = document.getElementById('confirmarAccion');
+
+  const btnConfirmar = document.getElementById("confirmarAccion");
   if (btnConfirmar) {
-    btnConfirmar.addEventListener('click', async () => {
+    btnConfirmar.addEventListener("click", async () => {
       if (!accionActual) return;
-      
-      const btn = document.getElementById('confirmarAccion');
-      const alertDiv = document.getElementById('modalAlert');
-      
+
+      const btn = document.getElementById("confirmarAccion");
+      const alertDiv = document.getElementById("actionModalAlert");
+
       if (btn) {
         btn.disabled = true;
-        btn.textContent = 'Procesando...';
+        btn.textContent = "Procesando...";
       }
-      if (alertDiv) alertDiv.innerHTML = '';
-      
+      if (alertDiv) alertDiv.innerHTML = "";
+
       try {
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+
         let response;
-        if (accionActual.tipo === 'cambiarEstado') {
+        if (accionActual.tipo === "cambiarEstado") {
           response = await fetch(`/api/reservas/${accionActual.id}`, {
-            method: 'PATCH',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ estado: accionActual.estado }),
           });
-        } else if (accionActual.tipo === 'cancelar') {
+        } else if (accionActual.tipo === "cancelar") {
           response = await fetch(`/api/reservas/${accionActual.id}`, {
-            method: 'DELETE',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ 
-              motivoCancelacion: document.getElementById('motivoInput')?.value || null,
-              canceladoPor: user.id
+            body: JSON.stringify({
+              motivoCancelacion:
+                document.getElementById("motivoInput")?.value || null,
+              canceladoPor: user.id,
             }),
           });
         }
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
-          if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-success">Operación exitosa</div>';
-          
+          if (alertDiv)
+            alertDiv.innerHTML =
+              '<div class="alert alert-success">Operación exitosa</div>';
+
           // Actualizar la reserva en la lista local en lugar de recargar todo
-          if (accionActual.tipo === 'cambiarEstado') {
-            const reserva = todasReservas.find(r => r.id === accionActual.id);
+          if (accionActual.tipo === "cambiarEstado") {
+            const reserva = todasReservas.find((r) => r.id === accionActual.id);
             if (reserva) {
               reserva.estado = accionActual.estado;
             }
-          } else if (accionActual.tipo === 'cancelar') {
-            const reserva = todasReservas.find(r => r.id === accionActual.id);
+          } else if (accionActual.tipo === "cancelar") {
+            const reserva = todasReservas.find((r) => r.id === accionActual.id);
             if (reserva) {
-              reserva.estado = 'cancelada';
+              reserva.estado = "cancelada";
             }
           }
-          
+
           setTimeout(() => {
             cerrarModal();
             // Solo actualizar la vista, no recargar desde el servidor
@@ -688,164 +956,177 @@ import Navbar from '../components/Navbar.astro';
             actualizarEstadisticas();
           }, 1000);
         } else {
-          if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+          if (alertDiv)
+            alertDiv.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
           if (btn) {
             btn.disabled = false;
-            btn.textContent = 'Confirmar';
+            btn.textContent = "Confirmar";
           }
         }
       } catch (error) {
-        if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-error">Error al procesar operación</div>';
+        if (alertDiv)
+          alertDiv.innerHTML =
+            '<div class="alert alert-error">Error al procesar operación</div>';
         if (btn) {
           btn.disabled = false;
-          btn.textContent = 'Confirmar';
+          btn.textContent = "Confirmar";
         }
       }
     });
   }
-  
+
   window.limpiarFiltros = () => {
-    const fechaFilter = document.getElementById('fechaFilter');
-    const espacioFilter = document.getElementById('espacioFilter');
-    const estadoFilter = document.getElementById('estadoFilter');
-    
-    if (fechaFilter) fechaFilter.value = '';
-    if (espacioFilter) espacioFilter.value = '';
-    if (estadoFilter) estadoFilter.value = '';
-    
+    const fechaFilter = document.getElementById("fechaFilter");
+    const espacioFilter = document.getElementById("espacioFilter");
+    const estadoFilter = document.getElementById("estadoFilter");
+
+    if (fechaFilter) fechaFilter.value = "";
+    if (espacioFilter) espacioFilter.value = "";
+    if (estadoFilter) estadoFilter.value = "";
+
     reservasFiltradas = todasReservas;
     mostrarReservas();
   };
-  
-  const fechaFilter = document.getElementById('fechaFilter');
-  const espacioFilter = document.getElementById('espacioFilter');
-  const estadoFilter = document.getElementById('estadoFilter');
-  
-  if (fechaFilter) fechaFilter.addEventListener('change', aplicarFiltros);
-  if (espacioFilter) espacioFilter.addEventListener('change', aplicarFiltros);
-  if (estadoFilter) estadoFilter.addEventListener('change', aplicarFiltros);
-  
+
+  const fechaFilter = document.getElementById("fechaFilter");
+  const espacioFilter = document.getElementById("espacioFilter");
+  const estadoFilter = document.getElementById("estadoFilter");
+
+  if (fechaFilter) fechaFilter.addEventListener("change", aplicarFiltros);
+  if (espacioFilter) espacioFilter.addEventListener("change", aplicarFiltros);
+  if (estadoFilter) estadoFilter.addEventListener("change", aplicarFiltros);
+
   cargarEspacios();
   cargarReservas();
-  
+
   // ============================================
   // FUNCIONES DE TABS
   // ============================================
-  
+
   window.cambiarTab = (tab) => {
-    console.log('🔄 Cambiando a tab:', tab);
-    
     // Actualizar botones
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    // Actualizar contenido
-    document.getElementById('tabReservas').style.display = tab === 'reservas' ? 'block' : 'none';
-    document.getElementById('tabBloqueos').style.display = tab === 'bloqueos' ? 'block' : 'none';
-    
-    if (tab === 'bloqueos') {
-      console.log('🔧 Inicializando tab de bloqueos...');
-      
-      // Forzar inicialización completa
-      setTimeout(() => {
-        console.log('⚡ Iniciando carga de espacios y bloqueos...');
-        cargarEspaciosBloqueo();
-        cargarBloqueos();
-        
-        // Verificar estado tras 2 segundos
-        setTimeout(() => {
-          const selectEspacio = document.getElementById('bloqueoEspacio');
-          const selectFilter = document.getElementById('bloqueoEspacioFilter');
-          console.log('🏢 Estado de selects:');
-          console.log('  Modal select opciones:', selectEspacio?.options?.length || 0);
-          console.log('  Filter select opciones:', selectFilter?.options?.length || 0);
-        }, 2000);
-      }, 100);
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    tabBtns.forEach((btn) => btn.classList.remove("active"));
+
+    // Encontrar y activar el botón correcto
+    const targetBtn = Array.from(tabBtns).find(
+      (btn) =>
+        (tab === "reservas" &&
+          btn.textContent.includes("Reservas") &&
+          !btn.textContent.includes("Bloqueos")) ||
+        (tab === "bloqueos" && btn.textContent.includes("Bloqueos")),
+    );
+
+    if (targetBtn) {
+      targetBtn.classList.add("active");
+    }
+
+    // Actualizar contenido - ocultar ambos tabs primero
+    const tabReservas = document.getElementById("tabReservas");
+    const tabBloqueos = document.getElementById("tabBloqueos");
+
+    if (tabReservas) {
+      tabReservas.style.display = "none";
+      tabReservas.classList.remove("active");
+    }
+
+    if (tabBloqueos) {
+      tabBloqueos.style.display = "none";
+      tabBloqueos.classList.remove("active");
+    }
+
+    // Mostrar el tab correcto
+    if (tab === "reservas" && tabReservas) {
+      tabReservas.style.display = "block";
+      tabReservas.classList.add("active");
+    } else if (tab === "bloqueos" && tabBloqueos) {
+      tabBloqueos.style.display = "block";
+      tabBloqueos.classList.add("active");
+
+      // Mostrar loading inicial
+      const loadingEl = document.getElementById("loadingBloqueos");
+      const tableEl = document.getElementById("bloqueosTable");
+      const noDataEl = document.getElementById("noBloqueos");
+
+      if (loadingEl) loadingEl.style.display = "block";
+      if (tableEl) tableEl.style.display = "none";
+      if (noDataEl) noDataEl.style.display = "none";
+
+      // Cargar datos de bloqueos
+      cargarEspaciosBloqueo();
+      cargarBloqueos();
     }
   };
-  
+
   // ============================================
   // FUNCIONES DE BLOQUEOS
   // ============================================
-  
+
   let todosBloqueos = [];
   let bloqueosFiltrados = [];
-  
+
   async function cargarBloqueos() {
-    const loadingEl = document.getElementById('loadingBloqueos');
-    const tableEl = document.getElementById('bloqueosTable');
-    const noDataEl = document.getElementById('noBloqueos');
-    
-    console.log('🔧 Iniciando carga de bloqueos...');
-    
-    if (loadingEl) loadingEl.style.display = 'block';
-    if (tableEl) tableEl.style.display = 'none';
-    if (noDataEl) noDataEl.style.display = 'none';
-    
+    const loadingEl = document.getElementById("loadingBloqueos");
+    const tableEl = document.getElementById("bloqueosTable");
+    const noDataEl = document.getElementById("noBloqueos");
+
+    if (loadingEl) loadingEl.style.display = "block";
+    if (tableEl) tableEl.style.display = "none";
+    if (noDataEl) noDataEl.style.display = "none";
+
     try {
-      const token = localStorage.getItem('token');
-      console.log('🔑 Token disponible:', !!token);
-      
-      const espacioFilter = document.getElementById('bloqueoEspacioFilter')?.value || '';
-      const activoFilter = document.getElementById('bloqueoActivoFilter')?.value || '';
-      
-      let url = '/api/bloqueos';
+      const token = localStorage.getItem("token");
+
+      const espacioFilter =
+        document.getElementById("bloqueoEspacioFilter")?.value || "";
+      const activoFilter =
+        document.getElementById("bloqueoActivoFilter")?.value || "";
+
+      let url = "/api/bloqueos";
       const params = [];
       if (espacioFilter) params.push(`espacioId=${espacioFilter}`);
       if (activoFilter) params.push(`activo=${activoFilter}`);
-      if (params.length > 0) url += '?' + params.join('&');
-      
-      console.log('🌐 Haciendo petición a:', url);
-      
+      if (params.length > 0) url += "?" + params.join("&");
+
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
-      console.log('📡 Response status:', response.status);
+
       const data = await response.json();
-      console.log('📄 Response data:', data);
-      
+
       if (data.success) {
         todosBloqueos = data.data;
         bloqueosFiltrados = todosBloqueos;
-        console.log('✅ Bloqueos cargados:', todosBloqueos.length);
         mostrarBloqueos();
       } else {
-        console.error('❌ Error en response:', data.error);
         if (noDataEl) {
           noDataEl.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
-          noDataEl.style.display = 'block';
+          noDataEl.style.display = "block";
         }
       }
     } catch (error) {
-      console.error('💥 Error al cargar bloqueos:', error);
       if (noDataEl) {
         noDataEl.innerHTML = `<p style="color: red;">Error al cargar bloqueos: ${error.message}</p>`;
-        noDataEl.style.display = 'block';
+        noDataEl.style.display = "block";
       }
     } finally {
-      if (loadingEl) loadingEl.style.display = 'none';
+      if (loadingEl) loadingEl.style.display = "none";
     }
   }
-  
+
   function mostrarBloqueos() {
-    const tableEl = document.getElementById('bloqueosTable');
-    const bodyEl = document.getElementById('bloqueosBody');
-    const noDataEl = document.getElementById('noBloqueos');
-    
-    console.log('📋 Mostrando bloqueos. Total encontrados:', bloqueosFiltrados.length);
-    
+    const tableEl = document.getElementById("bloqueosTable");
+    const bodyEl = document.getElementById("bloqueosBody");
+    const noDataEl = document.getElementById("noBloqueos");
+
     if (!bodyEl) {
-      console.error('❌ Element bloqueosBody not found');
       return;
     }
-    
+
     if (bloqueosFiltrados.length === 0) {
-      console.log('📝 No hay bloqueos para mostrar');
-      if (tableEl) tableEl.style.display = 'none';
+      if (tableEl) tableEl.style.display = "none";
       if (noDataEl) {
         noDataEl.innerHTML = `
           <div style="text-align: center; padding: 40px; color: var(--text-light);">
@@ -863,25 +1144,26 @@ import Navbar from '../components/Navbar.astro';
             </button>
           </div>
         `;
-        noDataEl.style.display = 'block';
+        noDataEl.style.display = "block";
       }
       return;
     }
-    
-    console.log('🔧 Generando tabla con bloqueos...');
-    
-    if (tableEl) tableEl.style.display = 'block';
-    if (noDataEl) noDataEl.style.display = 'none';
-    
-    bodyEl.innerHTML = bloqueosFiltrados.map(b => {
-      const fechaInicio = new Date(b.fechaInicio).toLocaleDateString('es-ES');
-      const fechaFin = new Date(b.fechaFin).toLocaleDateString('es-ES');
-      const horario = b.todoElDia ? 'Todo el día' : `${b.horaInicio} - ${b.horaFin}`;
-      const estadoBadge = b.activo 
-        ? '<span class="badge badge-success">Activo</span>'
-        : '<span class="badge badge-secondary">Inactivo</span>';
-      
-      return `
+
+    if (tableEl) tableEl.style.display = "block";
+    if (noDataEl) noDataEl.style.display = "none";
+
+    bodyEl.innerHTML = bloqueosFiltrados
+      .map((b) => {
+        const fechaInicio = new Date(b.fechaInicio).toLocaleDateString("es-ES");
+        const fechaFin = new Date(b.fechaFin).toLocaleDateString("es-ES");
+        const horario = b.todoElDia
+          ? "Todo el día"
+          : `${b.horaInicio} - ${b.horaFin}`;
+        const estadoBadge = b.activo
+          ? '<span class="badge badge-success">Activo</span>'
+          : '<span class="badge badge-secondary">Inactivo</span>';
+
+        return `
         <tr>
           <td>${b.id}</td>
           <td><strong>${b.espacio.nombre}</strong><br><small>${b.espacio.tipo}</small></td>
@@ -891,320 +1173,427 @@ import Navbar from '../components/Navbar.astro';
           <td>${b.motivo}</td>
           <td>${estadoBadge}</td>
           <td>
-            ${b.activo ? `<button class="btn btn-sm btn-danger" onclick="desactivarBloqueo(${b.id})">Desactivar</button>` : ''}
+            ${b.activo ? `<button class="btn btn-sm btn-danger" onclick="desactivarBloqueo(${b.id})">Desactivar</button>` : ""}
           </td>
         </tr>
       `;
-    }).join('');
-    
-    console.log('✅ Tabla generada correctamente');
+      })
+      .join("");
   }
-  
+
+  // Función auxiliar para escapar HTML y prevenir problemas de renderizado
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   window.desactivarBloqueo = async (id) => {
-    const confirmed = await showConfirm(
-      '¿Deseas desactivar este bloqueo? Los horarios volverán a estar disponibles.',
-      'Confirmar Desactivación',
-      '⚠️'
+    const bloqueo = todosBloqueos.find((b) => b.id === id);
+
+    if (!bloqueo) {
+      showError(
+        "No se encontró el bloqueo. Intenta recargar la página.",
+        "Error",
+        "❌",
+      );
+      return;
+    }
+
+    const fechaInicio = new Date(bloqueo.fechaInicio).toLocaleDateString(
+      "es-ES",
+      { day: "2-digit", month: "short", year: "numeric" },
     );
-    
+    const fechaFin = new Date(bloqueo.fechaFin).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+    const horario = bloqueo.todoElDia
+      ? "Todo el día"
+      : `${escapeHtml(bloqueo.horaInicio)} - ${escapeHtml(bloqueo.horaFin)}`;
+
+    // Escapar las variables que vienen de la base de datos para evitar romper el HTML
+    const nombreEspacio = escapeHtml(bloqueo.espacio?.nombre || 'Sin nombre');
+    const motivo = escapeHtml(bloqueo.motivo || 'Sin motivo especificado');
+
+    const mensaje = `<div style="text-align: left; margin: 16px 0;"><p style="margin-bottom: 12px; font-size: 15px;">Se desactivará el siguiente bloqueo de mantenimiento:</p><div style="background: #F3F4F6; padding: 14px; border-radius: 8px; margin-bottom: 12px;"><p style="margin: 6px 0; font-size: 14px;"><strong>Espacio:</strong> ${nombreEspacio}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Período:</strong> ${fechaInicio} - ${fechaFin}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Horario:</strong> ${horario}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Motivo:</strong> ${motivo}</p></div><p style="color: #059669; margin-top: 12px; font-size: 14px;">✓ Los horarios volverán a estar disponibles para reservas.</p></div>`;
+
+    const confirmed = await showConfirm(
+      mensaje,
+      "Confirmar Desactivación de Bloqueo",
+      "⚠️",
+    );
+
     if (!confirmed) return;
-    
+
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await fetch(`/api/bloqueos/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
-        showSuccess('Bloqueo desactivado correctamente', '¡Listo!', '✅');
+        showSuccess(
+          `El bloqueo de <strong>${escapeHtml(bloqueo.espacio?.nombre || 'Sin nombre')}</strong> ha sido desactivado. Los horarios ya están disponibles para nuevas reservas.`,
+          "¡Bloqueo Desactivado!",
+          "✅",
+        );
         cargarBloqueos();
       } else {
-        showError('Error: ' + data.error, 'Error', '❌');
+        showError("Error: " + escapeHtml(data.error || 'Error desconocido'), "Error", "❌");
       }
     } catch (error) {
-      console.error('Error:', error);
-      showError('Error al desactivar bloqueo', 'Error de Conexión', '❌');
+      console.error("Error:", error);
+      showError(
+        "No se pudo conectar con el servidor. Verifica tu conexión.",
+        "Error de Conexión",
+        "❌",
+      );
     }
   };
-  
-  window.limpiarFiltrosBloqueos = () => {
-    const espacioFilter = document.getElementById('bloqueoEspacioFilter');
-    const activoFilter = document.getElementById('bloqueoActivoFilter');
-    
-    if (espacioFilter) espacioFilter.value = '';
-    if (activoFilter) activoFilter.value = '';
-    
-    cargarBloqueos();
-  };
-  
-  // Event listeners para filtros de bloqueos
-  const bloqueoEspacioFilter = document.getElementById('bloqueoEspacioFilter');
-  const bloqueoActivoFilter = document.getElementById('bloqueoActivoFilter');
-  
-  if (bloqueoEspacioFilter) bloqueoEspacioFilter.addEventListener('change', cargarBloqueos);
-  if (bloqueoActivoFilter) bloqueoActivoFilter.addEventListener('change', cargarBloqueos);
 
   window.limpiarFiltrosBloqueos = () => {
-    if (bloqueoEspacioFilter) bloqueoEspacioFilter.value = '';
-    if (bloqueoActivoFilter) bloqueoActivoFilter.value = '';
+    const espacioFilter = document.getElementById("bloqueoEspacioFilter");
+    const activoFilter = document.getElementById("bloqueoActivoFilter");
+
+    if (espacioFilter) espacioFilter.value = "";
+    if (activoFilter) activoFilter.value = "";
+
     cargarBloqueos();
   };
-  
-  // DIAGNÓSTICO COMPLETO
-  setTimeout(() => {
-    console.log('🧪 === DIAGNÓSTICO DE BLOQUEOS ===');
-    
-    // 1. Verificar elementos DOM
-    const elementosDOM = {
-      'tabBloqueos': document.getElementById('tabBloqueos'),
-      'loadingBloqueos': document.getElementById('loadingBloqueos'), 
-      'bloqueosTable': document.getElementById('bloqueosTable'),
-      'noBloqueos': document.getElementById('noBloqueos'),
-      'bloqueoEspacio': document.getElementById('bloqueoEspacio'),
-      'bloqueoEspacioFilter': document.getElementById('bloqueoEspacioFilter')
-    };
-    
-    console.log('📋 Elementos DOM:');
-    Object.entries(elementosDOM).forEach(([name, el]) => {
-      console.log(`  ${name}: ${!!el} ${el ? '✅' : '❌'}`);
-    });
-    
-    // 2. Test API espacios
-    async function testEspacios() {
-      try {
-        console.log('🏢 Testeando API de espacios...');
-        const response = await fetch('/api/espacios');
-        const data = await response.json();
-        console.log('🏢 Respuesta espacios:', data.success ? `${data.data.length} espacios` : 'ERROR');
-      } catch (error) {
-        console.error('❌ Error en API espacios:', error);
-      }
-    }
-    
-    // 3. Test API bloqueos
-    async function testBloqueos() {
-      try {
-        console.log('🔧 Testeando API de bloqueos...');
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/bloqueos', {
-          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-        });
-        const data = await response.json();
-        console.log('🔧 Respuesta bloqueos:', response.status, data);
-      } catch (error) {
-        console.error('❌ Error en API bloqueos:', error);
-      }
-    }
-    
-    testEspacios();
-    testBloqueos();
-    
-    // Si estamos en el tab de bloqueos, inicializar automáticamente
-    const tabBloqueos = document.getElementById('tabBloqueos');
-    if (tabBloqueos && tabBloqueos.style.display !== 'none') {
-      console.log('🔧 Tab de bloqueos visible, inicializando...');
+
+  // Event listeners para filtros de bloqueos
+  const bloqueoEspacioFilter = document.getElementById("bloqueoEspacioFilter");
+  const bloqueoActivoFilter = document.getElementById("bloqueoActivoFilter");
+
+  if (bloqueoEspacioFilter)
+    bloqueoEspacioFilter.addEventListener("change", cargarBloqueos);
+  if (bloqueoActivoFilter)
+    bloqueoActivoFilter.addEventListener("change", cargarBloqueos);
+
+  window.limpiarFiltrosBloqueos = () => {
+    if (bloqueoEspacioFilter) bloqueoEspacioFilter.value = "";
+    if (bloqueoActivoFilter) bloqueoActivoFilter.value = "";
+    cargarBloqueos();
+  };
+
+  // Inicialización al cargar la página
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabBloqueos = document.getElementById("tabBloqueos");
+    const activeTabBtn = document.querySelector(".tab-btn.active");
+
+    if (
+      activeTabBtn &&
+      activeTabBtn.textContent.includes("Bloqueos") &&
+      tabBloqueos
+    ) {
       cargarEspaciosBloqueo();
       cargarBloqueos();
     }
-  }, 1000);
-  
-  // INICIALIZACIÓN AL CARGAR LA PÁGINA
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 DOM cargado, verificando estado inicial...');
-    
-    // Si el tab de bloqueos está activo por defecto, inicializarlo
-    setTimeout(() => {
-      const tabBloqueos = document.getElementById('tabBloqueos');
-      const activeTabBtn = document.querySelector('.tab-btn.active');
-      
-      if (activeTabBtn && activeTabBtn.textContent.includes('Bloqueos')) {
-        console.log('🎯 Tab de bloqueos activo al cargar, inicializando...');
-        cargarEspaciosBloqueo();
-        cargarBloqueos();
-      }
-    }, 500);
   });
-  
+
   // ============================================
   // MODAL DE BLOQUEO
   // ============================================
-  
+
   async function cargarEspaciosBloqueo() {
-    console.log('🏢 Cargando espacios para bloqueos...');
     try {
-      const response = await fetch('/api/espacios');
+      const response = await fetch("/api/espacios");
       const data = await response.json();
-      
-      console.log('🏢 Response espacios:', data);
-      
+
       if (data.success) {
-        const selectEspacio = document.getElementById('bloqueoEspacio');
-        const selectFilter = document.getElementById('bloqueoEspacioFilter');
-        
-        console.log('🏢 Elementos encontrados - Modal Select:', !!selectEspacio, 'Filter Select:', !!selectFilter);
-        
+        const selectEspacio = document.getElementById("bloqueoEspacio");
+        const selectFilter = document.getElementById("bloqueoEspacioFilter");
+
         if (selectEspacio) {
-          selectEspacio.innerHTML = '<option value="">Seleccione un espacio</option>' +
-            data.data.map(e => `<option value="${e.id}">${e.nombre} (${e.tipo})</option>`).join('');
-          console.log('✅ Select del modal actualizado');
+          selectEspacio.innerHTML =
+            '<option value="">Seleccione un espacio</option>' +
+            data.data
+              .map(
+                (e) =>
+                  `<option value="${e.id}">${e.nombre} (${e.tipo})</option>`,
+              )
+              .join("");
         }
-        
+
         if (selectFilter) {
-          selectFilter.innerHTML = '<option value="">Todos los espacios</option>' +
-            data.data.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
-          console.log('✅ Select del filtro actualizado');
+          selectFilter.innerHTML =
+            '<option value="">Todos los espacios</option>' +
+            data.data
+              .map((e) => `<option value="${e.id}">${e.nombre}</option>`)
+              .join("");
         }
-      } else {
-        console.error('❌ Error al cargar espacios:', data.error);
       }
     } catch (error) {
-      console.error('💥 Error al cargar espacios:', error);
+      console.error("Error al cargar espacios:", error);
     }
   }
-  
-  window.abrirModalBloqueo = () => {
-    console.log('🎯 Abriendo modal de bloqueo...');
-    
-    const modal = document.getElementById('bloqueoModal');
-    console.log('🎯 Modal encontrado:', !!modal);
-    
-    if (modal) {
-      modal.classList.add('active');
-      console.log('✅ Modal activado');
+
+  // Función para verificar si es un solo día o rango
+  function verificarRangoFechas() {
+    const fechaInicio = document.getElementById("bloqueoFechaInicio")?.value;
+    const fechaFin = document.getElementById("bloqueoFechaFin")?.value;
+    const mensajeRango = document.getElementById("mensajeRangoDias");
+    const opcionesHorario = document.getElementById("opcionesHorario");
+    const todoElDiaCheckbox = document.getElementById("bloqueoTodoElDia");
+    const horaInicio = document.getElementById("bloqueoHoraInicio");
+    const horaFin = document.getElementById("bloqueoHoraFin");
+
+    if (!fechaInicio || !fechaFin) return;
+
+    const esUnSoloDia = fechaInicio === fechaFin;
+
+    if (esUnSoloDia) {
+      // Un solo día: mostrar opciones de horario
+      if (mensajeRango) mensajeRango.style.display = "none";
+      if (opcionesHorario) opcionesHorario.style.display = "block";
+
+      // Restaurar required en los campos de hora (si no está marcado "todo el día")
+      if (todoElDiaCheckbox && !todoElDiaCheckbox.checked) {
+        if (horaInicio) horaInicio.setAttribute("required", "required");
+        if (horaFin) horaFin.setAttribute("required", "required");
+      }
+    } else {
+      // Rango de días: ocultar opciones y mostrar mensaje
+      if (mensajeRango) mensajeRango.style.display = "block";
+      if (opcionesHorario) opcionesHorario.style.display = "none";
+
+      // Marcar como todo el día automáticamente
+      if (todoElDiaCheckbox) todoElDiaCheckbox.checked = true;
+
+      // IMPORTANTE: Remover required de los campos ocultos para evitar error de validación
+      if (horaInicio) horaInicio.removeAttribute("required");
+      if (horaFin) horaFin.removeAttribute("required");
     }
-    
+  }
+
+  window.abrirModalBloqueo = () => {
+    const modal = document.getElementById("bloqueoModal");
+
+    if (modal) {
+      modal.classList.add("active");
+    }
+
     // Resetear formulario
-    const form = document.getElementById('bloqueoForm');
+    const form = document.getElementById("bloqueoForm");
     if (form) {
       form.reset();
-      console.log('🔄 Formulario reseteado');
     }
-    
+
     // Configurar fechas mínimas
-    const fechaInicio = document.getElementById('bloqueoFechaInicio');
-    const fechaFin = document.getElementById('bloqueoFechaFin');
-    const hoy = new Date().toISOString().split('T')[0];
-    
+    const fechaInicio = document.getElementById("bloqueoFechaInicio");
+    const fechaFin = document.getElementById("bloqueoFechaFin");
+    const hoy = new Date().toISOString().split("T")[0];
+
     if (fechaInicio) {
       fechaInicio.min = hoy;
       fechaInicio.value = hoy;
-      console.log('📅 Fecha inicio configurada');
     }
-    
+
     if (fechaFin) {
       fechaFin.min = hoy;
       fechaFin.value = hoy;
-      console.log('📅 Fecha fin configurada');
     }
-    
+
+    // Configurar event listeners para las fechas
+    const setupFechaListeners = () => {
+      const inputInicio = document.getElementById("bloqueoFechaInicio");
+      const inputFin = document.getElementById("bloqueoFechaFin");
+
+      if (inputInicio) {
+        // Remover listener anterior si existe
+        inputInicio.removeEventListener("change", handleFechaChange);
+        inputInicio.addEventListener("change", handleFechaChange);
+      }
+
+      if (inputFin) {
+        inputFin.removeEventListener("change", handleFechaChange);
+        inputFin.addEventListener("change", handleFechaChange);
+      }
+    };
+
+    const handleFechaChange = () => {
+      const inputInicio = document.getElementById("bloqueoFechaInicio");
+      const inputFin = document.getElementById("bloqueoFechaFin");
+
+      if (inputFin && inputInicio && inputInicio.value) {
+        inputFin.min = inputInicio.value;
+        if (inputFin.value && inputFin.value < inputInicio.value) {
+          inputFin.value = inputInicio.value;
+        }
+      }
+      verificarRangoFechas();
+    };
+
+    setupFechaListeners();
+
+    // Verificar rango de fechas inicial
+    setTimeout(() => verificarRangoFechas(), 100);
+
     // Verificar que los espacios estén cargados
-    const selectEspacio = document.getElementById('bloqueoEspacio');
+    const selectEspacio = document.getElementById("bloqueoEspacio");
     if (selectEspacio && selectEspacio.options.length <= 1) {
-      console.log('🔄 Recargando espacios porque el select está vacío...');
       cargarEspaciosBloqueo();
     }
   };
-  
+
   window.cerrarModalBloqueo = () => {
-    const modal = document.getElementById('bloqueoModal');
-    if (modal) modal.classList.remove('active');
+    const modal = document.getElementById("bloqueoModal");
+    if (modal) modal.classList.remove("active");
   };
-  
-  // Toggle horarios según checkbox
-  const todoElDiaCheckbox = document.getElementById('bloqueoTodoElDia');
-  const horariosGroup = document.getElementById('horariosGroup');
-  
+
+  // Toggle horarios según checkbox (solo cuando es un día)
+  const todoElDiaCheckbox = document.getElementById("bloqueoTodoElDia");
+  const horariosGroup = document.getElementById("horariosGroup");
+
   if (todoElDiaCheckbox) {
-    todoElDiaCheckbox.addEventListener('change', (e) => {
+    todoElDiaCheckbox.addEventListener("change", (e) => {
       if (horariosGroup) {
-        horariosGroup.style.display = e.target.checked ? 'none' : 'grid';
+        horariosGroup.style.display = e.target.checked ? "none" : "grid";
       }
-      
-      const horaInicio = document.getElementById('bloqueoHoraInicio');
-      const horaFin = document.getElementById('bloqueoHoraFin');
-      
+
+      const horaInicio = document.getElementById("bloqueoHoraInicio");
+      const horaFin = document.getElementById("bloqueoHoraFin");
+
       if (e.target.checked) {
-        if (horaInicio) horaInicio.removeAttribute('required');
-        if (horaFin) horaFin.removeAttribute('required');
+        if (horaInicio) horaInicio.removeAttribute("required");
+        if (horaFin) horaFin.removeAttribute("required");
       } else {
-        if (horaInicio) horaInicio.setAttribute('required', 'required');
-        if (horaFin) horaFin.setAttribute('required', 'required');
+        if (horaInicio) horaInicio.setAttribute("required", "required");
+        if (horaFin) horaFin.setAttribute("required", "required");
       }
     });
   }
-  
+
   // Formulario de bloqueo
-  const bloqueoForm = document.getElementById('bloqueoForm');
+  const bloqueoForm = document.getElementById("bloqueoForm");
   if (bloqueoForm) {
-    bloqueoForm.addEventListener('submit', async (e) => {
+    bloqueoForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
-      const alertDiv = document.getElementById('bloqueoAlert');
+
+      const alertDiv = document.getElementById("bloqueoAlert");
       const submitBtn = e.target.querySelector('button[type="submit"]');
-      
+
+      // Limpiar alertas previas
+      if (alertDiv) alertDiv.innerHTML = "";
+
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Creando...';
+        submitBtn.textContent = "Creando...";
       }
-      
+
       try {
-        const espacioId = document.getElementById('bloqueoEspacio')?.value;
-        const fechaInicio = document.getElementById('bloqueoFechaInicio')?.value;
-        const fechaFin = document.getElementById('bloqueoFechaFin')?.value;
-        const todoElDia = document.getElementById('bloqueoTodoElDia')?.checked;
-        const horaInicio = document.getElementById('bloqueoHoraInicio')?.value;
-        const horaFin = document.getElementById('bloqueoHoraFin')?.value;
-        const motivo = document.getElementById('bloqueoMotivo')?.value;
-        const descripcion = document.getElementById('bloqueoDescripcion')?.value;
-        
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/bloqueos', {
-          method: 'POST',
+        const espacioId = document.getElementById("bloqueoEspacio")?.value;
+        const fechaInicio =
+          document.getElementById("bloqueoFechaInicio")?.value;
+        const fechaFin = document.getElementById("bloqueoFechaFin")?.value;
+        const todoElDia = document.getElementById("bloqueoTodoElDia")?.checked;
+        const horaInicio = document.getElementById("bloqueoHoraInicio")?.value;
+        const horaFin = document.getElementById("bloqueoHoraFin")?.value;
+        const motivo = document.getElementById("bloqueoMotivo")?.value;
+
+        // Si es rango de días, forzar todo el día
+        const esRangoDias = fechaInicio !== fechaFin;
+        const esTodoElDia = esRangoDias || todoElDia;
+
+        // Validaciones adicionales del lado del cliente
+        if (!espacioId) {
+          if (alertDiv)
+            alertDiv.innerHTML =
+              '<div class="alert alert-error">Debe seleccionar un espacio</div>';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Bloqueo";
+          }
+          return;
+        }
+
+        if (!fechaInicio || !fechaFin) {
+          if (alertDiv)
+            alertDiv.innerHTML =
+              '<div class="alert alert-error">Las fechas son obligatorias</div>';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Bloqueo";
+          }
+          return;
+        }
+
+        // Solo validar horarios si es un día y no está marcado todo el día
+        if (!esTodoElDia && (!horaInicio || !horaFin)) {
+          if (alertDiv)
+            alertDiv.innerHTML =
+              '<div class="alert alert-error">Los horarios son obligatorios si no es todo el día</div>';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Bloqueo";
+          }
+          return;
+        }
+
+        if (!motivo || motivo.trim() === "") {
+          if (alertDiv)
+            alertDiv.innerHTML =
+              '<div class="alert alert-error">El motivo es obligatorio</div>';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Bloqueo";
+          }
+          return;
+        }
+
+        const token = localStorage.getItem("token");
+        const response = await fetch("/api/bloqueos", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             espacioId: parseInt(espacioId),
             fechaInicio,
             fechaFin,
-            horaInicio: todoElDia ? null : horaInicio,
-            horaFin: todoElDia ? null : horaFin,
-            todoElDia,
+            horaInicio: esTodoElDia ? null : horaInicio,
+            horaFin: esTodoElDia ? null : horaFin,
+            todoElDia: esTodoElDia,
             motivo,
-            descripcion: descripcion || null
-          })
+          }),
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
-          if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-success">Bloqueo creado exitosamente</div>';
+          if (alertDiv)
+            alertDiv.innerHTML =
+              '<div class="alert alert-success">Bloqueo creado exitosamente</div>';
           setTimeout(() => {
             cerrarModalBloqueo();
             cargarBloqueos();
           }, 1000);
         } else {
-          if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${data.error}</div>`;
+          if (alertDiv)
+            alertDiv.innerHTML = `<div class="alert alert-error">Error: ${data.error || "Error desconocido"}</div>`;
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Crear Bloqueo';
+            submitBtn.textContent = "Crear Bloqueo";
           }
         }
       } catch (error) {
-        console.error('Error:', error);
-        if (alertDiv) alertDiv.innerHTML = '<div class="alert alert-error">Error al crear bloqueo</div>';
+        console.error("Error:", error);
+        if (alertDiv)
+          alertDiv.innerHTML = `<div class="alert alert-error">Error de conexión: ${error.message}</div>`;
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Crear Bloqueo';
+          submitBtn.textContent = "Crear Bloqueo";
         }
       }
     });
   }
-
 </script>

@@ -587,36 +587,36 @@ import Navbar from '../components/Navbar.astro';
   function getTipoIconConfig(tipo) {
     const configs = {
       'futbol5': { 
-        icon: '<img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop&crop=center" alt="Fútbol 5" style="width: 100%; height: 100%; object-fit: cover;">',
+        icon: '<img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop&crop=center" alt="Fútbol 5" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
         gradient: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)'
       },
       'futbol7': { 
-        icon: '<img src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=400&h=300&fit=crop&crop=center" alt="Fútbol 7" style="width: 100%; height: 100%; object-fit: cover;">',
+        icon: '<img src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=400&h=300&fit=crop&crop=center" alt="Fútbol 7" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
         gradient: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)'
       },
       'futbol11': { 
-        icon: '<img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&h=300&fit=crop&crop=center" alt="Fútbol 11" style="width: 100%; height: 100%; object-fit: cover;">',
+        icon: '<img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&h=300&fit=crop&crop=center" alt="Fútbol 11" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
         gradient: 'linear-gradient(135deg, #16A34A 0%, #15803D 100%)'
       },
       'basquet': { 
-        icon: '<img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop&crop=center" alt="Básquet" style="width: 100%; height: 100%; object-fit: cover;">',
+        icon: '<img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop&crop=center" alt="Básquet" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
         gradient: 'linear-gradient(135deg, #F97316 0%, #C2410C 100%)'
       },
       'voley': { 
-        icon: '<img src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400&h=300&fit=crop&crop=center" alt="Vóley" style="width: 100%; height: 100%; object-fit: cover;">',
+        icon: '<img src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400&h=300&fit=crop&crop=center" alt="Vóley" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
         gradient: 'linear-gradient(135deg, #F97316 0%, #C2410C 100%)'
       },
       'piscina': { 
-        icon: '<img src="https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&h=300&fit=crop&crop=center" alt="Piscina" style="width: 100%; height: 100%; object-fit: cover;">',
+        icon: '<img src="https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&h=300&fit=crop&crop=center" alt="Piscina" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
         gradient: 'linear-gradient(135deg, #2563EB 0%, #1E40AF 100%)'
       },
       'gimnasio': { 
-        icon: '<img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop&crop=center" alt="Gimnasio" style="width: 100%; height: 100%; object-fit: cover;">',
+        icon: '<img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop&crop=center" alt="Gimnasio" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
         gradient: 'linear-gradient(135deg, #9333EA 0%, #7E22CE 100%)'
       },
     };
     return configs[tipo] || { 
-      icon: '<img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center" alt="Deporte" style="width: 100%; height: 100%; object-fit: cover;">',
+      icon: '<img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop&crop=center" alt="Deporte" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">',
       gradient: 'linear-gradient(135deg, #64748B 0%, #475569 100%)'
     };
   }
@@ -656,6 +656,22 @@ import Navbar from '../components/Navbar.astro';
             const disponibilidad = dispData.data[espacio.id];
             espacio.horariosDisponibles = disponibilidad?.disponibles || 0;
             espacio.proximoHorario = disponibilidad?.proximoHorario || null;
+          });
+        }
+        
+        // Obtener bloqueos activos para la fecha actual
+        const bloqueosResp = await fetch(`/api/bloqueos?activo=true&fecha=${hoy}`);
+        const bloqueosData = await bloqueosResp.json();
+        
+        if (bloqueosData.success) {
+          // Asignar bloqueos a cada espacio
+          espacios.forEach(espacio => {
+            const bloqueosEspacio = bloqueosData.data.filter(bloqueo => 
+              bloqueo.espacioId === espacio.id
+            );
+            
+            espacio.bloqueos = bloqueosEspacio;
+            espacio.enMantenimiento = bloqueosEspacio.length > 0;
           });
         }
         
@@ -729,6 +745,14 @@ import Navbar from '../components/Navbar.astro';
       const iconConfig = getTipoIconConfig(espacio.tipo);
       
       const badges = [];
+      
+      // Badge de mantenimiento (prioridad alta)
+      if (espacio.enMantenimiento) {
+        const bloqueo = espacio.bloqueos[0];
+        const motivoTexto = bloqueo.motivo || 'Mantenimiento programado';
+        badges.push(`<span class="espacio-badge-small badge-mantenimiento" style="font-size: 10px; padding: 4px 9px; border-radius: 5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); color: #991B1B; border: 1px solid #EF4444; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" title="${motivoTexto}">⚠️ Mantenimiento</span>`);
+      }
+      
       if (espacio.iluminacion) badges.push('<span class="espacio-badge-small badge-iluminacion" style="font-size: 10px; padding: 4px 9px; border-radius: 5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); color: #78350F; border: 1px solid #F59E0B; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">✓ Iluminación</span>');
       if (espacio.techado) badges.push('<span class="espacio-badge-small badge-techado" style="font-size: 10px; padding: 4px 9px; border-radius: 5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); color: #1E3A8A; border: 1px solid #3B82F6; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">✓ Techado</span>');
       else badges.push('<span class="espacio-badge-small badge-aire" style="font-size: 10px; padding: 4px 9px; border-radius: 5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%); color: #064E3B; border: 1px solid #10B981; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">✓ Aire Libre</span>');

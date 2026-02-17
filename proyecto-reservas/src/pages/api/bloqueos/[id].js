@@ -9,7 +9,7 @@ export const prerender = false;
  * GET /api/bloqueos/[id]
  * Obtener detalle de un bloqueo
  */
-async function GET(request) {
+export async function GET({ request }) {
   try {
     const url = new URL(request.url);
     const id = parseInt(url.pathname.split('/').pop());
@@ -69,7 +69,7 @@ async function GET(request) {
  * DELETE /api/bloqueos/[id]
  * Eliminar o desactivar un bloqueo
  */
-async function DELETE(request) {
+export async function DELETE({ request }) {
   try {
     // Verificar autenticación y rol de admin
     const token = request.headers.get('Authorization')?.replace('Bearer ', '');
@@ -175,7 +175,7 @@ async function DELETE(request) {
  * PATCH /api/bloqueos/[id]
  * Actualizar un bloqueo
  */
-async function PATCH(request) {
+export async function PATCH({ request }) {
   try {
     // Verificar autenticación y rol de admin
     const token = request.headers.get('Authorization')?.replace('Bearer ', '');
@@ -235,7 +235,6 @@ async function PATCH(request) {
       horaFin,
       todoElDia,
       motivo,
-      descripcion,
       activo,
     } = body;
 
@@ -266,7 +265,6 @@ async function PATCH(request) {
     if (horaFin) dataActualizacion.horaFin = horaFin;
     if (todoElDia !== undefined) dataActualizacion.todoElDia = todoElDia;
     if (motivo) dataActualizacion.motivo = motivo;
-    if (descripcion !== undefined) dataActualizacion.descripcion = descripcion;
     if (activo !== undefined) dataActualizacion.activo = activo;
 
     // Actualizar bloqueo
@@ -308,5 +306,3 @@ async function PATCH(request) {
     );
   }
 }
-
-export { GET, DELETE, PATCH };

@@ -11,7 +11,7 @@ import Navbar from '../components/Navbar.astro';
     <!-- Header -->
     <div class="welcome-header">
       <div>
-        <h1 class="welcome-title">Bienvenido</h1>
+        <h1 class="welcome-title" id="welcomeTitle">Bienvenido</h1>
         <p class="welcome-subtitle">¿Qué deporte te gustaría practicar hoy?</p>
       </div>
     </div>
@@ -361,6 +361,19 @@ import Navbar from '../components/Navbar.astro';
   // Mostrar badge de notificaciones solo si hay sesión
   const token = localStorage.getItem('token');
   const notificationBadge = document.getElementById('notificationBadge');
+  
+  // Personalizar mensaje de bienvenida
+  const welcomeTitle = document.getElementById('welcomeTitle');
+  if (token && welcomeTitle) {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.nombre) {
+        welcomeTitle.textContent = `Bienvenido ${user.nombre}`;
+      }
+    } catch (error) {
+      console.log('No se pudo obtener el nombre del usuario');
+    }
+  }
   
   if (token && notificationBadge) {
     notificationBadge.style.display = 'block';

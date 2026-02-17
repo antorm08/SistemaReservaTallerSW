@@ -233,10 +233,7 @@ export async function GET({ params, request }) {
         motivo = 'Reservado';
       } else if (estaBloqueado) {
         disponible = false;
-        const bloqueo = bloqueos.find(b =>
-          b.todoElDia || estaHoraBloqueada(slot.horaInicio, slot.horaFin, [b])
-        );
-        motivo = bloqueo?.motivo || 'Bloqueado';
+        motivo = 'Mantenimiento';
       }
 
       return {

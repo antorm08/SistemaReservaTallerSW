@@ -17,7 +17,7 @@ const currentPath = Astro.url.pathname;
         <li><a href="/espacios" class={`navbar-link ${currentPath === '/espacios' ? 'active' : ''}`}>Espacios</a></li>
         <li><a href="/mis-reservas" class={`navbar-link ${currentPath === '/mis-reservas' ? 'active' : ''}`}>Mis Reservas</a></li>
         <li id="adminMenuItem" style="display: none;"><a href="/admin" class={`navbar-link ${currentPath === '/admin' ? 'active' : ''}`}>Admin</a></li>
-        <li><a href="/login" class="btn btn-primary navbar-btn">Iniciar Sesión</a></li>
+        <li id="authMenuItem"><a href="/login" class="btn btn-primary navbar-btn" id="authLink">Iniciar Sesión</a></li>
       </ul>
     </div>
   </div>
@@ -95,19 +95,23 @@ const currentPath = Astro.url.pathname;
   // Manejo de autenticación en el cliente
   const token = localStorage.getItem('token');
   const userStr = localStorage.getItem('user');
-  const loginBtn = document.querySelector('a[href="/login"]');
+  const authMenuItem = document.getElementById('authMenuItem');
   const adminMenuItem = document.getElementById('adminMenuItem');
   
-  if (token && loginBtn) {
-    loginBtn.textContent = 'Cerrar Sesión';
-    loginBtn.href = '#';
-    loginBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await fetch('/api/auth/logout', { method: 'POST' });
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    });
+  if (token && authMenuItem) {
+    // Reemplazar el enlace con un botón para evitar href inválido
+    authMenuItem.innerHTML = '<button class="btn btn-primary navbar-btn" id="logoutBtn">Cerrar Sesión</button>';
+    
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await fetch('/api/auth/logout', { method: 'POST' });
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      });
+    }
     
     // Mostrar menú Admin solo si el usuario es admin
     if (userStr) {

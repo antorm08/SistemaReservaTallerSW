@@ -13,7 +13,7 @@ export const prerender = false;
  * - activo: filtrar por estado activo
  * - fecha: filtrar bloqueos que afecten esta fecha
  */
-async function GET(request) {
+export async function GET({ request }) {
   try {
     const url = new URL(request.url);
     const espacioId = url.searchParams.get('espacioId');
@@ -94,9 +94,8 @@ async function GET(request) {
  * - horaFin: hora de fin (si no es todo el día)
  * - todoElDia: boolean, si el bloqueo es todo el día
  * - motivo: razón del bloqueo
- * - descripcion: descripción adicional (opcional)
  */
-async function POST(request) {
+export async function POST({ request }) {
   try {
     // Verificar autenticación y rol de admin
     const token = request.headers.get('Authorization')?.replace('Bearer ', '');
@@ -154,8 +153,9 @@ async function POST(request) {
       horaFin,
       todoElDia,
       motivo,
-      descripcion,
     } = body;
+    
+    console.log('📥 Datos recibidos:', { espacioId, fechaInicio, fechaFin, horaInicio, horaFin, todoElDia, motivo });
 
     // Validaciones
     if (!espacioId || !fechaInicio || !fechaFin || !motivo) {
@@ -190,8 +190,8 @@ async function POST(request) {
     }
 
     // Validar fechas
-    const fechaInicioObj = new Date(fechaInicio);
-    const fechaFinObj = new Date(fechaFin);
+    const fechaInicioObj = new Date(fechaInicio + 'T00:00:00');
+    const fechaFinObj = new Date(fechaFin + 'T23:59:59');
 
     if (fechaFinObj < fechaInicioObj) {
       return new Response(
@@ -241,11 +241,11 @@ async function POST(request) {
         espacioId: parseInt(espacioId),
         fechaInicio: fechaInicioObj,
         fechaFin: fechaFinObj,
-        horaInicio: todoElDia ? '00:00' : horaInicio,
-        horaFin: todoElDia ? '23:59' : horaFin,
-        todoElDia: todoElDia || false,
+        horaInicio: todoElDia ? '00:00' : (horaInicio || '00:00'),
+        horaFin: todoElDia ? '23:59' : (horaFin || '23:59'),
+        todoElDia: Boolean(todoElDia),
+        tipo: 'mantenimiento',
         motivo,
-        descripcion: descripcion || null,
       },
       include: {
         espacio: {
@@ -273,7 +273,7 @@ async function POST(request) {
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'Error al crear bloqueo',
+        error: error.message || 'Error al crear bloqueo',
       }),
       {
         status: 500,
@@ -282,5 +282,3 @@ async function POST(request) {
     );
   }
 }
-
-export { GET, POST };

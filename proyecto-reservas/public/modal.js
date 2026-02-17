@@ -10,7 +10,7 @@ function createModalContainer() {
       <div class="custom-modal-content">
         <div class="custom-modal-icon" id="modalIcon"></div>
         <h3 class="custom-modal-title" id="modalTitle"></h3>
-        <p class="custom-modal-message" id="modalMessage"></p>
+        <div class="custom-modal-message" id="modalMessage"></div>
         <div class="custom-modal-buttons" id="modalButtons"></div>
       </div>
     </div>
@@ -47,7 +47,7 @@ window.showAlert = function(message, title = 'Aviso', icon = '⚠️') {
   
   modalIcon.textContent = icon;
   modalTitle.textContent = title;
-  modalMessage.textContent = message;
+  modalMessage.innerHTML = message;
   modalButtons.innerHTML = '<button class="btn btn-primary" onclick="closeModal()">Entendido</button>';
   
   modal.classList.add('active');
@@ -63,10 +63,18 @@ window.showConfirm = function(message, title = 'Confirmar', icon = '❓') {
     const modalTitle = document.getElementById('modalTitle');
     const modalMessage = document.getElementById('modalMessage');
     const modalButtons = document.getElementById('modalButtons');
+    const modalContent = modal.querySelector('.custom-modal-content');
+    
+    // Si el mensaje contiene HTML (tiene tags), ampliar el modal
+    if (message.includes('<div') || message.includes('<p')) {
+      modalContent.style.maxWidth = '600px';
+    } else {
+      modalContent.style.maxWidth = '450px';
+    }
     
     modalIcon.textContent = icon;
     modalTitle.textContent = title;
-    modalMessage.textContent = message;
+    modalMessage.innerHTML = message;
     modalButtons.innerHTML = `
       <button class="btn btn-secondary" onclick="closeModal(); window.confirmResult(false);">Cancelar</button>
       <button class="btn btn-primary" onclick="closeModal(); window.confirmResult(true);">Confirmar</button>
