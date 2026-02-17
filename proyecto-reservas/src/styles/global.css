@@ -78,6 +78,28 @@ body {
   color: var(--white);
 }
 
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.btn-success {
+  background: var(--success);
+  color: var(--white);
+}
+
+.btn-success:hover {
+  background: #15803d;
+}
+
+.btn-info {
+  background: #3b82f6;
+  color: var(--white);
+}
+
+.btn-info:hover {
+  background: #2563eb;
+}
+
 .btn-outline {
   background: transparent;
   border: 2px solid var(--primary);
@@ -87,6 +109,11 @@ body {
 .btn-block {
   width: 100%;
   display: block;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
 }
 
 /* Formularios */
@@ -519,9 +546,9 @@ body {
 
 .custom-modal-content {
   background: var(--white);
-  padding: 32px;
+  padding: 40px;
   border-radius: 16px;
-  max-width: 450px;
+  max-width: 480px;
   width: 90%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.3s;
@@ -529,22 +556,25 @@ body {
 }
 
 .custom-modal-icon {
-  font-size: 56px;
-  margin-bottom: 16px;
+  font-size: 64px;
+  margin-bottom: 20px;
+  line-height: 1;
 }
 
 .custom-modal-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--dark);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  line-height: 1.3;
 }
 
 .custom-modal-message {
   font-size: 16px;
   color: var(--text);
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   line-height: 1.6;
+  padding: 0 8px;
 }
 
 .custom-modal-buttons {

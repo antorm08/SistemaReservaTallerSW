@@ -77,7 +77,7 @@ window.showConfirm = function(message, title = 'Confirmar', icon = '❓') {
     modalMessage.innerHTML = message;
     modalButtons.innerHTML = `
       <button class="btn btn-secondary" onclick="closeModal(); window.confirmResult(false);">Cancelar</button>
-      <button class="btn btn-primary" onclick="closeModal(); window.confirmResult(true);">Confirmar</button>
+      <button class="btn btn-success" onclick="closeModal(); window.confirmResult(true);">Confirmar</button>
     `;
     
     window.confirmResult = resolve;

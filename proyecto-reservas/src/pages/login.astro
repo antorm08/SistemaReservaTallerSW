@@ -32,14 +32,6 @@ import Navbar from '../components/Navbar.astro';
       <p class="text-center mt-3" style="color: var(--text-light);">
         ¿No tienes cuenta? <a href="/registro" style="color: var(--primary);">Regístrate aquí</a>
       </p>
-
-      <hr style="margin: 24px 0;">
-      
-      <div class="alert alert-info">
-        <strong>Usuario de prueba:</strong><br>
-        Email: admin@deportivo.com<br>
-        Password: admin123
-      </div>
     </div>
   </div>
 </Layout>
@@ -49,6 +41,16 @@ import Navbar from '../components/Navbar.astro';
   const form = document.getElementById('loginForm');
   const alertDiv = document.getElementById('alert');
   const submitBtn = document.getElementById('submitBtn');
+
+  // Detectar si la sesión expiró
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('sessionExpired') === 'true') {
+    if (alertDiv) {
+      alertDiv.innerHTML = '<div class="alert alert-error">🔒 Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</div>';
+    }
+    // Limpiar el parámetro de la URL
+    window.history.replaceState({}, document.title, '/login');
+  }
 
   if (form) {
     form.addEventListener('submit', async (e) => {

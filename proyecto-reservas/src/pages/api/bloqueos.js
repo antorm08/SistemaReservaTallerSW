@@ -94,6 +94,11 @@ export async function GET({ request }) {
  * - horaFin: hora de fin (si no es todo el día)
  * - todoElDia: boolean, si el bloqueo es todo el día
  * - motivo: razón del bloqueo
+ * - forzarCancelacion: boolean (opcional), si es true cancela automáticamente las reservas conflictivas
+ * 
+ * Flujo:
+ * 1. Si hay reservas confirmadas conflictivas y NO se envía forzarCancelacion, devuelve error 409 con la lista
+ * 2. Si se envía forzarCancelacion: true, crea el bloqueo y cancela las reservas automáticamente
  */
 export async function POST({ request }) {
   try {
@@ -235,6 +240,90 @@ export async function POST({ request }) {
       }
     }
 
+    // ========================================
+    // VERIFICAR RESERVAS CONFIRMADAS CONFLICTIVAS
+    // ========================================
+    const horaInicioBloqueo = todoElDia ? '00:00' : (horaInicio || '00:00');
+    const horaFinBloqueo = todoElDia ? '23:59' : (horaFin || '23:59');
+
+    // Buscar reservas confirmadas en el rango de fechas y horas
+    const reservasConflictivas = await prisma.reserva.findMany({
+      where: {
+        espacioId: parseInt(espacioId),
+        estado: {
+          in: ['pendiente', 'confirmada'],
+        },
+        fecha: {
+          gte: fechaInicioObj,
+          lte: fechaFinObj,
+        },
+        OR: todoElDia ? undefined : [
+          // Reserva inicia dentro del bloqueo
+          {
+            horaInicio: {
+              gte: horaInicioBloqueo,
+              lt: horaFinBloqueo,
+            },
+          },
+          // Reserva termina dentro del bloqueo
+          {
+            horaFin: {
+              gt: horaInicioBloqueo,
+              lte: horaFinBloqueo,
+            },
+          },
+          // Reserva envuelve el bloqueo
+          {
+            AND: [
+              { horaInicio: { lte: horaInicioBloqueo } },
+              { horaFin: { gte: horaFinBloqueo } },
+            ],
+          },
+        ],
+      },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            nombre: true,
+            apellido: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: [
+        { fecha: 'asc' },
+        { horaInicio: 'asc' },
+      ],
+    });
+
+    console.log(`🔍 Reservas conflictivas encontradas: ${reservasConflictivas.length}`);
+
+    // Si hay reservas conflictivas y NO se forzó la cancelación, devolver advertencia
+    if (reservasConflictivas.length > 0 && !body.forzarCancelacion) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          requiereConfirmacion: true,
+          mensaje: `Se encontraron ${reservasConflictivas.length} reserva(s) confirmada(s) en este horario`,
+          reservasAfectadas: reservasConflictivas.map((r) => ({
+            id: r.id,
+            usuario: `${r.usuario.nombre} ${r.usuario.apellido || ''}`.trim(),
+            email: r.usuario.email,
+            fecha: r.fecha.toISOString().split('T')[0],
+            horaInicio: r.horaInicio,
+            horaFin: r.horaFin,
+            estado: r.estado,
+          })),
+          instruccion: 'Para crear el bloqueo y cancelar estas reservas, envía la solicitud nuevamente con "forzarCancelacion": true',
+        }),
+        {
+          status: 409, // Conflict
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     // Crear bloqueo
     const bloqueo = await prisma.horarioBloqueado.create({
       data: {
@@ -246,6 +335,7 @@ export async function POST({ request }) {
         todoElDia: Boolean(todoElDia),
         tipo: 'mantenimiento',
         motivo,
+        createdBy: usuario.email,
       },
       include: {
         espacio: {
@@ -258,10 +348,45 @@ export async function POST({ request }) {
       },
     });
 
+    console.log('✅ Bloqueo creado:', bloqueo.id);
+
+    // ========================================
+    // CANCELAR RESERVAS CONFLICTIVAS SI SE FORZÓ
+    // ========================================
+    let reservasCanceladas = [];
+    if (reservasConflictivas.length > 0 && body.forzarCancelacion) {
+      console.log(`🚫 Cancelando ${reservasConflictivas.length} reserva(s)...`);
+
+      // Cancelar cada reserva
+      const promesasCancelacion = reservasConflictivas.map((reserva) =>
+        prisma.reserva.update({
+          where: { id: reserva.id },
+          data: {
+            estado: 'cancelada',
+            motivoCancelacion: `Cancelada por mantenimiento programado: ${motivo}`,
+            canceladoPor: 'sistema',
+            canceladaAt: new Date(),
+          },
+        })
+      );
+
+      reservasCanceladas = await Promise.all(promesasCancelacion);
+      console.log(`✅ ${reservasCanceladas.length} reserva(s) cancelada(s) exitosamente`);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
         data: bloqueo,
+        ...(reservasCanceladas.length > 0 && {
+          reservasCanceladas: reservasCanceladas.length,
+          detalleReservasCanceladas: reservasCanceladas.map((r) => ({
+            id: r.id,
+            fecha: r.fecha.toISOString().split('T')[0],
+            horaInicio: r.horaInicio,
+            horaFin: r.horaFin,
+          })),
+        }),
       }),
       {
         status: 201,
