@@ -224,6 +224,58 @@ import Navbar from "../components/Navbar.astro";
             </table>
           </div>
         </div>
+        <!-- Paginación Reservas -->
+        <div
+          id="reservasPagination"
+          style="display: none; padding: 16px 24px; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;"
+        >
+          <div
+            style="font-size: 13px; color: var(--text-light);"
+            id="reservasPaginationInfo"
+          >
+            Mostrando <span id="reservasFrom">1</span> a <span id="reservasTo"
+              >10</span
+            > de <span id="reservasTotal">0</span> reservas
+          </div>
+          <div style="display: flex; gap: 12px;" id="reservasPaginationButtons">
+            <button
+              class="btn btn-sm"
+              onclick="cambiarPaginaReservas('prev')"
+              id="reservasPrevBtn"
+              style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                style="vertical-align: middle;"
+                ><path d="M15 18l-6-6 6-6"></path></svg
+              >
+              Anterior
+            </button>
+            <button
+              class="btn btn-sm"
+              onclick="cambiarPaginaReservas('next')"
+              id="reservasNextBtn"
+              style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;"
+            >
+              Siguiente
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                style="vertical-align: middle;"
+                ><path d="M9 18l6-6-6-6"></path></svg
+              >
+            </button>
+          </div>
+        </div>
 
         <div
           id="noReservas"
@@ -296,6 +348,24 @@ import Navbar from "../components/Navbar.astro";
       </div>
 
       <div
+        id="bloqueosPagination"
+        style="display: none; padding: 16px 24px; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;"
+      >
+        <div style="font-size: 13px; color: var(--text-light);" id="bloqueosPaginationInfo">
+          Mostrando <span id="bloqueosFrom">1</span> a <span id="bloqueosTo">10</span> de <span id="bloqueosTotal">0</span> bloqueos
+        </div>
+        <div style="display: flex; gap: 12px;" id="bloqueosPaginationButtons">
+          <button class="btn btn-sm" onclick="cambiarPaginaBloqueos('prev')" id="bloqueosPrevBtn" style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M15 18l-6-6 6-6"></path></svg>
+            Anterior
+          </button>
+          <button class="btn btn-sm" onclick="cambiarPaginaBloqueos('next')" id="bloqueosNextBtn" style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;">
+            Siguiente
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div
         id="noBloqueos"
         style="display: none; text-align: center; padding: 40px; color: var(--text-light);"
       >
@@ -306,10 +376,14 @@ import Navbar from "../components/Navbar.astro";
 
     <!-- Tab: Espacios -->
     <div id="tabEspacios" class="tab-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;"
+      >
         <div>
           <h2 style="margin: 0 0 4px 0;">Gestión de Espacios</h2>
-          <p style="margin: 0; color: var(--text-light); font-size: 14px;">Administra y configura las áreas deportivas disponibles.</p>
+          <p style="margin: 0; color: var(--text-light); font-size: 14px;">
+            Administra y configura las áreas deportivas disponibles.
+          </p>
         </div>
         <button class="btn btn-primary" onclick="abrirModalEspacio()">
           + Nuevo Espacio
@@ -319,41 +393,79 @@ import Navbar from "../components/Navbar.astro";
       <div id="espaciosAlert"></div>
 
       <!-- Tabla de espacios -->
-      <div class="card" style="padding: 0; overflow: hidden; background: #fafafa;">
-        <table id="espaciosTable" class="data-table" style="display: none; width: 100%; background: white;">
-          <thead style="background: #f8f9fa; border-bottom: 1px solid #e5e7eb;">
-            <tr>
-              <th style="width: 50px; text-align: center; padding: 12px 8px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">#</th>
-              <th style="min-width: 200px; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">NOMBRE DEL ESPACIO</th>
-              <th style="width: 120px; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">TIPO</th>
-              <th style="width: 100px; text-align: center; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">CAPACIDAD</th>
-              <th style="width: 110px; text-align: right; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">PRECIO</th>
-              <th style="min-width: 180px; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">CARACTERÍSTICAS</th>
-              <th style="width: 90px; text-align: center; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">ESTADO</th>
-              <th style="width: 110px; text-align: center; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px;">ACCIONES</th>
-            </tr>
-          </thead>
-          <tbody id="espaciosBody"></tbody>
-        </table>
-        
+      <div class="card">
+        <div class="table-responsive">
+          <table id="espaciosTable" class="table" style="display: none;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre del Espacio</th>
+                <th>Tipo</th>
+                <th>Capacidad</th>
+                <th>Precio</th>
+                <th>Características</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="espaciosBody"></tbody>
+          </table>
+        </div>
         <div
           id="noEspacios"
           style="display: none; text-align: center; padding: 40px; color: var(--text-light);"
         >
           No hay espacios registrados
         </div>
-
         <!-- Paginación -->
-        <div id="espaciosPagination" style="display: none; padding: 16px 24px; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-          <div style="font-size: 13px; color: var(--text-light);" id="espaciosPaginationInfo">
-            Mostrando <span id="espaciosFrom">1</span> a <span id="espaciosTo">4</span> de <span id="espaciosTotal">8</span> espacios
+        <div
+          id="espaciosPagination"
+          style="display: none; padding: 16px 24px; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;"
+        >
+          <div
+            style="font-size: 13px; color: var(--text-light);"
+            id="espaciosPaginationInfo"
+          >
+            Mostrando <span id="espaciosFrom">1</span> a <span id="espaciosTo"
+              >10</span
+            > de <span id="espaciosTotal">8</span> espacios
           </div>
-          <div style="display: flex; gap: 8px;" id="espaciosPaginationButtons">
-            <button class="btn btn-sm btn-secondary" onclick="cambiarPaginaEspacios('prev')" id="espaciosPrevBtn" style="padding: 6px 12px; font-size: 12px;">
-              ← Anterior
+          <div style="display: flex; gap: 12px;" id="espaciosPaginationButtons">
+            <button
+              class="btn btn-sm"
+              onclick="cambiarPaginaEspacios('prev')"
+              id="espaciosPrevBtn"
+              style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                style="vertical-align: middle;"
+                ><path d="M15 18l-6-6 6-6"></path></svg
+              >
+              Anterior
             </button>
-            <button class="btn btn-sm btn-secondary" onclick="cambiarPaginaEspacios('next')" id="espaciosNextBtn" style="padding: 6px 12px; font-size: 12px;">
-              Siguiente →
+            <button
+              class="btn btn-sm"
+              onclick="cambiarPaginaEspacios('next')"
+              id="espaciosNextBtn"
+              style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;"
+            >
+              Siguiente
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                style="vertical-align: middle;"
+                ><path d="M9 18l6-6-6-6"></path></svg
+              >
             </button>
           </div>
         </div>
@@ -366,18 +478,41 @@ import Navbar from "../components/Navbar.astro";
   <!-- Modal de confirmación -->
   <div id="actionModal" class="modal">
     <div class="modal-content" style="padding: 32px; max-width: 480px;">
-      <h3 style="margin-bottom: 20px; font-size: 22px; font-weight: 700; color: var(--dark);" id="actionModalTitle"></h3>
+      <h3
+        style="margin-bottom: 20px; font-size: 22px; font-weight: 700; color: var(--dark);"
+        id="actionModalTitle"
+      >
+      </h3>
       <div id="actionModalAlert"></div>
-      <p id="actionModalMessage" style="margin-bottom: 24px; color: var(--text); line-height: 1.6; font-size: 16px;"></p>
-      <div class="form-group" id="motivoGroup" style="display: none; margin-bottom: 24px;">
-        <label class="form-label" for="motivoInput">Motivo de cancelación</label>
-        <textarea class="form-textarea" id="motivoInput" placeholder="Ingresa el motivo de la cancelación" style="min-height: 80px;"></textarea>
+      <p
+        id="actionModalMessage"
+        style="margin-bottom: 24px; color: var(--text); line-height: 1.6; font-size: 16px;"
+      >
+      </p>
+      <div
+        class="form-group"
+        id="motivoGroup"
+        style="display: none; margin-bottom: 24px;"
+      >
+        <label class="form-label" for="motivoInput">Motivo de cancelación</label
+        >
+        <textarea
+          class="form-textarea"
+          id="motivoInput"
+          placeholder="Ingresa el motivo de la cancelación"
+          style="min-height: 80px;"></textarea>
       </div>
       <div class="flex gap-2" style="justify-content: center;">
-        <button class="btn btn-secondary" onclick="cerrarModal()" style="min-width: 120px;"
-          >Cancelar</button
+        <button
+          class="btn btn-secondary"
+          onclick="cerrarModal()"
+          style="min-width: 120px;">Cancelar</button
         >
-        <button class="btn btn-primary" id="confirmarAccion" style="min-width: 120px;">Confirmar</button>
+        <button
+          class="btn btn-primary"
+          id="confirmarAccion"
+          style="min-width: 120px;">Confirmar</button
+        >
       </div>
     </div>
   </div>
@@ -402,7 +537,9 @@ import Navbar from "../components/Navbar.astro";
 
           <div class="grid grid-2 gap-3">
             <div class="form-group-modal">
-              <label class="form-label" for="bloqueoFechaInicio">Fecha Inicio *</label>
+              <label class="form-label" for="bloqueoFechaInicio"
+                >Fecha Inicio *</label
+              >
               <input
                 type="date"
                 class="form-input"
@@ -411,7 +548,8 @@ import Navbar from "../components/Navbar.astro";
               />
             </div>
             <div class="form-group-modal">
-              <label class="form-label" for="bloqueoFechaFin">Fecha Fin *</label>
+              <label class="form-label" for="bloqueoFechaFin">Fecha Fin *</label
+              >
               <input
                 type="date"
                 class="form-input"
@@ -443,7 +581,9 @@ import Navbar from "../components/Navbar.astro";
 
             <div class="grid grid-2 gap-3" id="horariosGroup">
               <div class="form-group-modal">
-                <label class="form-label" for="bloqueoHoraInicio">Hora Inicio *</label>
+                <label class="form-label" for="bloqueoHoraInicio"
+                  >Hora Inicio *</label
+                >
                 <input
                   type="time"
                   class="form-input"
@@ -452,7 +592,8 @@ import Navbar from "../components/Navbar.astro";
                 />
               </div>
               <div class="form-group-modal">
-                <label class="form-label" for="bloqueoHoraFin">Hora Fin *</label>
+                <label class="form-label" for="bloqueoHoraFin">Hora Fin *</label
+                >
                 <input
                   type="time"
                   class="form-input"
@@ -524,12 +665,21 @@ import Navbar from "../components/Navbar.astro";
               <option value="voley">Vóley</option>
               <option value="piscina">Piscina</option>
               <option value="gimnasio">Gimnasio</option>
+              <option value="tenis">Tenis</option>
+              <option value="padel">Padel</option>
+              <option value="pingpong">Pingpong</option>
+              <option value="yoga">Yoga</option>
+              <option value="pilates">Pilates</option>
+              <option value="boxeo">Boxeo</option>
+              <option value="artes_marciales">Artes Marciales</option>
             </select>
           </div>
 
           <div class="grid grid-2 gap-3">
             <div class="form-group-modal">
-              <label class="form-label" for="espacioCapacidad">Capacidad *</label>
+              <label class="form-label" for="espacioCapacidad"
+                >Capacidad *</label
+              >
               <input
                 type="number"
                 class="form-input"
@@ -554,7 +704,9 @@ import Navbar from "../components/Navbar.astro";
 
           <div class="grid grid-2 gap-3">
             <div class="form-group-modal">
-              <label class="form-label" for="espacioPrecioHora">Precio/Hora (S/) *</label>
+              <label class="form-label" for="espacioPrecioHora"
+                >Precio/Hora (S/) *</label
+              >
               <input
                 type="number"
                 class="form-input"
@@ -565,46 +717,47 @@ import Navbar from "../components/Navbar.astro";
                 placeholder="50.00"
               />
             </div>
-
-            <div class="form-group-modal">
-              <label class="form-label" for="espacioPrecioMedia">Precio Media Hora (S/)</label>
-              <input
-                type="number"
-                class="form-input"
-                id="espacioPrecioMedia"
-                min="0"
-                step="0.01"
-                placeholder="30.00"
-              />
-            </div>
           </div>
 
           <div class="form-group-modal">
-            <label class="form-label" for="espacioDescripcion">Descripción</label>
+            <label class="form-label" for="espacioDescripcion"
+              >Descripción</label
+            >
             <textarea
               class="form-textarea"
               id="espacioDescripcion"
               rows="3"
-              placeholder="Descripción del espacio deportivo..."
-            ></textarea>
+              placeholder="Descripción del espacio deportivo..."></textarea>
           </div>
 
           <div class="form-group-modal" style="margin-bottom: 0;">
-            <label class="form-label" style="margin-bottom: 12px;">Características</label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <label class="form-label" style="margin-bottom: 12px;"
+              >Características</label
+            >
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"
+            >
+              <label
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;"
+              >
                 <input type="checkbox" id="espacioTechado" />
                 <span>Techado</span>
               </label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <label
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;"
+              >
                 <input type="checkbox" id="espacioIluminacion" checked />
                 <span>Iluminación</span>
               </label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <label
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;"
+              >
                 <input type="checkbox" id="espacioVestuarios" checked />
                 <span>Vestuarios</span>
               </label>
-              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <label
+                style="display: flex; align-items: center; gap: 8px; cursor: pointer;"
+              >
                 <input type="checkbox" id="espacioEstacionamiento" />
                 <span>Estacionamiento</span>
               </label>
@@ -678,12 +831,16 @@ import Navbar from "../components/Navbar.astro";
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @keyframes slideUp {
-    from { 
+    from {
       transform: translateY(20px);
       opacity: 0;
     }
@@ -789,7 +946,9 @@ import Navbar from "../components/Navbar.astro";
   }
 
   /* Botones de paginación */
-  #espaciosPaginationButtons button:disabled {
+  #espaciosPaginationButtons button:disabled,
+  #reservasPaginationButtons button:disabled,
+  #bloqueosPaginationButtons button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
@@ -799,6 +958,42 @@ import Navbar from "../components/Navbar.astro";
   // @ts-nocheck
   let todasReservas = [];
   let reservasFiltradas = [];
+  // Paginación reservas
+  let paginaReservas = 1;
+  let reservasPorPagina = 10;
+
+  window.cambiarPaginaReservas = function (direccion) {
+    const totalPaginas = Math.ceil(
+      reservasFiltradas.length / reservasPorPagina,
+    );
+    if (direccion === "prev" && paginaReservas > 1) {
+      paginaReservas--;
+    } else if (direccion === "next" && paginaReservas < totalPaginas) {
+      paginaReservas++;
+    }
+    mostrarReservas();
+  }
+
+  function actualizarPaginacionReservas() {
+    const pagDiv = document.getElementById("reservasPagination");
+    const info = document.getElementById("reservasPaginationInfo");
+    const from = document.getElementById("reservasFrom");
+    const to = document.getElementById("reservasTo");
+    const total = document.getElementById("reservasTotal");
+    const prevBtn = document.getElementById("reservasPrevBtn");
+    const nextBtn = document.getElementById("reservasNextBtn");
+    const totalPaginas = Math.ceil(
+      reservasFiltradas.length / reservasPorPagina,
+    );
+    pagDiv.style.display = "flex";
+    let desde = reservasFiltradas.length === 0 ? 0 : (paginaReservas - 1) * reservasPorPagina + 1;
+    let hasta = reservasFiltradas.length === 0 ? 0 : Math.min(paginaReservas * reservasPorPagina, reservasFiltradas.length);
+    from.textContent = desde;
+    to.textContent = hasta;
+    total.textContent = reservasFiltradas.length;
+    prevBtn.disabled = paginaReservas === 1 || reservasFiltradas.length === 0;
+    nextBtn.disabled = paginaReservas >= totalPaginas || reservasFiltradas.length === 0;
+  }
   let espacios = [];
   let accionActual = null;
 
@@ -985,6 +1180,7 @@ import Navbar from "../components/Navbar.astro";
     if (reservasFiltradas.length === 0) {
       if (table) table.style.display = "none";
       if (noReservas) noReservas.style.display = "block";
+      actualizarPaginacionReservas();
       return;
     }
 
@@ -992,7 +1188,10 @@ import Navbar from "../components/Navbar.astro";
     if (noReservas) noReservas.style.display = "none";
 
     if (tbody) {
+      const inicio = (paginaReservas - 1) * reservasPorPagina;
+      const fin = inicio + reservasPorPagina;
       tbody.innerHTML = reservasFiltradas
+        .slice(inicio, fin)
         .map((r) => {
           // Verificar si la reserva ya pasó
           const fechaReserva = new Date(r.fecha);
@@ -1037,6 +1236,7 @@ import Navbar from "../components/Navbar.astro";
         })
         .join("");
     }
+    actualizarPaginacionReservas();
   }
 
   function formatFecha(fecha) {
@@ -1088,11 +1288,11 @@ import Navbar from "../components/Navbar.astro";
     // Mensajes personalizados según el estado
     let titulo = "Cambiar Estado";
     let mensaje = `¿Confirmar cambio de estado a ${nuevoEstado.toUpperCase()}?`;
-    
-    if (nuevoEstado === 'confirmada') {
+
+    if (nuevoEstado === "confirmada") {
       titulo = "Confirmar Reserva";
       mensaje = "¿Confirmar esta reserva?";
-    } else if (nuevoEstado === 'completada') {
+    } else if (nuevoEstado === "completada") {
       titulo = "Completar Reserva";
       mensaje = "¿Marcar esta reserva como completada?";
     }
@@ -1102,7 +1302,8 @@ import Navbar from "../components/Navbar.astro";
     if (motivoGroup) motivoGroup.style.display = "none";
     if (confirmarBtn) {
       // Usar verde para confirmar, azul para otros estados
-      confirmarBtn.className = nuevoEstado === 'confirmada' ? "btn btn-success" : "btn btn-primary";
+      confirmarBtn.className =
+        nuevoEstado === "confirmada" ? "btn btn-success" : "btn btn-primary";
     }
     if (modalAlert) modalAlert.innerHTML = "";
     if (modal) modal.classList.add("active");
@@ -1323,6 +1524,42 @@ import Navbar from "../components/Navbar.astro";
 
   let todosBloqueos = [];
   let bloqueosFiltrados = [];
+  // Paginación bloqueos
+  let paginaBloqueos = 1;
+  let bloqueosPorPagina = 10;
+
+  window.cambiarPaginaBloqueos = function (direccion) {
+    const totalPaginas = Math.ceil(bloqueosFiltrados.length / bloqueosPorPagina);
+    if (direccion === "prev" && paginaBloqueos > 1) {
+      paginaBloqueos--;
+    } else if (direccion === "next" && paginaBloqueos < totalPaginas) {
+      paginaBloqueos++;
+    }
+    mostrarBloqueos();
+  }
+
+  function actualizarPaginacionBloqueos() {
+    const pagDiv = document.getElementById("bloqueosPagination");
+    const infoDiv = document.getElementById("bloqueosPaginationInfo");
+    const prevBtn = document.getElementById("bloqueosPrevBtn");
+    const nextBtn = document.getElementById("bloqueosNextBtn");
+    const fromSpan = document.getElementById("bloqueosFrom");
+    const toSpan = document.getElementById("bloqueosTo");
+    const totalSpan = document.getElementById("bloqueosTotal");
+    const total = bloqueosFiltrados.length;
+    const totalPaginas = Math.ceil(total / bloqueosPorPagina);
+    if (total === 0) {
+      if (pagDiv) pagDiv.style.display = "none";
+      return;
+    }
+    if (pagDiv) pagDiv.style.display = "flex";
+    if (infoDiv) infoDiv.style.display = "block";
+    if (fromSpan) fromSpan.textContent = String((paginaBloqueos - 1) * bloqueosPorPagina + 1);
+    if (toSpan) toSpan.textContent = String(Math.min(paginaBloqueos * bloqueosPorPagina, total));
+    if (totalSpan) totalSpan.textContent = String(total);
+    if (prevBtn) prevBtn.disabled = paginaBloqueos === 1;
+    if (nextBtn) nextBtn.disabled = paginaBloqueos === totalPaginas || totalPaginas === 0;
+  }
 
   async function cargarBloqueos() {
     const loadingEl = document.getElementById("loadingBloqueos");
@@ -1411,7 +1648,12 @@ import Navbar from "../components/Navbar.astro";
     if (tableEl) tableEl.style.display = "block";
     if (noDataEl) noDataEl.style.display = "none";
 
-    bodyEl.innerHTML = bloqueosFiltrados
+    // Paginación
+    const total = bloqueosFiltrados.length;
+    const inicio = (paginaBloqueos - 1) * bloqueosPorPagina;
+    const fin = Math.min(paginaBloqueos * bloqueosPorPagina, total);
+    const bloqueosPagina = bloqueosFiltrados.slice(inicio, fin);
+    bodyEl.innerHTML = bloqueosPagina
       .map((b) => {
         const fechaInicio = new Date(b.fechaInicio).toLocaleDateString("es-ES");
         const fechaFin = new Date(b.fechaFin).toLocaleDateString("es-ES");
@@ -1421,7 +1663,6 @@ import Navbar from "../components/Navbar.astro";
         const estadoBadge = b.activo
           ? '<span class="badge badge-success">Activo</span>'
           : '<span class="badge badge-secondary">Inactivo</span>';
-
         return `
         <tr>
           <td>${b.id}</td>
@@ -1438,12 +1679,13 @@ import Navbar from "../components/Navbar.astro";
       `;
       })
       .join("");
+    actualizarPaginacionBloqueos();
   }
 
   // Función auxiliar para escapar HTML y prevenir problemas de renderizado
   function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
+    if (!text) return "";
+    const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
   }
@@ -1474,8 +1716,8 @@ import Navbar from "../components/Navbar.astro";
       : `${escapeHtml(bloqueo.horaInicio)} - ${escapeHtml(bloqueo.horaFin)}`;
 
     // Escapar las variables que vienen de la base de datos para evitar romper el HTML
-    const nombreEspacio = escapeHtml(bloqueo.espacio?.nombre || 'Sin nombre');
-    const motivo = escapeHtml(bloqueo.motivo || 'Sin motivo especificado');
+    const nombreEspacio = escapeHtml(bloqueo.espacio?.nombre || "Sin nombre");
+    const motivo = escapeHtml(bloqueo.motivo || "Sin motivo especificado");
 
     const mensaje = `<div style="text-align: left; margin: 16px 0;"><p style="margin-bottom: 12px; font-size: 15px;">Se desactivará el siguiente bloqueo de mantenimiento:</p><div style="background: #F3F4F6; padding: 14px; border-radius: 8px; margin-bottom: 12px;"><p style="margin: 6px 0; font-size: 14px;"><strong>Espacio:</strong> ${nombreEspacio}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Período:</strong> ${fechaInicio} - ${fechaFin}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Horario:</strong> ${horario}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Motivo:</strong> ${motivo}</p></div><p style="color: #059669; margin-top: 12px; font-size: 14px;">✓ Los horarios volverán a estar disponibles para reservas.</p></div>`;
 
@@ -1500,13 +1742,17 @@ import Navbar from "../components/Navbar.astro";
 
       if (data.success) {
         showSuccess(
-          `El bloqueo de <strong>${escapeHtml(bloqueo.espacio?.nombre || 'Sin nombre')}</strong> ha sido desactivado. Los horarios ya están disponibles para nuevas reservas.`,
+          `El bloqueo de <strong>${escapeHtml(bloqueo.espacio?.nombre || "Sin nombre")}</strong> ha sido desactivado. Los horarios ya están disponibles para nuevas reservas.`,
           "¡Bloqueo Desactivado!",
           "✅",
         );
         cargarBloqueos();
       } else {
-        showError("Error: " + escapeHtml(data.error || 'Error desconocido'), "Error", "❌");
+        showError(
+          "Error: " + escapeHtml(data.error || "Error desconocido"),
+          "Error",
+          "❌",
+        );
       }
     } catch (error) {
       console.error("Error:", error);
@@ -1840,7 +2086,7 @@ import Navbar from "../components/Navbar.astro";
           mensajeHTML += `<div style="text-align: left; margin: 16px 0;">`;
           mensajeHTML += `<p style="margin-bottom: 12px; font-weight: 600;">Reservas que serán canceladas:</p>`;
           mensajeHTML += `<div style="max-height: 200px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;">`;
-          
+
           data.reservasAfectadas.forEach((r, i) => {
             mensajeHTML += `
               <div style="padding: 8px; background: #f9fafb; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #f59e0b;">
@@ -1857,11 +2103,15 @@ import Navbar from "../components/Navbar.astro";
               </div>
             `;
           });
-          
+
           mensajeHTML += `</div></div>`;
           mensajeHTML += `<p style="margin-top: 16px; font-size: 14px; color: #64748b;">¿Desea crear el bloqueo y cancelar automáticamente estas reservas?</p>`;
 
-          const confirmar = await showConfirm(mensajeHTML, "Confirmar Bloqueo", "⚠️");
+          const confirmar = await showConfirm(
+            mensajeHTML,
+            "Confirmar Bloqueo",
+            "⚠️",
+          );
 
           if (confirmar) {
             // Reenviar con forzarCancelacion: true
@@ -1961,25 +2211,25 @@ import Navbar from "../components/Navbar.astro";
   // ========================================
   // GESTIÓN DE TABS
   // ========================================
-  window.cambiarTab = function(tab) {
+  window.cambiarTab = function (tab) {
     // Actualizar botones
-    const botones = document.querySelectorAll('.tab-btn');
-    botones.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    const botones = document.querySelectorAll(".tab-btn");
+    botones.forEach((btn) => btn.classList.remove("active"));
+    event.target.classList.add("active");
 
     // Mostrar/ocultar contenido
-    document.getElementById('tabReservas').classList.remove('active');
-    document.getElementById('tabBloqueos').classList.remove('active');
-    document.getElementById('tabEspacios').classList.remove('active');
+    document.getElementById("tabReservas").classList.remove("active");
+    document.getElementById("tabBloqueos").classList.remove("active");
+    document.getElementById("tabEspacios").classList.remove("active");
 
-    if (tab === 'reservas') {
-      document.getElementById('tabReservas').classList.add('active');
+    if (tab === "reservas") {
+      document.getElementById("tabReservas").classList.add("active");
       cargarReservas();
-    } else if(tab === 'bloqueos') {
-      document.getElementById('tabBloqueos').classList.add('active');
+    } else if (tab === "bloqueos") {
+      document.getElementById("tabBloqueos").classList.add("active");
       cargarBloqueos();
-    } else if (tab === 'espacios') {
-      document.getElementById('tabEspacios').classList.add('active');
+    } else if (tab === "espacios") {
+      document.getElementById("tabEspacios").classList.add("active");
       cargarTodosEspacios();
     }
   };
@@ -1989,7 +2239,7 @@ import Navbar from "../components/Navbar.astro";
   // ========================================
   let todosEspacios = [];
   let paginaActualEspacios = 1;
-  const espaciosPorPagina = 4;
+  const espaciosPorPagina = 10;
 
   async function cargarTodosEspacios() {
     try {
@@ -2004,7 +2254,7 @@ import Navbar from "../components/Navbar.astro";
         todosEspacios = data.data;
         paginaActualEspacios = 1; // Resetear a página 1
         mostrarEspaciosPaginados();
-        
+
         if (table) table.style.display = "table";
         if (noEspacios) noEspacios.style.display = "none";
         if (pagination) pagination.style.display = "flex";
@@ -2023,202 +2273,319 @@ import Navbar from "../components/Navbar.astro";
     const inicio = (paginaActualEspacios - 1) * espaciosPorPagina;
     const fin = inicio + espaciosPorPagina;
     const espaciosPagina = todosEspacios.slice(inicio, fin);
-    
+
     const totalPaginas = Math.ceil(todosEspacios.length / espaciosPorPagina);
 
     if (tbody) {
-      tbody.innerHTML = espaciosPagina.map(e => `
+      tbody.innerHTML = espaciosPagina
+        .map(
+          (e) => `
         <tr style="vertical-align: middle; border-bottom: 1px solid #f3f4f6; transition: background 0.15s;">
           <td style="text-align: center; font-weight: 600; color: #9ca3af; font-size: 13px; padding: 16px 8px;">
             ${e.id}
           </td>
           <td style="padding: 16px;">
             <div style="font-weight: 600; color: #2563eb; margin-bottom: 2px; font-size: 14px;">${e.nombre}</div>
-            ${e.descripcion ? `<div style="font-size: 12px; color: #6b7280; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${e.descripcion}</div>` : ''}
+            ${e.descripcion ? `<div style=\"font-size: 12px; color: #6b7280; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;\">${e.descripcion}</div>` : ""}
           </td>
-          <td style="padding: 16px;">
-            <span class="badge" style="background: ${getTipoColor(e.tipo)}; color: white; font-size: 11px; padding: 5px 10px; border-radius: 5px; font-weight: 600; display: inline-block;">
-              ${formatTipo(e.tipo)}
-            </span>
+          <td style="padding: 16px; text-align: center; vertical-align: middle; white-space: nowrap;">
+            <span class="badge" style="background: ${getTipoColor(e.tipo)}; color: white; font-size: 13px; padding: 6px 18px; border-radius: 6px; font-weight: 600; display: inline-block; min-width: 80px; letter-spacing: 0.5px;">${formatTipo(e.tipo)}</span>
           </td>
           <td style="text-align: center; padding: 16px;">
             <div style="font-weight: 600; color: #111827; font-size: 16px;">${e.capacidad}</div>
-            <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px;">personas</div>
+            <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.3px;">PERSONAS</div>
           </td>
-          <td style="text-align: right; padding: 16px 20px;">
-            <div style="font-weight: 700; color: #10b981; font-size: 16px;">S/ ${e.precioHora.toFixed(2)}</div>
-            ${e.precioMedia ? `<div style="font-size: 11px; color: #9ca3af;">S/ ${e.precioMedia.toFixed(2)} / media</div>` : ''}
+          <td style="text-align: center; padding: 16px 20px; vertical-align: middle; white-space: nowrap;">
+            <span style="font-weight: 700; color: #10b981; font-size: 18px; letter-spacing: 0.5px;">S/ ${e.precioHora.toFixed(2)}</span>
           </td>
           <td style="padding: 16px;">
             <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px;">
-              ${e.techado ? '<span style="color: #3b82f6; white-space: nowrap;">✓ Techado</span>' : ''}
-              ${e.iluminacion ? '<span style="color: #f59e0b; white-space: nowrap;">💡 Iluminación</span>' : ''}
-              ${e.vestuarios ? '<span style="color: #10b981; white-space: nowrap;">🚿 Vestuarios</span>' : ''}
-              ${e.estacionamiento ? '<span style="color: #8b5cf6; white-space: nowrap;">🅿 Estacionamiento</span>' : ''}
+              ${e.techado ? '<span style=\"color: #3b82f6; white-space: nowrap;\">✓ Techado</span>' : ""}
+              ${e.iluminacion ? '<span style=\"color: #f59e0b; white-space: nowrap;\">💡 Iluminación</span>' : ""}
+              ${e.vestuarios ? '<span style=\"color: #10b981; white-space: nowrap;\">🚿 Vestuarios</span>' : ""}
+              ${e.estacionamiento ? '<span style=\"color: #8b5cf6; white-space: nowrap;\">🅿 Estacionamiento</span>' : ""}
             </div>
           </td>
-          <td style="text-align: center; padding: 16px;">
-            <span class="badge badge-${e.activo ? 'success' : 'secondary'}" style="font-size: 10px; padding: 5px 10px; font-weight: 600; border-radius: 4px;">
-              ${e.activo ? '● ACTIVO' : '○ INACTIVO'}
+          <td style="text-align: center; padding: 16px; vertical-align: middle; white-space: nowrap;">
+            <span class="badge badge-${e.activo ? "success" : "secondary"}" style="font-size: 13px; padding: 6px 18px; font-weight: 600; border-radius: 6px; min-width: 90px; display: inline-block; letter-spacing: 0.5px;">
+              ${e.activo ? "● ACTIVO" : "○ INACTIVO"}
             </span>
           </td>
           <td style="text-align: center; padding: 16px;">
             <button 
-              class="btn btn-sm ${e.activo ? 'btn-danger' : 'btn-success'}" 
+              class="btn btn-sm ${e.activo ? "btn-danger" : "btn-success"}" 
               onclick="toggleEstadoEspacio(${e.id}, ${!e.activo})"
               style="min-width: 90px; font-size: 11px; padding: 6px 10px; border-radius: 5px;"
             >
-              ${e.activo ? '⊗ Desactivar' : '✓ Activar'}
+              ${e.activo ? "⊗ Desactivar" : "✓ Activar"}
             </button>
           </td>
         </tr>
-      `).join('');
+      `,
+        )
+        .join("");
     }
 
     // Actualizar info de paginación
-    document.getElementById('espaciosFrom').textContent = inicio + 1;
-    document.getElementById('espaciosTo').textContent = Math.min(fin, todosEspacios.length);
-    document.getElementById('espaciosTotal').textContent = todosEspacios.length;
+    document.getElementById("espaciosFrom").textContent = inicio + 1;
+    document.getElementById("espaciosTo").textContent = Math.min(
+      fin,
+      todosEspacios.length,
+    );
+    document.getElementById("espaciosTotal").textContent = todosEspacios.length;
 
     // Actualizar botones
-    const prevBtn = document.getElementById('espaciosPrevBtn');
-    const nextBtn = document.getElementById('espaciosNextBtn');
-    
+    const prevBtn = document.getElementById("espaciosPrevBtn");
+    const nextBtn = document.getElementById("espaciosNextBtn");
+
     if (prevBtn) prevBtn.disabled = paginaActualEspacios === 1;
     if (nextBtn) nextBtn.disabled = paginaActualEspacios >= totalPaginas;
   }
 
-  window.cambiarPaginaEspacios = function(direccion) {
+  window.cambiarPaginaEspacios = function (direccion) {
     const totalPaginas = Math.ceil(todosEspacios.length / espaciosPorPagina);
-    
-    if (direccion === 'prev' && paginaActualEspacios > 1) {
+
+    if (direccion === "prev" && paginaActualEspacios > 1) {
       paginaActualEspacios--;
-    } else if (direccion === 'next' && paginaActualEspacios < totalPaginas) {
+    } else if (direccion === "next" && paginaActualEspacios < totalPaginas) {
       paginaActualEspacios++;
     }
-    
+
     mostrarEspaciosPaginados();
   };
 
   function getTipoColor(tipo) {
     const colores = {
-      futbol5: '#10b981',
-      futbol7: '#059669',
-      futbol11: '#047857',
-      basquet: '#f59e0b',
-      voley: '#3b82f6',
-      piscina: '#06b6d4',
-      gimnasio: '#8b5cf6',
-      tenis: '#ec4899',
+      futbol5: "#10b981",
+      futbol7: "#059669",
+      futbol11: "#047857",
+      basquet: "#f59e0b",
+      voley: "#3b82f6",
+      piscina: "#06b6d4",
+      gimnasio: "#8b5cf6",
+      tenis: "#ec4899",
     };
-    return colores[tipo] || '#6b7280';
+    return colores[tipo] || "#6b7280";
   }
 
   function formatTipo(tipo) {
     const tipos = {
-      futbol5: 'Fútbol 5',
-      futbol7: 'Fútbol 7',
-      futbol11: 'Fútbol 11',
-      basquet: 'Basquet',
-      voley: 'Vóley',
-      piscina: 'Piscina',
-      gimnasio: 'Gimnasio'
+      futbol5: "Fútbol 5",
+      futbol7: "Fútbol 7",
+      futbol11: "Fútbol 11",
+      basquet: "Basquet",
+      voley: "Vóley",
+      piscina: "Piscina",
+      gimnasio: "Gimnasio",
+      tenis: "Tenis",
+      padel: "Padel",
+      pingpong: "Pingpong",
+      yoga: "Yoga",
+      pilates: "Pilates",
+      boxeo: "Boxeo",
+      artes_marciales: "Artes Marciales",
     };
-    return tipos[tipo] || tipo;
+    return (
+      tipos[tipo] ||
+      tipo.charAt(0).toUpperCase() + tipo.slice(1).replace(/_/g, " ")
+    );
   }
 
-  window.abrirModalEspacio = function() {
-    const modal = document.getElementById('espacioModal');
-    const form = document.getElementById('espacioForm');
-    const alertDiv = document.getElementById('espacioAlert');
-    
+  window.abrirModalEspacio = function () {
+    const modal = document.getElementById("espacioModal");
+    const form = document.getElementById("espacioForm");
+    const alertDiv = document.getElementById("espacioAlert");
+
     if (form) form.reset();
-    if (alertDiv) alertDiv.innerHTML = '';
-    if (modal) modal.classList.add('active');
+    if (alertDiv) alertDiv.innerHTML = "";
+    if (modal) modal.classList.add("active");
   };
 
-  window.cerrarModalEspacio = function() {
-    const modal = document.getElementById('espacioModal');
-    if (modal) modal.classList.remove('active');
+  window.cerrarModalEspacio = function () {
+    const modal = document.getElementById("espacioModal");
+    if (modal) modal.classList.remove("active");
   };
 
-  window.toggleEstadoEspacio = async function(id, nuevoEstado) {
-    // Implementar lógica para activar/desactivar espacio
-    console.log(`Toggle espacio ${id} a ${nuevoEstado}`);
+  // Modal informativo reutilizando actionModal
+  function mostrarModalInfo(titulo, mensaje, tipo = "info") {
+    const modal = document.getElementById("actionModal");
+    const modalTitle = document.getElementById("actionModalTitle");
+    const modalMessage = document.getElementById("actionModalMessage");
+    const motivoGroup = document.getElementById("motivoGroup");
+    const confirmarBtn = document.getElementById("confirmarAccion");
+    const modalAlert = document.getElementById("actionModalAlert");
+    if (modalTitle) modalTitle.textContent = titulo;
+    if (modalMessage) modalMessage.innerHTML = mensaje;
+    if (motivoGroup) motivoGroup.style.display = "none";
+    if (modalAlert) modalAlert.innerHTML = "";
+    if (confirmarBtn) {
+      confirmarBtn.style.display = "none";
+    }
+    if (modal) {
+      modal.classList.add("active");
+    }
+    // Cerrar modal al hacer clic en Cancelar
+    const cancelarBtn = modal.querySelector(".btn.btn-secondary");
+    if (cancelarBtn) cancelarBtn.textContent = "Cerrar";
+  }
+
+  window.toggleEstadoEspacio = async function (id, nuevoEstado) {
+    const confirmMsg = nuevoEstado
+      ? "¿Seguro que deseas ACTIVAR este espacio? Volverá a estar disponible para reservas."
+      : "¿Seguro que deseas DESACTIVAR este espacio? Se cancelarán automáticamente todas las reservas futuras.";
+    // Usar modal de confirmación
+    let confirmar = await new Promise((resolve) => {
+      const modal = document.getElementById("actionModal");
+      const modalTitle = document.getElementById("actionModalTitle");
+      const modalMessage = document.getElementById("actionModalMessage");
+      const motivoGroup = document.getElementById("motivoGroup");
+      const confirmarBtn = document.getElementById("confirmarAccion");
+      const modalAlert = document.getElementById("actionModalAlert");
+      if (modalTitle)
+        modalTitle.textContent = nuevoEstado
+          ? "Activar Espacio"
+          : "Desactivar Espacio";
+      if (modalMessage) modalMessage.innerHTML = confirmMsg;
+      if (motivoGroup) motivoGroup.style.display = "none";
+      if (modalAlert) modalAlert.innerHTML = "";
+      if (confirmarBtn) {
+        confirmarBtn.style.display = "";
+        confirmarBtn.className = nuevoEstado
+          ? "btn btn-success"
+          : "btn btn-danger";
+        confirmarBtn.textContent = "Confirmar";
+        confirmarBtn.onclick = function () {
+          if (modal) modal.classList.remove("active");
+          confirmarBtn.onclick = null;
+          resolve(true);
+        };
+      }
+      // Cancelar/cerrar
+      const cancelarBtn = modal.querySelector(".btn.btn-secondary");
+      if (cancelarBtn) {
+        cancelarBtn.textContent = "Cancelar";
+        cancelarBtn.onclick = function () {
+          if (modal) modal.classList.remove("active");
+          if (confirmarBtn) confirmarBtn.onclick = null;
+          cancelarBtn.onclick = null;
+          resolve(false);
+        };
+      }
+      if (modal) modal.classList.add("active");
+    });
+    if (!confirmar) return;
+
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch("/api/espacios", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id, activo: nuevoEstado }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        mostrarModalInfo(
+          "¡Éxito!",
+          nuevoEstado
+            ? "Espacio activado correctamente."
+            : `Espacio desactivado.<br>Reservas canceladas: <b>${data.reservasCanceladas || 0}</b>`,
+          "success",
+        );
+        cargarTodosEspacios();
+        cargarEspacios(); // Actualizar filtro de reservas
+      } else {
+        mostrarModalInfo(
+          "Error",
+          data.error || "Error al actualizar el espacio",
+          "error",
+        );
+      }
+    } catch (error) {
+      mostrarModalInfo("Error", "Error de conexión", "error");
+    }
   };
 
   // Manejar envío del formulario de espacio
-  const espacioForm = document.getElementById('espacioForm');
+  const espacioForm = document.getElementById("espacioForm");
   if (espacioForm) {
-    espacioForm.addEventListener('submit', async (e) => {
+    espacioForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const alertDiv = document.getElementById('espacioAlert');
+      const alertDiv = document.getElementById("espacioAlert");
       const submitBtn = e.target.querySelector('button[type="submit"]');
 
-      if (alertDiv) alertDiv.innerHTML = '';
+      if (alertDiv) alertDiv.innerHTML = "";
 
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Creando...';
+        submitBtn.textContent = "Creando...";
       }
 
       try {
         const formData = {
-          nombre: document.getElementById('espacioNombre')?.value,
-          tipo: document.getElementById('espacioTipo')?.value,
-          capacidad: document.getElementById('espacioCapacidad')?.value,
-          precioHora: document.getElementById('espacioPrecioHora')?.value,
-          precioMedia: document.getElementById('espacioPrecioMedia')?.value || null,
-          descripcion: document.getElementById('espacioDescripcion')?.value || null,
-          techado: document.getElementById('espacioTechado')?.checked || false,
-          iluminacion: document.getElementById('espacioIluminacion')?.checked || false,
-          vestuarios: document.getElementById('espacioVestuarios')?.checked || false,
-          estacionamiento: document.getElementById('espacioEstacionamiento')?.checked || false,
-          orden: document.getElementById('espacioOrden')?.value || 0,
+          nombre: document.getElementById("espacioNombre")?.value,
+          tipo: document.getElementById("espacioTipo")?.value,
+          capacidad: document.getElementById("espacioCapacidad")?.value,
+          precioHora: document.getElementById("espacioPrecioHora")?.value,
+
+          descripcion:
+            document.getElementById("espacioDescripcion")?.value || null,
+          techado: document.getElementById("espacioTechado")?.checked || false,
+          iluminacion:
+            document.getElementById("espacioIluminacion")?.checked || false,
+          vestuarios:
+            document.getElementById("espacioVestuarios")?.checked || false,
+          estacionamiento:
+            document.getElementById("espacioEstacionamiento")?.checked || false,
+          orden: document.getElementById("espacioOrden")?.value || 0,
         };
 
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/espacios', {
-          method: 'POST',
+        const token = localStorage.getItem("token");
+        const response = await fetch("/api/espacios", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(formData),
         });
 
         const data = await response.json();
 
         if (data.success) {
-          showSuccess('Espacio creado exitosamente', '¡Éxito!');
+          showSuccess("Espacio creado exitosamente", "¡Éxito!");
           setTimeout(() => {
             cerrarModalEspacio();
             cargarTodosEspacios();
             cargarEspacios(); // Actualizar filtro de reservas
           }, 1000);
         } else {
-          if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">Error: ${data.error}</div>`;
+          if (alertDiv)
+            alertDiv.innerHTML = `<div class="alert alert-error">Error: ${data.error}</div>`;
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Crear Espacio';
+            submitBtn.textContent = "Crear Espacio";
           }
         }
       } catch (error) {
-        console.error('Error:', error);
-        if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">Error de conexión</div>`;
+        console.error("Error:", error);
+        if (alertDiv)
+          alertDiv.innerHTML = `<div class="alert alert-error">Error de conexión</div>`;
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Crear Espacio';
+          submitBtn.textContent = "Crear Espacio";
         }
       }
     });
   }
 
   // Cerrar modal al hacer clic fuera
-  const espacioModal = document.getElementById('espacioModal');
+  const espacioModal = document.getElementById("espacioModal");
   if (espacioModal) {
-    espacioModal.addEventListener('click', (e) => {
+    espacioModal.addEventListener("click", (e) => {
       if (e.target === espacioModal) {
         cerrarModalEspacio();
       }

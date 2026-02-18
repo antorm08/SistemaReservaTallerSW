@@ -70,10 +70,20 @@ import Navbar from '../components/Navbar.astro';
       </div>
       
       <!-- Paginación -->
-      <div class="pagination-wrapper" id="pagination">
-      </div>
-      
-      <div id="paginationInfo">
+      <div id="misReservasPagination" style="padding: 16px 24px; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; margin-top: 0;">
+        <div style="font-size: 13px; color: var(--text-light);" id="misReservasPaginationInfo">
+          Mostrando <span id="misReservasFrom">1</span> a <span id="misReservasTo">10</span> de <span id="misReservasTotal">0</span> reservas
+        </div>
+        <div style="display: flex; gap: 12px;" id="misReservasPaginationButtons">
+          <button class="btn btn-sm" onclick="cambiarPaginaMisReservas('prev')" id="misReservasPrevBtn" style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M15 18l-6-6 6-6"></path></svg>
+            Anterior
+          </button>
+          <button class="btn btn-sm" onclick="cambiarPaginaMisReservas('next')" id="misReservasNextBtn" style="padding: 8px 18px; font-size: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 8px; font-weight: 600; box-shadow: 0 2px 8px rgba(16,185,129,0.08); transition: background 0.2s; display: flex; align-items: center; gap: 6px;" disabled>
+            Siguiente
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
       </div>
     </div>
     
@@ -242,62 +252,11 @@ import Navbar from '../components/Navbar.astro';
   font-weight: 400;
 }
 
-/* === PAGINACIÓN PREMIUM === */
-.pagination-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  margin-top: 32px;
-  padding: 0;
+/* Botones de paginación Mis Reservas */
+#misReservasPaginationButtons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
-
-.pagination-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  padding: 8px 12px;
-  border-radius: 16px;
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.08),
-    0 4px 10px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-}
-
-.pagination-container:hover {
-  box-shadow: 
-    0 12px 35px rgba(0, 0, 0, 0.12),
-    0 6px 15px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
-}
-
-.pagination-btn {
-  position: relative;
-  padding: 0;
-  border: none;
-  background: linear-gradient(145deg, #f8fafc 0%, #e2e8f0 100%);
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #475569;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(226, 232, 240, 0.6);
-  overflow: hidden;
 }
 
 .pagination-btn::before {
@@ -522,40 +481,75 @@ import Navbar from '../components/Navbar.astro';
   
   function getTipoIcon(tipo) {
     const icons = {
-      'futbol5': { 
-        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
-        color: '#16A34A', 
-        bg: '#DCFCE7' 
+      'pilates': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="4" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>',
+        color: '#f472b6',
+        bg: '#fce7f3'
       },
-      'futbol7': { 
-        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
-        color: '#16A34A', 
-        bg: '#DCFCE7' 
+      'artes_marciales': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 16l4-8 4 8"/></svg>',
+        color: '#818cf8',
+        bg: '#e0e7ff'
       },
-      'futbol11': { 
-        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
-        color: '#16A34A', 
-        bg: '#DCFCE7' 
+      'boxeo': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="10" rx="5"/><rect x="15" y="3" width="6" height="6" rx="3"/><rect x="3" y="15" width="6" height="6" rx="3"/></svg>',
+        color: '#f87171',
+        bg: '#fee2e2'
       },
-      'basquet': { 
+      'futbol5': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
+        color: '#16A34A',
+        bg: '#DCFCE7'
+      },
+      'futbol7': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
+        color: '#16A34A',
+        bg: '#DCFCE7'
+      },
+      'futbol11': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 2c1.5 1 2.5 2 3 4l-3 3-3-3c.5-2 1.5-3 3-4z"/><path d="M2 12c1-1.5 2-2.5 4-3l3 3-3 3c-2-.5-3-1.5-4-3z"/><path d="M12 22c-1.5-1-2.5-2-3-4l3-3 3 3c-.5 2-1.5 3-3 4z"/><path d="M22 12c-1 1.5-2 2.5-4 3l-3-3 3-3c2 .5 3 1.5 4 3z"/></svg>',
+        color: '#16A34A',
+        bg: '#DCFCE7'
+      },
+      'basquet': {
         icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/><path d="M6 6c3 3 3 9 0 12M18 6c-3 3-3 9 0 12"/></svg>',
-        color: '#F97316', 
-        bg: '#FFEDD5' 
+        color: '#F97316',
+        bg: '#FFEDD5'
       },
-      'voley': { 
+      'voley': {
         icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20M2 12h20"/><path d="M8 4c2 4 2 12 0 16M16 4c-2 4-2 12 0 16"/></svg>',
-        color: '#F97316', 
-        bg: '#FFEDD5' 
+        color: '#F97316',
+        bg: '#FFEDD5'
       },
-      'piscina': { 
+      'piscina': {
         icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 15c1.7 0 3-1 4-1s2.3 1 4 1 2.3-1 4-1 2.3 1 4 1 2.3-1 4-1"/><path d="M2 19c1.7 0 3-1 4-1s2.3 1 4 1 2.3-1 4-1 2.3 1 4 1 2.3-1 4-1"/><circle cx="8" cy="8" r="2"/><path d="M12 6l3 3-3 3"/></svg>',
-        color: '#2563EB', 
-        bg: '#DBEAFE' 
+        color: '#2563EB',
+        bg: '#DBEAFE'
       },
-      'gimnasio': { 
+      'gimnasio': {
         icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 6v12M17.5 6v12M3 9h3M18 9h3M3 15h3M18 15h3M9 12h6"/></svg>',
-        color: '#9333EA', 
-        bg: '#F3E8FF' 
+        color: '#9333EA',
+        bg: '#F3E8FF'
+      },
+      'tenis': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 16c2-2 6-6 8-8"/><path d="M15 9l2-2"/></svg>',
+        color: '#22d3ee',
+        bg: '#cffafe'
+      },
+      'padel': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="M15 15l3 3"/></svg>',
+        color: '#fbbf24',
+        bg: '#fef9c3'
+      },
+      'pingpong': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="15" r="6"/><path d="M14 15h7"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>',
+        color: '#f472b6',
+        bg: '#fce7f3'
+      },
+      'yoga': {
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="3"/><path d="M12 10v4"/><path d="M9 17l3-3 3 3"/><path d="M6 21l6-6 6 6"/></svg>',
+        color: '#a3e635',
+        bg: '#ecfccb'
       },
     };
     return icons[tipo] || { 
@@ -574,6 +568,13 @@ import Navbar from '../components/Navbar.astro';
       'voley': 'Vóley',
       'piscina': 'Piscina',
       'gimnasio': 'Gimnasio',
+      'tenis': 'Tenis',
+      'padel': 'Pádel',
+      'pingpong': 'Ping Pong',
+      'yoga': 'Yoga',
+      'boxeo': 'Boxeo',
+      'pilates': 'Pilates',
+      'artes_marciales': 'Artes Marciales',
     };
     return tipos[tipo] || tipo;
   }
@@ -829,6 +830,13 @@ import Navbar from '../components/Navbar.astro';
       </tr>
     `}).join('');
     
+    // Actualizar info de paginación abajo
+    const from = reservasFiltradas.length === 0 ? 0 : (inicio + 1);
+    const to = reservasFiltradas.length === 0 ? 0 : Math.min(fin, reservasFiltradas.length);
+    const total = reservasFiltradas.length;
+    document.getElementById('misReservasFrom').textContent = from;
+    document.getElementById('misReservasTo').textContent = to;
+    document.getElementById('misReservasTotal').textContent = total;
     mostrarPaginacion();
   }
   

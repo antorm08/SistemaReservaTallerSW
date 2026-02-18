@@ -1,3 +1,85 @@
+// PATCH /api/espacios.js
+// Activa o desactiva un espacio y cancela reservas futuras si se desactiva
+export async function PATCH({ request }) {
+  try {
+    const token = request.headers.get('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'No autorizado' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const { verifyToken } = await import('../../lib/auth.js');
+    let usuario;
+    try {
+      usuario = verifyToken(token);
+    } catch (e) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Token inválido' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    if (usuario.rol !== 'admin') {
+      return new Response(
+        JSON.stringify({ success: false, error: 'No tienes permisos para modificar espacios' }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    const body = await request.json();
+    const { id, activo } = body;
+    if (typeof id !== 'number' || typeof activo !== 'boolean') {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Datos inválidos' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    // Actualizar estado del espacio
+    const espacio = await prisma.espacio.update({
+      where: { id },
+      data: { activo }
+    });
+
+    let reservasCanceladas = 0;
+    if (!activo) {
+      // Cancelar reservas futuras (pendiente/confirmada y fecha >= hoy)
+      const hoy = new Date();
+      const reservas = await prisma.reserva.findMany({
+        where: {
+          espacioId: id,
+          estado: { in: ['pendiente', 'confirmada'] },
+          fecha: { gte: hoy }
+        }
+      });
+      for (const r of reservas) {
+        await prisma.reserva.update({
+          where: { id: r.id },
+          data: {
+            estado: 'cancelada',
+            motivoCancelacion: 'Cancelada por desactivación del espacio',
+            canceladoPor: 'admin',
+            canceladaAt: new Date()
+          }
+        });
+        reservasCanceladas++;
+      }
+    }
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: activo ? 'Espacio activado' : 'Espacio desactivado y reservas futuras canceladas',
+        data: espacio,
+        reservasCanceladas
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Error al actualizar espacio:', error);
+    return new Response(
+      JSON.stringify({ success: false, error: 'Error al actualizar el espacio', message: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
 // GET /api/espacios.js
 // Lista todos los espacios deportivos activos con sus características
 
@@ -141,7 +223,7 @@ export async function POST({ request }) {
       iluminacion,
       vestuarios,
       estacionamiento,
-      orden,
+      orden
     } = body;
 
     // Validaciones
@@ -159,7 +241,7 @@ export async function POST({ request }) {
     }
 
     // Validar tipo de espacio
-    const tiposValidos = ['futbol5', 'futbol7', 'futbol11', 'basquet', 'voley', 'piscina', 'gimnasio'];
+    const tiposValidos = ['futbol5', 'futbol7', 'futbol11', 'basquet', 'voley', 'piscina', 'gimnasio', 'tenis', 'padel', 'pingpong', 'yoga', 'pilates', 'boxeo', 'artes_marciales'];
     if (!tiposValidos.includes(tipo)) {
       return new Response(
         JSON.stringify({
@@ -190,6 +272,35 @@ export async function POST({ request }) {
         activo: true,
       },
     });
+
+    // Crear horarios de operación estándar automáticamente (Lunes a Domingo)
+    const horarios = [];
+    for (let dia = 0; dia <= 6; dia++) {
+      let horaApertura, horaCierre;
+      if (dia >= 1 && dia <= 5) { // Lunes a Viernes
+        horaApertura = '06:00';
+        horaCierre = '23:00';
+      } else if (dia === 6) { // Sábado
+        horaApertura = '08:00';
+        horaCierre = '18:00';
+      } else if (dia === 0) { // Domingo
+        horaApertura = '10:00';
+        horaCierre = '16:00';
+      }
+      horarios.push(
+        prisma.horario.create({
+          data: {
+            espacioId: espacio.id,
+            diaSemana: dia,
+            horaApertura,
+            horaCierre,
+            intervalo: 60,
+            activo: true,
+          },
+        })
+      );
+    }
+    await Promise.all(horarios);
 
     return new Response(
       JSON.stringify({
