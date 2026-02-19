@@ -8,18 +8,21 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test-api": "node test-api.js"
+    "test-api": "node test-api.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@astrojs/vercel": "^9.0.4",
-    "prisma": "^5.15.0",
     "@prisma/client": "^5.15.0",
     "astro": "^5.17.1",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
     "lucide-astro": "^0.556.0"
-    },
-    "prisma": {
-      "seed": "node prisma/seed.js"
-    }
+  },
+  "devDependencies": {
+    "prisma": "^5.15.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
 }
