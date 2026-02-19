@@ -26,22 +26,61 @@ export async function PATCH({ request }) {
       );
     }
     const body = await request.json();
-    const { id, activo } = body;
-    if (typeof id !== 'number' || typeof activo !== 'boolean') {
+    const { id } = body;
+    if (typeof id !== 'number') {
       return new Response(
-        JSON.stringify({ success: false, error: 'Datos inválidos' }),
+        JSON.stringify({ success: false, error: 'ID inválido' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
-    // Actualizar estado del espacio
+
+    // Campos editables
+    const camposEditables = [
+      'nombre', 'descripcion', 'tipo', 'capacidad', 'precioHora', 'precioMedia',
+      'techado', 'iluminacion', 'vestuarios', 'estacionamiento', 'orden', 'activo'
+    ];
+    const data = {};
+    for (const campo of camposEditables) {
+      if (body.hasOwnProperty(campo)) {
+        data[campo] = body[campo];
+      }
+    }
+
+    // Validaciones mínimas
+    if (data.nombre !== undefined && !data.nombre) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'El nombre es requerido' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    if (data.tipo !== undefined) {
+      const tiposValidos = ['futbol5', 'futbol7', 'futbol11', 'basquet', 'voley', 'piscina', 'gimnasio', 'tenis', 'padel', 'pingpong', 'yoga', 'pilates', 'boxeo', 'artes_marciales'];
+      if (!tiposValidos.includes(data.tipo)) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Tipo de espacio inválido' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+    if (data.capacidad !== undefined) data.capacidad = parseInt(data.capacidad);
+    if (data.precioHora !== undefined) data.precioHora = parseFloat(data.precioHora);
+    if (data.precioMedia !== undefined) data.precioMedia = parseFloat(data.precioMedia);
+    if (data.orden !== undefined) data.orden = parseInt(data.orden);
+    if (data.techado !== undefined) data.techado = Boolean(data.techado);
+    if (data.iluminacion !== undefined) data.iluminacion = Boolean(data.iluminacion);
+    if (data.vestuarios !== undefined) data.vestuarios = Boolean(data.vestuarios);
+    if (data.estacionamiento !== undefined) data.estacionamiento = Boolean(data.estacionamiento);
+    if (data.activo !== undefined) data.activo = Boolean(data.activo);
+
+    // Actualizar espacio
     const espacio = await prisma.espacio.update({
       where: { id },
-      data: { activo }
+      data
     });
 
     let reservasCanceladas = 0;
-    if (!activo) {
-      // Cancelar reservas futuras (pendiente/confirmada y fecha >= hoy)
+    // Si se desactiva, cancelar reservas futuras
+    if (data.activo === false) {
       const hoy = new Date();
       const reservas = await prisma.reserva.findMany({
         where: {
@@ -66,7 +105,7 @@ export async function PATCH({ request }) {
     return new Response(
       JSON.stringify({
         success: true,
-        message: activo ? 'Espacio activado' : 'Espacio desactivado y reservas futuras canceladas',
+        message: 'Espacio actualizado',
         data: espacio,
         reservasCanceladas
       }),

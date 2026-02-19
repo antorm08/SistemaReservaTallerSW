@@ -773,9 +773,8 @@ import Navbar from "../components/Navbar.astro";
             class="btn btn-secondary"
             onclick="cerrarModalEspacio()">Cancelar</button
           >
-          <button type="submit" form="espacioForm" class="btn btn-primary"
-            >Crear Espacio</button
-          >
+          <button type="submit" form="espacioForm" class="btn btn-primary" id="espacioSubmitBtn"
+            >Crear Espacio</button>
         </div>
       </div>
     </div>
@@ -985,6 +984,10 @@ import Navbar from "../components/Navbar.astro";
     const totalPaginas = Math.ceil(
       reservasFiltradas.length / reservasPorPagina,
     );
+    if (reservasFiltradas.length === 0) {
+      pagDiv.style.display = "none";
+      return;
+    }
     pagDiv.style.display = "flex";
     let desde = reservasFiltradas.length === 0 ? 0 : (paginaReservas - 1) * reservasPorPagina + 1;
     let hasta = reservasFiltradas.length === 0 ? 0 : Math.min(paginaReservas * reservasPorPagina, reservasFiltradas.length);
@@ -1642,6 +1645,7 @@ import Navbar from "../components/Navbar.astro";
         `;
         noDataEl.style.display = "block";
       }
+      actualizarPaginacionBloqueos();
       return;
     }
 
@@ -2311,7 +2315,14 @@ import Navbar from "../components/Navbar.astro";
               ${e.activo ? "● ACTIVO" : "○ INACTIVO"}
             </span>
           </td>
-          <td style="text-align: center; padding: 16px;">
+          <td style="text-align: center; padding: 16px; display: flex; gap: 6px; justify-content: center; align-items: center;">
+            <button 
+              class="btn btn-sm btn-primary" 
+              onclick="editarEspacio(${e.id})"
+              style="min-width: 70px; font-size: 11px; padding: 6px 10px; border-radius: 5px;"
+            >
+              ✎ Editar
+            </button>
             <button 
               class="btn btn-sm ${e.activo ? "btn-danger" : "btn-success"}" 
               onclick="toggleEstadoEspacio(${e.id}, ${!e.activo})"
@@ -2391,12 +2402,51 @@ import Navbar from "../components/Navbar.astro";
     );
   }
 
+
+  // Variable global para saber si estamos editando o creando
+  let espacioEditando = null;
+
   window.abrirModalEspacio = function () {
+    espacioEditando = null;
     const modal = document.getElementById("espacioModal");
     const form = document.getElementById("espacioForm");
     const alertDiv = document.getElementById("espacioAlert");
-
+    const titulo = modal?.querySelector(".modal-header h3");
+    if (titulo) titulo.textContent = "Nuevo Espacio Deportivo";
     if (form) form.reset();
+    if (alertDiv) alertDiv.innerHTML = "";
+    // Cambiar texto del botón
+    const submitBtn = document.getElementById("espacioSubmitBtn");
+    if (submitBtn) submitBtn.textContent = "Crear Espacio";
+    if (modal) modal.classList.add("active");
+  };
+
+  window.editarEspacio = function (id) {
+    const espacio = todosEspacios.find(e => e.id === id);
+    if (!espacio) return;
+    espacioEditando = espacio;
+    const modal = document.getElementById("espacioModal");
+    const form = document.getElementById("espacioForm");
+    const alertDiv = document.getElementById("espacioAlert");
+    const titulo = modal?.querySelector(".modal-header h3");
+    if (titulo) titulo.textContent = "Editar Espacio Deportivo";
+    if (form) {
+      form.reset();
+      // Llenar campos
+      document.getElementById("espacioNombre").value = espacio.nombre || "";
+      document.getElementById("espacioTipo").value = espacio.tipo || "";
+      document.getElementById("espacioCapacidad").value = espacio.capacidad || "";
+      document.getElementById("espacioPrecioHora").value = espacio.precioHora || "";
+      document.getElementById("espacioDescripcion").value = espacio.descripcion || "";
+      document.getElementById("espacioTechado").checked = !!espacio.techado;
+      document.getElementById("espacioIluminacion").checked = !!espacio.iluminacion;
+      document.getElementById("espacioVestuarios").checked = !!espacio.vestuarios;
+      document.getElementById("espacioEstacionamiento").checked = !!espacio.estacionamiento;
+      document.getElementById("espacioOrden").value = espacio.orden || 0;
+      // Cambiar texto del botón
+      const submitBtn = document.getElementById("espacioSubmitBtn");
+      if (submitBtn) submitBtn.textContent = "Guardar Cambios";
+    }
     if (alertDiv) alertDiv.innerHTML = "";
     if (modal) modal.classList.add("active");
   };
@@ -2515,13 +2565,13 @@ import Navbar from "../components/Navbar.astro";
       e.preventDefault();
 
       const alertDiv = document.getElementById("espacioAlert");
-      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const submitBtn = document.getElementById("espacioSubmitBtn");
 
       if (alertDiv) alertDiv.innerHTML = "";
 
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "Creando...";
+        submitBtn.textContent = espacioEditando ? "Guardando..." : "Creando...";
       }
 
       try {
@@ -2530,7 +2580,6 @@ import Navbar from "../components/Navbar.astro";
           tipo: document.getElementById("espacioTipo")?.value,
           capacidad: document.getElementById("espacioCapacidad")?.value,
           precioHora: document.getElementById("espacioPrecioHora")?.value,
-
           descripcion:
             document.getElementById("espacioDescripcion")?.value || null,
           techado: document.getElementById("espacioTechado")?.checked || false,
@@ -2544,19 +2593,37 @@ import Navbar from "../components/Navbar.astro";
         };
 
         const token = localStorage.getItem("token");
-        const response = await fetch("/api/espacios", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        });
-
-        const data = await response.json();
+        let response, data;
+        if (espacioEditando) {
+          // Modo edición
+          formData.id = espacioEditando.id;
+          response = await fetch("/api/espacios", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
+          });
+          data = await response.json();
+        } else {
+          // Modo creación
+          response = await fetch("/api/espacios", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
+          });
+          data = await response.json();
+        }
 
         if (data.success) {
-          showSuccess("Espacio creado exitosamente", "¡Éxito!");
+          showSuccess(
+            espacioEditando ? "Espacio actualizado exitosamente" : "Espacio creado exitosamente",
+            "¡Éxito!"
+          );
           setTimeout(() => {
             cerrarModalEspacio();
             cargarTodosEspacios();
@@ -2567,7 +2634,7 @@ import Navbar from "../components/Navbar.astro";
             alertDiv.innerHTML = `<div class="alert alert-error">Error: ${data.error}</div>`;
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = "Crear Espacio";
+            submitBtn.textContent = espacioEditando ? "Guardar Cambios" : "Crear Espacio";
           }
         }
       } catch (error) {
@@ -2576,7 +2643,7 @@ import Navbar from "../components/Navbar.astro";
           alertDiv.innerHTML = `<div class="alert alert-error">Error de conexión</div>`;
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.textContent = "Crear Espacio";
+          submitBtn.textContent = espacioEditando ? "Guardar Cambios" : "Crear Espacio";
         }
       }
     });
