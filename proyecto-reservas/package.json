@@ -17,5 +17,8 @@
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
     "lucide-astro": "^0.556.0"
-  }
+    },
+    "prisma": {
+      "seed": "node prisma/seed.js"
+    }
 }
