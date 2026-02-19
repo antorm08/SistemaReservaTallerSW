@@ -9,5 +9,9 @@
   },
   "prisma": {
     "seed": "node prisma/seed.js"
+  },
+  "devDependencies": {
+    "@astrojs/vercel": "^9.0.4",
+    "astro": "^5.17.3"
   }
 }
