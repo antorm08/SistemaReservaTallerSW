@@ -14,7 +14,7 @@ Sistema de gestión de reservas para espacios deportivos desarrollado con Astro.
 
 ## 📋 Requisitos Previos
 
-- Node.js 18 o superior
+- Node.js 18 o 20
 - npm o pnpm
 
 ## 🛠️ Instalación
@@ -22,7 +22,8 @@ Sistema de gestión de reservas para espacios deportivos desarrollado con Astro.
 ### 1️⃣ Clona el repositorio:
 ```bash
 git clone <tu-repositorio>
-cd RESERVA
+cd SistemaReservaTallerSW
+cd proyecto-reservas
 ```
 
 ### 2️⃣ Instala las dependencias de la raíz:
@@ -35,11 +36,20 @@ npm install
 # En Windows (PowerShell)
 Copy-Item .env.example .env
 
-# En Linux/Mac
+# En Linux/Mac (o Git Bash)
 cp .env.example .env
+
+Alternativamente usar :
+
+cat > .env << EOF
+DATABASE_URL="file:./prisma/dev.db"
+JWT_SECRET="tu-secreto-super-seguro"
+PORT=4321
+NODE_ENV="development"
+EOF
 ```
 
-**Importante:** Edita el archivo `.env` y cambia el `JWT_SECRET` a algo seguro en producción.
+**Importante:** Puedes editar el archivo `.env` manualmente y cambiar el `JWT_SECRET` a algo seguro en producción.
 
 ### 4️⃣ Configura la base de datos:
 ```bash
@@ -49,8 +59,6 @@ npx prisma generate
 # Ejecuta las migraciones (crea las tablas)
 npx prisma migrate dev
 
-# Carga los datos iniciales (admin + espacios)
-npx prisma db seed
 ```
 
 **Nota:** El seed creará:
@@ -58,13 +66,8 @@ npx prisma db seed
 - ✅ 8 espacios deportivos con horarios
 - ❌ NO incluye reservas (la BD estará limpia)
 
-### 5️⃣ Instala las dependencias del frontend:
-```bash
-cd proyecto-reservas
-npm install
-```
 
-### 6️⃣ Inicia el servidor de desarrollo:
+### 6️⃣ Inicia el servidor de desarrollo (en la carpeta de proyecto-reservas):
 ```bash
 npm run dev
 ```
@@ -212,7 +215,7 @@ Este proyecto está bajo la Licencia MIT.
 
 ## 👤 Autor
 
-Tu Nombre / Tu Equipo
+Grupo 7
 
 ## 🐛 Problemas Conocidos
 
