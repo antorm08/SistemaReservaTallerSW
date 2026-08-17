@@ -2,7 +2,10 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret-key-temporal-cambiar-en-produccion';
+const JWT_SECRET = process.env.JWT_SECRET?.trim();
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET es obligatoria. Configúrala en las variables de entorno.');
+}
 const JWT_EXPIRES_IN = '7d';
 
 /**

@@ -1,226 +1,82 @@
-# Sistema de Reservas - Centro Deportivo
+# Sistema de Reservas Deportivas
 
-Sistema de gestión de reservas para espacios deportivos desarrollado con Astro.js y Prisma.
+Sistema web de reservas para espacios deportivos desarrollado con Astro, Prisma y SQLite, con autenticación JWT, roles, disponibilidad en tiempo real y panel administrativo.
 
-## 🚀 Características
+**Astro 5 · Prisma ORM · SQLite · JWT · bcrypt · REST API**
 
-- **Gestión de Espacios**: Múltiples tipos de espacios deportivos (fútbol 5/7/11, tenis, pádel, etc.)
-- **Sistema de Reservas**: Interfaz intuitiva para reservar espacios por fecha y horario
-- **Panel de Administración**: Gestión completa de reservas, espacios y bloqueos
-- **Autenticación**: Sistema de usuarios con roles (usuario/administrador)
-- **Estados de Reserva**: Flujo completo (pendiente → confirmada → completada → cancelada)
-- **Horarios Inteligentes**: Validación de horarios pasados y disponibilidad en tiempo real
-- **Bloqueos**: Sistema de bloqueo de horarios para mantenimiento u eventos
+## Funcionalidades
 
-## 📋 Requisitos Previos
+- Consulta de espacios y disponibilidad por fecha y horario.
+- Creación, seguimiento y cancelación de reservas.
+- Registro e inicio de sesión con contraseñas cifradas mediante bcrypt.
+- Autenticación JWT y autorización por roles de usuario y administrador.
+- Panel administrativo para gestionar reservas, espacios y bloqueos.
+- Validación de horarios pasados, solapamientos y franjas no disponibles.
+- API REST para autenticación, espacios, reservas y bloqueos.
 
-- Node.js 18 o 20
-- npm o pnpm
+## Arquitectura
 
-## 🛠️ Instalación
+La aplicación utiliza Astro en modo servidor con un adaptador para Vercel. Las páginas y los endpoints REST se encuentran en `proyecto-reservas/src/pages`, mientras que Prisma gestiona el modelo relacional, las migraciones y el seed sobre SQLite.
 
-### 1️⃣ Clona el repositorio:
-```bash
-git clone <tu-repositorio>
-cd SistemaReservaTallerSW
-cd proyecto-reservas
+```text
+proyecto-reservas/
+|-- prisma/            # Esquema, migraciones y datos iniciales
+|-- public/            # Recursos estáticos
+|-- src/
+|   |-- components/    # Componentes de interfaz
+|   |-- layouts/       # Layouts compartidos
+|   |-- lib/           # Autenticación y utilidades
+|   `-- pages/         # Vistas y endpoints REST
+`-- astro.config.mjs
 ```
 
-### 2️⃣ Instala las dependencias de la raíz:
+## Instalación
+
+Requisitos: Node.js 18.17.1 o superior y npm.
+
 ```bash
+git clone <url-del-repositorio>
+cd <nombre-del-repositorio>/proyecto-reservas
 npm install
 ```
 
-### 3️⃣ Configura las variables de entorno:
+Crea el archivo de entorno a partir del ejemplo ubicado en la raíz:
+
 ```bash
-# En Windows (PowerShell)
-Copy-Item .env.example .env
+# macOS y Linux
+cp ../.env.example .env
 
-# En Linux/Mac (o Git Bash)
-cp .env.example .env
-
-Alternativamente usar :
-
-cat > .env << EOF
-DATABASE_URL="file:./prisma/dev.db"
-JWT_SECRET="tu-secreto-super-seguro"
-PORT=4321
-NODE_ENV="development"
-EOF
+# Windows PowerShell
+Copy-Item ../.env.example .env
 ```
 
-**Importante:** Puedes editar el archivo `.env` manualmente y cambiar el `JWT_SECRET` a algo seguro en producción.
+Reemplaza todos los valores ficticios de `.env`. `JWT_SECRET` y `SEED_ADMIN_PASSWORD` son obligatorias; esta última define la contraseña del administrador creado por el seed.
 
-### 4️⃣ Configura la base de datos:
+Prepara la base de datos e inicia el entorno de desarrollo:
+
 ```bash
-# Genera el cliente de Prisma
-npx prisma generate
-
-# Ejecuta las migraciones (crea las tablas)
 npx prisma migrate dev
-
-```
-
-**Nota:** El seed creará:
-- ✅ Usuario administrador
-- ✅ 8 espacios deportivos con horarios
-- ❌ NO incluye reservas (la BD estará limpia)
-
-
-### 6️⃣ Inicia el servidor de desarrollo (en la carpeta de proyecto-reservas):
-```bash
-npm run dev
-```
-
-El servidor estará disponible en `http://localhost:4321`
-
-### ✅ Verificar la Instalación
-
-1. **Verifica que el servidor esté corriendo:**
-   - Abre http://localhost:4321 en tu navegador
-
-2. **Prueba el login:**
-   - Usa: `admin@deportivo.com` / `admin123`
-
-3. **Verifica los datos iniciales:**
-   ```bash
-   # Ver la base de datos con Prisma Studio
-   npx prisma studio
-   ```
-   Deberías ver 8 espacios deportivos y 1 usuario admin.
-
-### ❗ Solución de Problemas Comunes
-
-**Error: "Can't reach database server"**
-```bash
-# Regenera la base de datos
-npx prisma migrate reset
 npx prisma db seed
-```
-
-**Error: "Module not found"**
-```bash
-# Reinstala dependencias
-rm -rf node_modules
-npm install
-cd proyecto-reservas
-rm -rf node_modules
-npm install
-```
-
-**Error: "JWT_SECRET is not defined"**
-- Asegúrate de haber creado el archivo `.env` en la raíz del proyecto
-- Verifica que contenga `JWT_SECRET="tu-secreto-aqui"`
-
-## 🚀 Uso
-
-### Desarrollo
-
-```bash
-# Desde la carpeta proyecto-reservas
-cd proyecto-reservas
 npm run dev
 ```
 
-El servidor estará disponible en `http://localhost:4321`
+La aplicación estará disponible en `http://localhost:4321`.
 
-### Producción
+## Scripts
 
-```bash
-npm run build
-npm run preview
-```
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Inicia el servidor de desarrollo |
+| `npm run build` | Genera la compilación de producción |
+| `npm run preview` | Previsualiza la compilación |
+| `npm run test-api` | Ejecuta las comprobaciones de la API |
+| `npx prisma studio` | Abre el explorador visual de la base de datos |
 
-## 📁 Estructura del Proyecto
+## Documentación Técnica
 
-```
-RESERVA/
-├── prisma/                 # Esquema y migraciones de base de datos
-│   ├── schema.prisma
-│   ├── seed.js
-│   └── migrations/
-├── proyecto-reservas/      # Aplicación Astro.js
-│   ├── src/
-│   │   ├── pages/         # Páginas y API endpoints
-│   │   ├── components/    # Componentes reutilizables
-│   │   ├── layouts/       # Layouts de página
-│   │   ├── lib/          # Utilidades (auth, etc.)
-│   │   └── styles/       # Estilos globales
-│   └── public/           # Archivos estáticos
-└── API_ENDPOINTS.md       # Documentación de API
-```
+- [Endpoints de la API](API_ENDPOINTS.md)
+- [Esquema y modelo de datos](SCHEMA_DOCUMENTACION.md)
 
-## 🔑 Usuarios por Defecto
+## Seguridad
 
-Después de ejecutar `npx prisma db seed`:
-
-- **👤 Administrador**: 
-  - Email: `admin@deportivo.com`
-  - Password: `admin123`
-  - Rol: admin
-
-**Importante:** La base de datos se crea vacía (sin reservas). Solo incluye el usuario administrador y los espacios deportivos disponibles. Los usuarios regulares deben registrarse desde la aplicación en `/registro`.
-
-## 💾 Gestión de Datos
-
-### ¿Qué se sincroniza con Git?
-- ✅ Código fuente
-- ✅ Esquema de base de datos (`schema.prisma`)
-- ✅ Migraciones (`migrations/`)
-- ✅ Script de inicialización (`seed.js`)
-
-### ¿Qué NO se sincroniza?
-- ❌ Base de datos local (`dev.db`)
-- ❌ Variables de entorno (`.env`)
-- ❌ Archivos de dependencias (`node_modules/`)
-- ❌ Reservas o datos de prueba personales
-
-**Resultado:** Cada persona que clone el repositorio tendrá una base de datos limpia con solo los datos iniciales del seed (admin + espacios).
-
-## 🛣️ Rutas Principales
-
-- `/` - Página de inicio con reserva rápida
-- `/espacios` - Explorar espacios disponibles
-- `/reservar` - Realizar reserva
-- `/mis-reservas` - Ver y gestionar mis reservas
-- `/admin` - Panel de administración
-- `/login` - Iniciar sesión
-- `/registro` - Crear cuenta
-
-## 📡 API Endpoints
-
-Ver [API_ENDPOINTS.md](API_ENDPOINTS.md) para documentación completa de la API.
-
-## 🗄️ Base de Datos
-
-El proyecto utiliza SQLite con Prisma ORM. El esquema incluye:
-
-- **Usuario**: Gestión de usuarios y autenticación
-- **Espacio**: Espacios deportivos disponibles
-- **Reserva**: Sistema de reservas
-- **Horario**: Horarios disponibles por espacio
-- **HorarioBloqueado**: Bloqueos de horarios
-
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📝 Licencia
-
-Este proyecto está bajo la Licencia MIT.
-
-## 👤 Autor
-
-Grupo 7
-
-## 🐛 Problemas Conocidos
-
-- El proyecto actualmente usa el modo desarrollo de Astro. Para producción, se necesita configurar un adapter.
-
-## 📞 Soporte
-
-Para reportar problemas o solicitar características, abre un issue en GitHub.
+Los secretos y las bases de datos locales no se versionan. La aplicación exige `JWT_SECRET` para firmar y verificar tokens, y el seed exige `SEED_ADMIN_PASSWORD` para crear el usuario administrador sin incluir contraseñas en el código fuente.

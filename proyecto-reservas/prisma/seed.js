@@ -8,10 +8,15 @@ async function hashPassword(password) {
 }
 
 async function seed() {
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  if (!adminPassword?.trim()) {
+    throw new Error('SEED_ADMIN_PASSWORD es obligatoria para ejecutar el seed.');
+  }
+
   console.log('🌱 Iniciando seed de la base de datos...');
 
   // Crear usuario administrador
-  const hashedPassword = await hashPassword('admin123');
+  const hashedPassword = await hashPassword(adminPassword);
   const admin = await prisma.usuario.upsert({
     where: { email: 'admin@deportivo.com' },
     update: {},

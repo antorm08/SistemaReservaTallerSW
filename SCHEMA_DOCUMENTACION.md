@@ -171,7 +171,7 @@ Usuario (1) ────────< (N) Reserva (N) >──────── 
 
 ### Usuario Admin
 - **Email**: admin@deportivo.com
-- **Password**: admin123 (sin hash por ahora)
+- **Password**: definida mediante `SEED_ADMIN_PASSWORD` y almacenada como hash bcrypt
 - **Rol**: admin
 
 ### Espacios Creados (8)
