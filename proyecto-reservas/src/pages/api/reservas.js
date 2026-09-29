@@ -1,9 +1,7 @@
 // POST /api/reservas.js
 // Crea una nueva reserva validando disponibilidad
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma.js';
 
 /**
  * Valida que no existan conflictos de horario

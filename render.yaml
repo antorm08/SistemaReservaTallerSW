@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: reservas-deportivas
+    runtime: node
+    rootDir: proyecto-reservas
+    plan: free
+    buildCommand: npm ci && npm run db:deploy && npm run build
+    startCommand: npm start
+    autoDeployTrigger: commit
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.12.0

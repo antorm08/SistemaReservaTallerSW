@@ -1,8 +1,8 @@
 # Sistema de Reservas Deportivas
 
-Sistema web de reservas para espacios deportivos desarrollado con Astro, Prisma y SQLite, con autenticación JWT, roles, disponibilidad en tiempo real y panel administrativo.
+Sistema web de reservas para espacios deportivos desarrollado con Astro, Prisma y PostgreSQL, con autenticación JWT, roles, disponibilidad en tiempo real y panel administrativo.
 
-**Astro 5 · Prisma ORM · SQLite · JWT · bcrypt · REST API**
+**Astro 7 · Prisma ORM · PostgreSQL (Neon) · JWT · bcrypt · REST API**
 
 ## Funcionalidades
 
@@ -16,7 +16,7 @@ Sistema web de reservas para espacios deportivos desarrollado con Astro, Prisma 
 
 ## Arquitectura
 
-La aplicación utiliza Astro en modo servidor con un adaptador para Vercel. Las páginas y los endpoints REST se encuentran en `proyecto-reservas/src/pages`, mientras que Prisma gestiona el modelo relacional, las migraciones y el seed sobre SQLite.
+La aplicación utiliza Astro en modo servidor con el adaptador Node. Las páginas y los endpoints REST se encuentran en `proyecto-reservas/src/pages`, mientras que Prisma gestiona PostgreSQL, sus migraciones y los datos iniciales. La configuración incluida permite desplegar el servidor en Render y usar una base de datos de Neon.
 
 ```text
 proyecto-reservas/
@@ -32,7 +32,7 @@ proyecto-reservas/
 
 ## Instalación
 
-Requisitos: Node.js 18.17.1 o superior y npm.
+Requisitos: Node.js 22.12 o superior, npm y una base de datos PostgreSQL.
 
 ```bash
 git clone <url-del-repositorio>
@@ -50,13 +50,13 @@ cp ../.env.example .env
 Copy-Item ../.env.example .env
 ```
 
-Reemplaza todos los valores ficticios de `.env`. `JWT_SECRET` y `SEED_ADMIN_PASSWORD` son obligatorias; esta última define la contraseña del administrador creado por el seed.
+Reemplaza todos los valores ficticios de `.env`. En `DATABASE_URL` usa la cadena de conexión pooled de Neon y conserva `sslmode=require`. `JWT_SECRET` y `SEED_ADMIN_PASSWORD` son obligatorias; esta última define la contraseña del administrador creado por el seed.
 
 Prepara la base de datos e inicia el entorno de desarrollo:
 
 ```bash
-npx prisma migrate dev
-npx prisma db seed
+npm run db:deploy
+npm run db:seed
 npm run dev
 ```
 
@@ -70,7 +70,20 @@ La aplicación estará disponible en `http://localhost:4321`.
 | `npm run build` | Genera la compilación de producción |
 | `npm run preview` | Previsualiza la compilación |
 | `npm run test-api` | Ejecuta las comprobaciones de la API |
+| `npm run db:deploy` | Aplica en PostgreSQL las migraciones pendientes |
+| `npm run db:seed` | Crea el administrador, espacios y horarios iniciales |
 | `npx prisma studio` | Abre el explorador visual de la base de datos |
+
+## Despliegue en Neon y Render
+
+1. Crea un proyecto en [Neon](https://neon.tech/) y copia su connection string pooled. Debe comenzar con `postgresql://` y terminar con `sslmode=require`.
+2. En tu `.env` local configura esa URL como `DATABASE_URL`, define `SEED_ADMIN_PASSWORD` y ejecuta una vez `npm run db:deploy` y `npm run db:seed` desde `proyecto-reservas/`.
+3. Sube el repositorio a GitHub o GitLab. No subas el archivo `.env`.
+4. En Render selecciona **New > Blueprint**, conecta el repositorio y confirma el servicio definido en `render.yaml`.
+5. Cuando Render solicite `DATABASE_URL`, pega la misma URL pooled de Neon. `JWT_SECRET` se genera automáticamente mediante el Blueprint.
+6. Inicia el despliegue. Render instalará dependencias, aplicará las migraciones, compilará Astro y ejecutará el servidor Node.
+
+No configures `PORT` manualmente en Render; la plataforma lo proporciona al proceso. Si no quieres cargar los datos iniciales, omite el paso local `npm run db:seed`, pero la aplicación no tendrá espacios ni usuario administrador.
 
 ## Documentación Técnica
 

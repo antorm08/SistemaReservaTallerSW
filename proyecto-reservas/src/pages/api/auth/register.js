@@ -1,10 +1,8 @@
 // POST /api/auth/register.js
 // Registra un nuevo usuario
 
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma.js';
 import { hashPassword, generateToken } from '../../../lib/auth.js';
-
-const prisma = new PrismaClient();
 
 export async function POST({ request }) {
   try {

@@ -83,9 +83,7 @@ export async function PATCH({ request }) {
 // GET /api/espacios.js
 // Lista todos los espacios deportivos activos con sus características
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../../lib/prisma.js';
 
 export const prerender = false;
 

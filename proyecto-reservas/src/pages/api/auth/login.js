@@ -1,10 +1,8 @@
 // POST /api/auth/login.js
 // Inicia sesión de usuario
 
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma.js';
 import { comparePassword, generateToken } from '../../../lib/auth.js';
-
-const prisma = new PrismaClient();
 
 export async function POST({ request }) {
   try {

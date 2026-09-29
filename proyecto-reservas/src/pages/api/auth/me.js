@@ -1,10 +1,8 @@
 // GET /api/auth/me.js
 // Obtiene el usuario autenticado actual
 
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma.js';
 import { requireAuth } from '../../../lib/auth.js';
-
-const prisma = new PrismaClient();
 
 export async function GET({ request }) {
   try {

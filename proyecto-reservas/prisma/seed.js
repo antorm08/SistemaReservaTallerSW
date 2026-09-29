@@ -132,8 +132,15 @@ async function seed() {
   for (const espacio of espaciosCreados) {
     // Lunes a Viernes (1-5)
     for (let dia = 1; dia <= 5; dia++) {
-      await prisma.horario.create({
-        data: {
+      await prisma.horario.upsert({
+        where: { espacioId_diaSemana: { espacioId: espacio.id, diaSemana: dia } },
+        update: {
+          horaApertura: '06:00',
+          horaCierre: '23:00',
+          intervalo: 60,
+          activo: true,
+        },
+        create: {
           espacioId: espacio.id,
           diaSemana: dia,
           horaApertura: '06:00',
@@ -145,8 +152,15 @@ async function seed() {
     }
     
     // Sábado (6)
-    await prisma.horario.create({
-      data: {
+    await prisma.horario.upsert({
+      where: { espacioId_diaSemana: { espacioId: espacio.id, diaSemana: 6 } },
+      update: {
+        horaApertura: '08:00',
+        horaCierre: '18:00',
+        intervalo: 60,
+        activo: true,
+      },
+      create: {
         espacioId: espacio.id,
         diaSemana: 6,
         horaApertura: '08:00',
@@ -157,8 +171,15 @@ async function seed() {
     });
     
     // Domingo (0)
-    await prisma.horario.create({
-      data: {
+    await prisma.horario.upsert({
+      where: { espacioId_diaSemana: { espacioId: espacio.id, diaSemana: 0 } },
+      update: {
+        horaApertura: '10:00',
+        horaCierre: '16:00',
+        intervalo: 60,
+        activo: true,
+      },
+      create: {
         espacioId: espacio.id,
         diaSemana: 0,
         horaApertura: '10:00',
