@@ -1,6 +1,9 @@
 ---
 // Layout base para todas las páginas
 const { title = 'Sistema de Reservas' } = Astro.props;
+const pageName = Astro.url.pathname === '/'
+  ? 'inicio'
+  : Astro.url.pathname.replace(/^\//, '').replace(/\/$/, '').replace(/[^a-z0-9-]/gi, '-') || 'inicio';
 import '../styles/global.css';
 ---
 
@@ -9,11 +12,13 @@ import '../styles/global.css';
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a2b">
+  <meta name="description" content="Reserva y gestiona espacios del centro deportivo.">
   <title>{title}</title>
   <script is:inline src="/modal.js?v=20260216-debug"></script>
   <script is:inline src="/auth-interceptor.js"></script>
 </head>
-<body>
+<body class={`page-${pageName}`}>
   <slot />
 </body>
 </html>

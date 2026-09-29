@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar.astro';
 <Layout title="Sistema de Reservas - Centro Deportivo">
   <Navbar />
   
-  <div class="container" style="padding: 10x 20px;">
+  <main class="container page-shell">
     <!-- Header -->
     <div class="welcome-header">
       <div>
@@ -25,7 +25,7 @@ import Navbar from '../components/Navbar.astro';
     </div>
     
     <div class="sports-grid" id="sportsGrid">
-      <div class="sport-card futbol">
+      <a class="sport-card futbol" href="/espacios?categoria=futbol">
         <div class="sport-card-content">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
@@ -33,9 +33,9 @@ import Navbar from '../components/Navbar.astro';
           </div>
           <p class="sport-info">Canchas 5 y 7</p>
         </div>
-      </div>
+      </a>
       
-      <div class="sport-card basquet">
+      <a class="sport-card basquet" href="/espacios?categoria=basquet">
         <div class="sport-card-content">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1"/></svg>
@@ -43,9 +43,9 @@ import Navbar from '../components/Navbar.astro';
           </div>
           <p class="sport-info">Pista Interior</p>
         </div>
-      </div>
+      </a>
       
-      <div class="sport-card natacion">
+      <a class="sport-card natacion" href="/espacios?categoria=piscina">
         <div class="sport-card-content">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
@@ -53,9 +53,9 @@ import Navbar from '../components/Navbar.astro';
           </div>
           <p class="sport-info">Carriles Libres</p>
         </div>
-      </div>
+      </a>
       
-      <div class="sport-card gimnasio">
+      <a class="sport-card gimnasio" href="/espacios?categoria=gimnasio">
         <div class="sport-card-content">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6v11M17.5 6v11M3 9h3M18 9h3M3 15h3M18 15h3M9 12h6"/></svg>
@@ -63,7 +63,7 @@ import Navbar from '../components/Navbar.astro';
           </div>
           <p class="sport-info">Acceso Diario</p>
         </div>
-      </div>
+      </a>
     </div>
   
     <!-- Próximas Reservas -->
@@ -113,7 +113,7 @@ import Navbar from '../components/Navbar.astro';
         <a href="/login" class="btn btn-primary" style="margin-top: 16px;">Iniciar Sesión</a>
       </div>
     </div>
-  </div>
+  </main>
   
 </Layout>
 

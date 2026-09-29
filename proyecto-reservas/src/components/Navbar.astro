@@ -3,20 +3,20 @@
 const currentPath = Astro.url.pathname;
 ---
 
-<nav class="navbar">
+<nav class="navbar" aria-label="Navegación principal">
   <div class="container">
     <div class="navbar-content">
       <a href="/" class="navbar-brand">
         <span class="brand-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16M15 4v16M4 15h16"/><circle cx="12" cy="12" r="2.5"/></svg>
         </span>
         <span class="brand-text">Centro Deportivo</span>
       </a>
       <ul class="navbar-nav" id="navbarMenu">
-        <li><a href="/" class={`navbar-link ${currentPath === '/' ? 'active' : ''}`}>Inicio</a></li>
-        <li><a href="/espacios" class={`navbar-link ${currentPath === '/espacios' ? 'active' : ''}`}>Espacios</a></li>
-        <li><a href="/mis-reservas" class={`navbar-link ${currentPath === '/mis-reservas' ? 'active' : ''}`}>Mis Reservas</a></li>
-        <li id="adminMenuItem" style="display: none;"><a href="/admin" class={`navbar-link ${currentPath === '/admin' ? 'active' : ''}`}>Admin</a></li>
+        <li><a href="/" class={`navbar-link ${currentPath === '/' ? 'active' : ''}`} aria-current={currentPath === '/' ? 'page' : undefined}>Inicio</a></li>
+        <li><a href="/espacios" class={`navbar-link ${currentPath === '/espacios' ? 'active' : ''}`} aria-current={currentPath === '/espacios' ? 'page' : undefined}>Espacios</a></li>
+        <li><a href="/mis-reservas" class={`navbar-link ${currentPath === '/mis-reservas' ? 'active' : ''}`} aria-current={currentPath === '/mis-reservas' ? 'page' : undefined}>Mis Reservas</a></li>
+        <li id="adminMenuItem" style="display: none;"><a href="/admin" class={`navbar-link ${currentPath === '/admin' ? 'active' : ''}`} aria-current={currentPath === '/admin' ? 'page' : undefined}>Admin</a></li>
         <li id="authMenuItem"><a href="/login" class="btn btn-primary navbar-btn" id="authLink">Iniciar Sesión</a></li>
       </ul>
     </div>
@@ -25,68 +25,123 @@ const currentPath = Astro.url.pathname;
 
 <style>
   .navbar {
-    background: var(--white);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: rgba(7, 26, 43, 0.97);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(2, 12, 22, 0.18);
     position: sticky;
     top: 0;
     z-index: 100;
+    padding: 0;
+    margin-bottom: 0;
+    backdrop-filter: blur(16px);
   }
   
   .navbar-content {
-    padding: 12px 0;
+    min-height: 72px;
+    padding: 10px 0;
   }
   
   .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--dark);
+    gap: 12px;
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--white);
     text-decoration: none;
+    letter-spacing: -0.02em;
   }
   
   .brand-icon {
-    font-size: 28px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    background: rgba(191, 255, 73, 0.1);
+    border: 1px solid rgba(191, 255, 73, 0.34);
+    border-radius: 12px 4px 12px 4px;
   }
   
   .brand-text {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--white);
   }
   
   .navbar-link {
     font-size: 15px;
-    color: var(--text);
-    transition: color 0.2s;
+    color: rgba(255, 255, 255, 0.72);
+    transition: color 0.2s, background-color 0.2s;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 650;
   }
   
   .navbar-link:hover {
-    color: var(--primary);
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.07);
   }
   
   .navbar-link.active {
-    color: var(--primary);
-    font-weight: 600;
+    color: var(--accent);
+    font-weight: 750;
     position: relative;
   }
   
   .navbar-link.active::after {
     content: '';
     position: absolute;
-    bottom: -8px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--primary);
-    border-radius: 3px 3px 0 0;
+    bottom: 2px;
+    left: 12px;
+    right: 12px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
   }
   
   .navbar-btn {
-    font-size: 14px;
-    padding: 8px 20px;
+    font-size: 13px;
+    padding: 10px 18px;
+  }
+
+  @media (max-width: 760px) {
+    .navbar-content {
+      align-items: stretch;
+      gap: 8px;
+      padding: 10px 0 8px;
+    }
+
+    .navbar-brand {
+      align-self: flex-start;
+    }
+
+    .navbar-nav {
+      width: 100%;
+      justify-content: flex-start;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 4px 0 2px;
+      scrollbar-width: none;
+    }
+
+    .navbar-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .navbar-nav li {
+      flex: 0 0 auto;
+    }
+
+    .navbar-link {
+      display: block;
+      white-space: nowrap;
+      font-size: 13px;
+      padding: 9px 10px;
+    }
+
+    .navbar-btn {
+      white-space: nowrap;
+      padding: 9px 14px;
+    }
   }
 </style>
 
@@ -100,7 +155,7 @@ const currentPath = Astro.url.pathname;
   
   if (token && authMenuItem) {
     // Reemplazar el enlace con un botón para evitar href inválido
-    authMenuItem.innerHTML = '<button class="btn btn-primary navbar-btn" id="logoutBtn">Cerrar Sesión</button>';
+    authMenuItem.innerHTML = '<button type="button" class="btn btn-primary navbar-btn" id="logoutBtn">Cerrar Sesión</button>';
     
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {

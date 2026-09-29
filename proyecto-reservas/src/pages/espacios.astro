@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar.astro";
 <Layout title="Espacios Disponibles">
   <Navbar />
 
-  <div class="container">
+  <main class="container page-shell">
     <div class="espacios-header">
       <div>
         <h1 style="margin-bottom: 4px;">Espacios Deportivos</h1>
@@ -130,7 +130,7 @@ import Navbar from "../components/Navbar.astro";
       </aside>
 
       <!-- Contenido Principal -->
-      <main class="espacios-content">
+      <div class="espacios-content">
         <div id="loading" class="text-center" style="padding: 40px;">
           <div class="loading" style="width: 40px; height: 40px;"></div>
           <p class="mt-2">Cargando espacios...</p>
@@ -142,9 +142,9 @@ import Navbar from "../components/Navbar.astro";
         <div id="noResults" style="display: none;" class="card text-center">
           <p style="color: var(--text-light);">No se encontraron espacios</p>
         </div>
-      </main>
+      </div>
     </div>
-  </div>
+  </main>
 </Layout>
 
 <style>

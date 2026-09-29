@@ -679,3 +679,953 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 }
+
+/* =========================================================
+   Dirección visual 2026: club deportivo / precisión atlética
+   Esta capa conserva los contratos del markup y del JavaScript.
+   ========================================================= */
+:root {
+  --primary: #087f5b;
+  --primary-dark: #056247;
+  --primary-light: #dff8ed;
+  --secondary: #1463ff;
+  --secondary-dark: #0b3578;
+  --accent: #bfff49;
+  --success: #087f5b;
+  --danger: #d83a49;
+  --warning: #e99b16;
+  --dark: #071a2b;
+  --light: #f3f6f4;
+  --surface: #ffffff;
+  --surface-muted: #edf2ef;
+  --border: #d9e2dd;
+  --text: #142a38;
+  --text-light: #61727d;
+  --white: #ffffff;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --radius-lg: 22px;
+  --shadow: 0 5px 18px rgba(7, 26, 43, 0.07);
+  --shadow-md: 0 12px 30px rgba(7, 26, 43, 0.1);
+  --shadow-lg: 0 24px 60px rgba(7, 26, 43, 0.16);
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+  background: var(--dark);
+}
+
+body {
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    linear-gradient(90deg, rgba(7, 26, 43, 0.025) 1px, transparent 1px),
+    linear-gradient(rgba(7, 26, 43, 0.025) 1px, transparent 1px),
+    var(--light);
+  background-size: 42px 42px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 72px 0 auto;
+  height: 220px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(112deg, rgba(20, 99, 255, 0.07), transparent 43%),
+    linear-gradient(248deg, rgba(8, 127, 91, 0.09), transparent 48%);
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 100%);
+}
+
+::selection {
+  color: var(--dark);
+  background: var(--accent);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+[tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(20, 99, 255, 0.35) !important;
+  outline-offset: 3px !important;
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--dark);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 850;
+}
+
+.container {
+  width: min(100%, 1280px);
+  padding-inline: clamp(18px, 4vw, 42px);
+}
+
+body > .container,
+body > astro-island + .container,
+.navbar + .container {
+  padding-top: clamp(30px, 5vw, 58px);
+  padding-bottom: 64px;
+}
+
+.container-narrow {
+  width: min(100%, 560px);
+  padding-inline: 20px;
+}
+
+/* Controles y acciones */
+.btn {
+  min-height: 42px;
+  padding: 10px 19px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: 0.025em;
+  box-shadow: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+  box-shadow: none !important;
+}
+
+.btn-primary,
+.btn-success {
+  color: var(--white);
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 8px 18px rgba(8, 127, 91, 0.2);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-success:hover:not(:disabled) {
+  color: var(--white);
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  box-shadow: 0 11px 24px rgba(8, 127, 91, 0.25);
+}
+
+.btn-secondary {
+  color: var(--dark);
+  background: var(--surface-muted);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e2eae5;
+}
+
+.btn-danger {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-info {
+  background: var(--secondary);
+  border-color: var(--secondary);
+}
+
+.btn-outline {
+  border-width: 1px;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-label {
+  margin-bottom: 8px;
+  color: #294150;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  min-height: 48px;
+  padding: 11px 14px;
+  color: var(--text);
+  background: #fbfdfc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  box-shadow: inset 0 1px 1px rgba(7, 26, 43, 0.025);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover {
+  border-color: #afbeb6;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  background: var(--white);
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 4px rgba(20, 99, 255, 0.11);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--primary);
+}
+
+/* Superficies */
+.card,
+.reservas-card,
+.stat-card,
+.filtros-sidebar,
+.espacios-content {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card {
+  padding: clamp(20px, 3vw, 28px);
+  margin-bottom: 22px;
+}
+
+.card-header {
+  border-bottom-color: var(--border);
+}
+
+.card-title {
+  font-size: 19px;
+  font-weight: 820;
+  letter-spacing: -0.025em;
+}
+
+.alert {
+  padding: 13px 15px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.alert-success { background: #e5f8ef; color: #075b43; border-color: #9dd9c2; }
+.alert-error { background: #fff0f1; color: #8e1f2d; border-color: #efb1b8; }
+.alert-info { background: #edf4ff; color: #16468f; border-color: #b9d0fa; }
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.badge-success { background: #dff8ed; color: #056247; }
+.badge-warning { background: #fff1ce; color: #815407; }
+.badge-danger { background: #ffe4e7; color: #982837; }
+.badge-info { background: #e1ecff; color: #174c9d; }
+.badge-secondary { background: #e7ece9; color: #4f626d; }
+
+/* Tablas y navegación secundaria */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  scrollbar-color: #aebdb5 transparent;
+}
+
+.table,
+.modern-table {
+  background: var(--white);
+  border-radius: 0;
+}
+
+.table th,
+.modern-table th {
+  padding: 13px 15px;
+  color: #526570;
+  background: #edf2ef;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.table td,
+.modern-table td {
+  padding: 15px;
+  border-bottom-color: #e6ece8;
+  font-size: 14px;
+}
+
+.table tbody tr,
+.modern-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.table tbody tr:hover,
+.modern-table tbody tr:hover {
+  background: #f3f8f5;
+}
+
+.tabs {
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px;
+  background: #e9efeb;
+}
+
+.tab,
+.tab-btn {
+  min-height: 42px;
+  padding: 10px 17px;
+  border: 0 !important;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.015em;
+}
+
+.tab:hover,
+.tab-btn:hover {
+  color: var(--dark);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.tab.active,
+.tab-btn.active {
+  color: var(--dark) !important;
+  background: var(--white) !important;
+  box-shadow: 0 3px 10px rgba(7, 26, 43, 0.09);
+}
+
+/* Inicio */
+.page-inicio .welcome-header {
+  position: relative;
+  min-height: 190px;
+  margin-bottom: 40px;
+  padding: clamp(28px, 5vw, 54px);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  color: var(--white);
+  background:
+    linear-gradient(100deg, rgba(7, 26, 43, 0.98) 0%, rgba(7, 26, 43, 0.9) 55%, rgba(8, 127, 91, 0.76) 100%),
+    url("https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1400&q=75") center 48% / cover;
+  box-shadow: var(--shadow-lg);
+}
+
+.page-inicio .welcome-header::after {
+  content: "RESERVA · ENTRENA · COMPITE";
+  position: absolute;
+  right: -18px;
+  bottom: 8px;
+  color: rgba(255, 255, 255, 0.08);
+  font-size: clamp(1.8rem, 5.5vw, 5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+}
+
+.page-inicio .welcome-title {
+  position: relative;
+  z-index: 1;
+  color: var(--white);
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  font-weight: 900;
+  letter-spacing: -0.055em;
+}
+
+.page-inicio .welcome-subtitle {
+  position: relative;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 16px;
+}
+
+.page-inicio .section-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--dark);
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -0.025em;
+}
+
+.page-inicio .link-primary {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.page-inicio .sports-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.page-inicio .sport-card {
+  display: block;
+  height: 230px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px 10px 26px 10px;
+  box-shadow: 0 12px 25px rgba(7, 26, 43, 0.11);
+  text-decoration: none;
+}
+
+.page-inicio .sport-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 25%, rgba(2, 13, 22, 0.68) 100%);
+}
+
+.page-inicio .sport-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 20px 38px rgba(7, 26, 43, 0.2);
+}
+
+.page-inicio .sport-name {
+  font-size: 22px;
+  font-weight: 850;
+  letter-spacing: -0.025em;
+}
+
+.page-inicio .reservas-card {
+  padding: 8px;
+  overflow: hidden;
+}
+
+.loading-state,
+.empty-state {
+  min-height: 210px;
+  display: grid;
+  place-content: center;
+}
+
+/* Catálogo de espacios */
+.page-espacios .espacios-header,
+.page-mis-reservas .flex-between.mb-2 {
+  padding: 26px 0 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-espacios .espacios-header h1,
+.page-mis-reservas h1,
+.page-reservar h1,
+.page-admin h1 {
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.page-espacios .filtros-sidebar {
+  top: 94px;
+  padding: 22px;
+  border-top: 4px solid var(--primary);
+}
+
+.page-espacios .filtro-title {
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.page-espacios .filtro-checkbox {
+  margin-inline: -8px;
+  padding: 9px 8px;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.page-espacios .filtro-checkbox:hover {
+  background: var(--surface-muted);
+}
+
+.page-espacios .espacios-content {
+  padding: 22px !important;
+  background: rgba(255, 255, 255, 0.62) !important;
+}
+
+.page-espacios .espacios-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 0;
+}
+
+.page-espacios .espacio-card-new {
+  border: 1px solid var(--border) !important;
+  border-radius: 10px 10px 22px 10px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.page-espacios .espacio-card-new:hover {
+  border-color: #9eb2a7 !important;
+  box-shadow: var(--shadow-lg) !important;
+  transform: translateY(-5px) !important;
+}
+
+.page-espacios .espacio-card-new .espacio-image {
+  height: 176px !important;
+}
+
+.page-espacios .espacio-card-new .espacio-card-body {
+  padding: 20px !important;
+}
+
+.page-espacios .espacio-card-new .espacio-nombre {
+  color: var(--dark) !important;
+  font-size: 19px !important;
+  font-weight: 850 !important;
+}
+
+.page-espacios .espacio-card-new .espacio-precio-valor {
+  color: var(--primary) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: 27px !important;
+}
+
+.page-espacios .espacio-card-new .btn-ver-disponibilidad {
+  min-height: 46px;
+  background: var(--dark) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.page-espacios .espacio-card-new .btn-ver-disponibilidad:hover {
+  background: var(--primary) !important;
+  box-shadow: 0 9px 20px rgba(8, 127, 91, 0.22) !important;
+}
+
+/* Flujo de reserva */
+.page-reservar .container > .grid {
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.8fr) !important;
+  align-items: start;
+  gap: 28px !important;
+}
+
+.page-reservar .card-title {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-reservar .card-title::first-letter {
+  color: var(--primary);
+}
+
+.page-reservar .time-slots {
+  grid-template-columns: repeat(auto-fill, minmax(106px, 1fr));
+}
+
+.time-slot {
+  min-height: 70px;
+  padding: 12px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+}
+
+.time-slot:hover:not(.disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.time-slot.selected {
+  background: var(--dark);
+  border-color: var(--dark);
+  box-shadow: 0 7px 16px rgba(7, 26, 43, 0.2);
+}
+
+.page-reservar #reservarBtn {
+  background: var(--primary) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* Mis reservas y administración */
+.stats-grid {
+  gap: 12px;
+}
+
+.stats-grid .stat-card,
+#statsGrid .stat-card {
+  position: relative;
+  min-height: 128px;
+  overflow: hidden;
+  border-top: 3px solid var(--primary);
+  box-shadow: var(--shadow);
+}
+
+.stats-grid .stat-card::after,
+#statsGrid .stat-card::after {
+  content: "";
+  position: absolute;
+  right: -24px;
+  bottom: -30px;
+  width: 90px;
+  height: 90px;
+  border: 16px solid rgba(8, 127, 91, 0.055);
+  border-radius: 50%;
+}
+
+.stat-label {
+  color: var(--text-light);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.09em;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.page-mis-reservas #reservasTable,
+.page-admin #bloqueosTable {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: var(--white);
+}
+
+[id$="Pagination"] {
+  gap: 18px;
+  background: #f7faf8 !important;
+  border-top-color: var(--border) !important;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+[id$="PaginationButtons"] .btn {
+  background: var(--dark) !important;
+  box-shadow: none !important;
+}
+
+.page-admin .container > .mb-4[style] {
+  overflow-x: auto;
+  padding: 5px;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px;
+  background: #e9efeb;
+}
+
+.page-admin .stat-icon {
+  border-radius: 10px 3px 10px 3px;
+}
+
+.page-admin .card:has(.table-responsive) {
+  padding: 8px;
+}
+
+/* Acceso */
+.page-login,
+.page-registro {
+  background:
+    linear-gradient(110deg, rgba(7, 26, 43, 0.96), rgba(7, 26, 43, 0.76)),
+    url("https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=1600&q=75") center / cover fixed;
+}
+
+.page-login::before,
+.page-registro::before {
+  display: none;
+}
+
+.page-login .container-narrow,
+.page-registro .container-narrow {
+  margin-top: clamp(28px, 6vw, 68px) !important;
+  padding-bottom: 70px;
+}
+
+.page-login .card,
+.page-registro .card {
+  position: relative;
+  padding: clamp(26px, 5vw, 42px);
+  border-color: rgba(255, 255, 255, 0.5);
+  border-radius: 12px 12px 28px 12px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.32);
+}
+
+.page-login .card::before,
+.page-registro .card::before {
+  content: "CENTRO DEPORTIVO";
+  display: block;
+  margin-bottom: 11px;
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+.page-login .card-title,
+.page-registro .card-title {
+  font-size: 28px;
+  font-weight: 900;
+}
+
+/* Modales */
+.modal,
+.custom-modal {
+  padding: 18px;
+  background: rgba(3, 15, 25, 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.modal-content,
+.custom-modal-content {
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 12px 12px 26px 12px;
+  box-shadow: 0 30px 80px rgba(2, 12, 22, 0.36);
+}
+
+.custom-modal-content {
+  padding: clamp(26px, 5vw, 40px);
+}
+
+.custom-modal-title {
+  font-weight: 900;
+  letter-spacing: -0.035em;
+}
+
+.modal-header {
+  background: #f4f8f5;
+  border-bottom-color: var(--border) !important;
+}
+
+.modal-footer {
+  background: #f4f8f5 !important;
+  border-top-color: var(--border) !important;
+}
+
+@media (max-width: 1050px) {
+  .page-inicio .sports-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .page-espacios .espacios-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-reservar .container > .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .page-reservar .container > .grid > div:last-child .card {
+    position: static !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body::before {
+    top: 120px;
+  }
+
+  body > .container,
+  .navbar + .container {
+    padding-top: 26px;
+    padding-bottom: 44px;
+  }
+
+  .flex-between {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .page-mis-reservas .flex-between.mb-2 {
+    flex-direction: column;
+  }
+
+  .page-inicio .welcome-header {
+    min-height: 170px;
+    margin-bottom: 32px;
+  }
+
+  .page-inicio .sports-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .page-inicio .sport-card {
+    height: 175px;
+    padding: 16px;
+  }
+
+  .page-inicio .sport-name {
+    font-size: 18px;
+  }
+
+  .page-inicio .sport-card-content > div {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 5px !important;
+  }
+
+  .page-inicio .reservas-card {
+    overflow-x: auto;
+  }
+
+  .modern-table {
+    min-width: 640px;
+  }
+
+  .page-espacios .espacios-header > .flex {
+    width: 100%;
+  }
+
+  .page-espacios #categoriaFilter {
+    width: 100% !important;
+  }
+
+  .page-espacios .espacios-content {
+    padding: 12px !important;
+  }
+
+  .page-espacios .espacios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-espacios .espacio-card-new .espacio-image {
+    height: 190px !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats-grid .stat-card,
+  #statsGrid .stat-card {
+    min-width: 0;
+    min-height: 112px;
+    padding: 16px;
+  }
+
+  .tabs,
+  .page-admin .container > .mb-4[style] {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .tab,
+  .tab-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  [id$="Pagination"] {
+    align-items: stretch !important;
+    flex-direction: column;
+    padding: 14px !important;
+  }
+
+  [id$="PaginationButtons"] {
+    justify-content: space-between;
+  }
+
+  .modal-content {
+    width: 100% !important;
+    max-height: calc(100vh - 28px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-inline: 14px;
+  }
+
+  .page-inicio .sports-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-inicio .sport-card {
+    height: 160px;
+  }
+
+  .section-header {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-modal-buttons,
+  .modal-footer .flex {
+    flex-direction: column-reverse;
+  }
+
+  .custom-modal-buttons .btn,
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

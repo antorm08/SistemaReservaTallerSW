@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar.astro';
 <Layout title="Mis Reservas">
   <Navbar />
   
-  <div class="container">
+  <main class="container page-shell">
     <div class="flex-between mb-2">
       <div>
         <h1 style="margin-bottom: 4px;">Mis Reservas</h1>
@@ -91,7 +91,7 @@ import Navbar from '../components/Navbar.astro';
       <p style="color: var(--text-light);">No tienes reservas</p>
       <a href="/reservar" class="btn btn-primary mt-3">Hacer una Reserva</a>
     </div>
-  </div>
+  </main>
   
   <!-- Modal para cancelar -->
   <div id="cancelModal" class="modal">
