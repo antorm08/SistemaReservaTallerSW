@@ -77,13 +77,12 @@ La aplicación estará disponible en `http://localhost:4321`.
 ## Despliegue en Neon y Render
 
 1. Crea un proyecto en [Neon](https://neon.tech/) y copia su connection string pooled. Debe comenzar con `postgresql://` y terminar con `sslmode=require`.
-2. En tu `.env` local configura esa URL como `DATABASE_URL`, define `SEED_ADMIN_PASSWORD` y ejecuta una vez `npm run db:deploy` y `npm run db:seed` desde `proyecto-reservas/`.
-3. Sube el repositorio a GitHub o GitLab. No subas el archivo `.env`.
-4. En Render selecciona **New > Blueprint**, conecta el repositorio y confirma el servicio definido en `render.yaml`.
-5. Cuando Render solicite `DATABASE_URL`, pega la misma URL pooled de Neon. `JWT_SECRET` se genera automáticamente mediante el Blueprint.
-6. Inicia el despliegue. Render instalará dependencias, aplicará las migraciones, compilará Astro y ejecutará el servidor Node.
+2. Sube el repositorio a GitHub o GitLab. No subas el archivo `.env`.
+3. En Render selecciona **New > Blueprint**, conecta el repositorio y confirma el servicio definido en `render.yaml`.
+4. Cuando Render solicite `DATABASE_URL`, pega la URL pooled de Neon. En `SEED_ADMIN_PASSWORD` define una contraseña segura para `admin@deportivo.com`; `JWT_SECRET` se genera automáticamente.
+5. Inicia el despliegue. Render instalará dependencias, aplicará las migraciones, cargará los datos iniciales, compilará Astro y ejecutará el servidor Node.
 
-No configures `PORT` manualmente en Render; la plataforma lo proporciona al proceso. Si no quieres cargar los datos iniciales, omite el paso local `npm run db:seed`, pero la aplicación no tendrá espacios ni usuario administrador.
+No configures `PORT` manualmente en Render; la plataforma lo proporciona al proceso. El seed es idempotente y puede ejecutarse en cada despliegue sin duplicar espacios, horarios ni el administrador.
 
 ## Documentación Técnica
 
