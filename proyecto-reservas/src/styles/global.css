@@ -559,6 +559,36 @@ body {
   font-size: 64px;
   margin-bottom: 20px;
   line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.custom-modal-icon .app-icon {
+  stroke-width: 1.9;
+}
+
+.custom-modal-icon[data-icon='warning'] { color: var(--warning); }
+.custom-modal-icon[data-icon='error'] { color: var(--danger); }
+.custom-modal-icon[data-icon='success'] { color: var(--primary); }
+.custom-modal-icon[data-icon='info'] { color: var(--secondary); }
+.custom-modal-icon[data-icon='question'] { color: var(--secondary); }
+.custom-modal-icon[data-icon='lock'] { color: var(--secondary-dark); }
+.custom-modal-icon[data-icon='ban'] { color: var(--danger); }
+
+.app-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+}
+
+.alert .app-icon,
+.badge .app-icon,
+.badge-small .app-icon,
+button .app-icon,
+.btn .app-icon,
+.espacio-badge-small .app-icon {
+  vertical-align: -0.15em;
+  margin-right: 4px;
 }
 
 .custom-modal-title {
@@ -1140,10 +1170,23 @@ input[type="radio"] {
   box-shadow: 0 20px 38px rgba(7, 26, 43, 0.2);
 }
 
+.page-inicio .sport-card-content,
+.page-inicio .sport-card-content h1,
+.page-inicio .sport-card-content h2,
+.page-inicio .sport-card-content h3,
+.page-inicio .sport-card-content h4 {
+  color: #ffffff;
+}
+
 .page-inicio .sport-name {
+  color: #ffffff;
   font-size: 22px;
   font-weight: 850;
   letter-spacing: -0.025em;
+}
+
+.page-inicio .sport-info {
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .page-inicio .reservas-card {

@@ -564,7 +564,8 @@ import Navbar from "../components/Navbar.astro";
             id="mensajeRangoDias"
             style="display: none; padding: 12px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; color: #1E40AF; font-size: 14px; margin-bottom: 12px;"
           >
-            ℹ️ <strong>Bloqueo de varios días:</strong> Se bloqueará todo el día para
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <strong>Bloqueo de varios días:</strong> Se bloqueará todo el día para
             el rango de fechas seleccionado.
           </div>
 
@@ -1006,7 +1007,7 @@ import Navbar from "../components/Navbar.astro";
     }
 
     if (user.rol !== "admin") {
-      showError("No tienes permisos de administrador", "Acceso Denegado", "🚫");
+      showError("No tienes permisos de administrador", "Acceso Denegado", "ban");
       setTimeout(() => {
         window.location.href = "/espacios";
       }, 2000);
@@ -1629,7 +1630,7 @@ import Navbar from "../components/Navbar.astro";
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 16px; opacity: 0.5;">
               <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <p style="margin-bottom: 16px; font-size: 16px; font-weight: 500;">📅 No hay bloqueos de mantenimiento</p>
+            <p style="margin-bottom: 16px; font-size: 16px; font-weight: 500;">No hay bloqueos de mantenimiento</p>
             <p style="font-size: 14px; margin-bottom: 24px; opacity: 0.8;">Los espacios están disponibles para reservas en todos los horarios habilitados.</p>
             <button class="btn btn-primary" onclick="abrirModalBloqueo()" style="padding: 12px 24px; font-weight: 600;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
@@ -1697,7 +1698,7 @@ import Navbar from "../components/Navbar.astro";
       showError(
         "No se encontró el bloqueo. Intenta recargar la página.",
         "Error",
-        "❌",
+        "error",
       );
       return;
     }
@@ -1719,12 +1720,12 @@ import Navbar from "../components/Navbar.astro";
     const nombreEspacio = escapeHtml(bloqueo.espacio?.nombre || "Sin nombre");
     const motivo = escapeHtml(bloqueo.motivo || "Sin motivo especificado");
 
-    const mensaje = `<div style="text-align: left; margin: 16px 0;"><p style="margin-bottom: 12px; font-size: 15px;">Se desactivará el siguiente bloqueo de mantenimiento:</p><div style="background: #F3F4F6; padding: 14px; border-radius: 8px; margin-bottom: 12px;"><p style="margin: 6px 0; font-size: 14px;"><strong>Espacio:</strong> ${nombreEspacio}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Período:</strong> ${fechaInicio} - ${fechaFin}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Horario:</strong> ${horario}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Motivo:</strong> ${motivo}</p></div><p style="color: #059669; margin-top: 12px; font-size: 14px;">✓ Los horarios volverán a estar disponibles para reservas.</p></div>`;
+    const mensaje = `<div style="text-align: left; margin: 16px 0;"><p style="margin-bottom: 12px; font-size: 15px;">Se desactivará el siguiente bloqueo de mantenimiento:</p><div style="background: #F3F4F6; padding: 14px; border-radius: 8px; margin-bottom: 12px;"><p style="margin: 6px 0; font-size: 14px;"><strong>Espacio:</strong> ${nombreEspacio}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Período:</strong> ${fechaInicio} - ${fechaFin}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Horario:</strong> ${horario}</p><p style="margin: 6px 0; font-size: 14px;"><strong>Motivo:</strong> ${motivo}</p></div>            <span style="color: #059669; margin-top: 12px; font-size: 14px;">${appIcon('check', 15)} Los horarios volverán a estar disponibles para reservas.</span></div>`;
 
     const confirmed = await showConfirm(
       mensaje,
       "Confirmar Desactivación de Bloqueo",
-      "⚠️",
+      "warning",
     );
 
     if (!confirmed) return;
@@ -1744,14 +1745,14 @@ import Navbar from "../components/Navbar.astro";
         showSuccess(
           `El bloqueo de <strong>${escapeHtml(bloqueo.espacio?.nombre || "Sin nombre")}</strong> ha sido desactivado. Los horarios ya están disponibles para nuevas reservas.`,
           "¡Bloqueo Desactivado!",
-          "✅",
+          "success",
         );
         cargarBloqueos();
       } else {
         showError(
           "Error: " + escapeHtml(data.error || "Error desconocido"),
           "Error",
-          "❌",
+          "error",
         );
       }
     } catch (error) {
@@ -1759,7 +1760,7 @@ import Navbar from "../components/Navbar.astro";
       showError(
         "No se pudo conectar con el servidor. Verifica tu conexión.",
         "Error de Conexión",
-        "❌",
+        "error",
       );
     }
   };
@@ -2082,7 +2083,7 @@ import Navbar from "../components/Navbar.astro";
           }
 
           // Mostrar lista de reservas afectadas
-          let mensajeHTML = `<h4 style="margin-bottom: 16px; color: #f59e0b;">⚠️ ${data.mensaje}</h4>`;
+          let mensajeHTML = `<h4 style="margin-bottom: 16px; color: #f59e0b; display: flex; align-items: center; gap: 8px;">${appIcon('warning', 18)} ${data.mensaje}</h4>`;
           mensajeHTML += `<div style="text-align: left; margin: 16px 0;">`;
           mensajeHTML += `<p style="margin-bottom: 12px; font-weight: 600;">Reservas que serán canceladas:</p>`;
           mensajeHTML += `<div style="max-height: 200px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;">`;
@@ -2093,7 +2094,7 @@ import Navbar from "../components/Navbar.astro";
                 <div style="font-weight: 600; color: #1e293b;">${i + 1}. ${r.usuario}</div>
                 <div style="font-size: 13px; color: #64748b;">${r.email}</div>
                 <div style="font-size: 13px; color: #64748b; margin-top: 4px;">
-                  📅 ${r.fecha} | ⏰ ${r.horaInicio} - ${r.horaFin}
+                  ${appIcon('calendar', 13)} ${r.fecha} &nbsp;|&nbsp; ${appIcon('clock', 13)} ${r.horaInicio} - ${r.horaFin}
                 </div>
                 <div style="font-size: 12px; margin-top: 4px;">
                   <span style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 12px; font-weight: 500;">
@@ -2110,7 +2111,7 @@ import Navbar from "../components/Navbar.astro";
           const confirmar = await showConfirm(
             mensajeHTML,
             "Confirmar Bloqueo",
-            "⚠️",
+            "warning",
           );
 
           if (confirmar) {
@@ -2135,7 +2136,7 @@ import Navbar from "../components/Navbar.astro";
                   horaFin: esTodoElDia ? null : horaFin,
                   todoElDia: esTodoElDia,
                   motivo,
-                  forzarCancelacion: true, // 🔑 Confirmación
+                  forzarCancelacion: true, // Confirmación
                 }),
               });
 
@@ -2300,10 +2301,10 @@ import Navbar from "../components/Navbar.astro";
           </td>
           <td style="padding: 16px;">
             <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px;">
-              ${e.techado ? '<span style=\"color: #3b82f6; white-space: nowrap;\">✓ Techado</span>' : ""}
-              ${e.iluminacion ? '<span style=\"color: #f59e0b; white-space: nowrap;\">💡 Iluminación</span>' : ""}
-              ${e.vestuarios ? '<span style=\"color: #10b981; white-space: nowrap;\">🚿 Vestuarios</span>' : ""}
-              ${e.estacionamiento ? '<span style=\"color: #8b5cf6; white-space: nowrap;\">🅿 Estacionamiento</span>' : ""}
+              ${e.techado ? `<span style="color: #3b82f6; white-space: nowrap;">${appIcon('home', 13)} Techado</span>` : ""}
+              ${e.iluminacion ? `<span style="color: #f59e0b; white-space: nowrap;">${appIcon('lightbulb', 13)} Iluminación</span>` : ""}
+              ${e.vestuarios ? `<span style="color: #10b981; white-space: nowrap;">${appIcon('shirt', 13)} Vestuarios</span>` : ""}
+              ${e.estacionamiento ? `<span style="color: #8b5cf6; white-space: nowrap;">${appIcon('home', 13)} Estacionamiento</span>` : ""}
             </div>
           </td>
           <td style="text-align: center; padding: 16px; vertical-align: middle; white-space: nowrap;">
@@ -2317,7 +2318,7 @@ import Navbar from "../components/Navbar.astro";
               onclick="toggleEstadoEspacio(${e.id}, ${!e.activo})"
               style="min-width: 90px; font-size: 11px; padding: 6px 10px; border-radius: 5px;"
             >
-              ${e.activo ? "⊗ Desactivar" : "✓ Activar"}
+              ${e.activo ? `${appIcon('ban', 13)} Desactivar` : `${appIcon('check', 13)} Activar`}
             </button>
           </td>
         </tr>

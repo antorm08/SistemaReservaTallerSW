@@ -38,7 +38,7 @@
             window.showError(
               'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
               'Sesión Expirada',
-              '🔒'
+              'lock'
             );
             
             // Redirigir después de 2 segundos

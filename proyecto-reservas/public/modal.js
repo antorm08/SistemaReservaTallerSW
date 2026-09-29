@@ -35,8 +35,18 @@ function closeModal() {
   }
 }
 
+// Insertar el icono (SVG) en el contenedor del modal
+function setModalIcon(modalIcon, icon) {
+  if (typeof window.appIcon === 'function') {
+    modalIcon.innerHTML = window.appIcon(icon, 44);
+  } else {
+    modalIcon.textContent = icon;
+  }
+  modalIcon.dataset.icon = icon || 'info';
+}
+
 // Mostrar alerta personalizada
-window.showAlert = function(message, title = 'Aviso', icon = '⚠️') {
+window.showAlert = function(message, title = 'Aviso', icon = 'warning') {
   createModalContainer();
   
   const modal = document.getElementById('globalModal');
@@ -45,7 +55,7 @@ window.showAlert = function(message, title = 'Aviso', icon = '⚠️') {
   const modalMessage = document.getElementById('modalMessage');
   const modalButtons = document.getElementById('modalButtons');
   
-  modalIcon.textContent = icon;
+  setModalIcon(modalIcon, icon);
   modalTitle.textContent = title;
   modalMessage.innerHTML = message;
   modalButtons.innerHTML = '<button class="btn btn-primary" onclick="closeModal()">Entendido</button>';
@@ -54,7 +64,7 @@ window.showAlert = function(message, title = 'Aviso', icon = '⚠️') {
 };
 
 // Mostrar confirmación personalizada
-window.showConfirm = function(message, title = 'Confirmar', icon = '❓') {
+window.showConfirm = function(message, title = 'Confirmar', icon = 'question') {
   return new Promise((resolve) => {
     createModalContainer();
     
@@ -72,7 +82,7 @@ window.showConfirm = function(message, title = 'Confirmar', icon = '❓') {
       modalContent.style.maxWidth = '450px';
     }
     
-    modalIcon.textContent = icon;
+    setModalIcon(modalIcon, icon);
     modalTitle.textContent = title;
     modalMessage.innerHTML = message;
     modalButtons.innerHTML = `
@@ -86,17 +96,17 @@ window.showConfirm = function(message, title = 'Confirmar', icon = '❓') {
 };
 
 // Mostrar modal de éxito
-window.showSuccess = function(message, title = '¡Éxito!', icon = '✅') {
+window.showSuccess = function(message, title = '¡Éxito!', icon = 'success') {
   showAlert(message, title, icon);
 };
 
 // Mostrar modal de error
-window.showError = function(message, title = 'Error', icon = '❌') {
+window.showError = function(message, title = 'Error', icon = 'error') {
   showAlert(message, title, icon);
 };
 
 // Mostrar modal de información
-window.showInfo = function(message, title = 'Información', icon = 'ℹ️') {
+window.showInfo = function(message, title = 'Información', icon = 'info') {
   showAlert(message, title, icon);
 };
 

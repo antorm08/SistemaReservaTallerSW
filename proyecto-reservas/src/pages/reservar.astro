@@ -301,7 +301,7 @@ import Navbar from '../components/Navbar.astro';
       const token = localStorage.getItem('token');
       
       if (!token) {
-        showError('Sesión expirada. Por favor, inicia sesión nuevamente', 'Sesión Expirada', '⏱️');
+        showError('Sesión expirada. Por favor, inicia sesión nuevamente', 'Sesión Expirada', 'clock');
         setTimeout(() => {
           window.location.href = '/login';
         }, 2000);

@@ -46,7 +46,7 @@ import Navbar from '../components/Navbar.astro';
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('sessionExpired') === 'true') {
     if (alertDiv) {
-      alertDiv.innerHTML = '<div class="alert alert-error">🔒 Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</div>';
+      alertDiv.innerHTML = '<div class="alert alert-error">' + appIcon('lock', 16) + ' Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</div>';
     }
     // Limpiar el parámetro de la URL
     window.history.replaceState({}, document.title, '/login');
